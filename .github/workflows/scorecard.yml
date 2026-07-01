@@ -6,6 +6,12 @@ name: OpenSSF Scorecard
 #
 # Requires a PUBLIC repository. If this repo is private, delete this file —
 # Scorecard publishing only works for public repos.
+#
+# Global permissions are read-only by design. `id-token: write` lives at the
+# JOB level (see below) because the Scorecard webapp rejects publishes when the
+# workflow-global token has write scope — a guard against a compromised run
+# minting broad OIDC tokens. See:
+# https://github.com/ossf/scorecard-action#workflow-restrictions
 on:
   schedule:
     # Weekly (Sunday 00:00 UTC). Keeps the scorecard fresh without CI noise.
@@ -15,15 +21,18 @@ on:
   # Allow manual runs from the Actions tab.
   workflow_dispatch:
 
-permissions:
-  contents: read
-  # Required to publish results to the OpenSSF Scorecards API.
-  id-token: write
+permissions: contents: read
 
 jobs:
   analysis:
     name: Scorecard analysis
     runs-on: ubuntu-latest
+    permissions:
+      # Needed to publish results to the OpenSSF Scorecards API (badge).
+      id-token: write
+      # Needed to upload the SARIF to GitHub code scanning.
+      contents: read
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -35,9 +44,7 @@ jobs:
           results_format: sarif
           results_file: results.sarif
           publish_results: true
-      - name: Upload SARIF to code scanning
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - name: Upload to GitHub code scanning
+        uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
         with:
-          name: SARIF file
-          path: results.sarif
-          retention-days: 5
+          sarif_file: results.sarif
