@@ -35,7 +35,8 @@
     "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
     "lint-ci": "eslint \"src/**/*.{js,ts,tsx}\" --max-warnings 0",
-    "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\""
+    "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\"",
+    "release": "release-it"
   },
   "keywords": [
     "react-native",
@@ -64,6 +65,7 @@
   },
   "devDependencies": {
     "@react-native/eslint-config": "0.85.3",
+    "@release-it/conventional-changelog": "^11.0.1",
     "@types/react": "^19.2.15",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
@@ -72,6 +74,7 @@
     "react": "19.2.3",
     "react-native": "0.85.3",
     "react-native-nitro-modules": "*",
+    "release-it": "^20.2.1",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {

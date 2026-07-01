@@ -1,0 +1,62 @@
+name: Release
+
+# Publish to npm automatically when a version tag (`vX.Y.Z`) is pushed.
+# Tags are created by `bun release` (release-it). This workflow holds the only
+# path to the npm registry: npm Trusted Publishing (OIDC), which mints a
+# short-lived, workflow-scoped publish token — no long-lived NPM_TOKEN secret.
+# Provenance attestations are generated automatically (public repo + OIDC),
+# cryptographically binding every published tarball to this exact workflow run.
+on:
+  push:
+    tags:
+      - 'v*'
+
+# id-token: write lets GitHub issue the OIDC token npm exchanges for a publish
+# token. contents: read is the least privilege needed to checkout the tag.
+# No other permissions are granted.
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    # Recommended: create a `release` environment in repo settings with required
+    # reviewers + tag-protection rules on `v*` so only maintainers can trigger.
+    environment: release
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          # Match the tag exactly; no ref resolution drift.
+          ref: ${{ github.ref }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+
+- name: Setup Node (npm CLI w/ OIDC + registry auth)
+        # node 22.14+ ships npm 11.5.1+, required for Trusted Publishing.
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.14'
+          registry-url: 'https://registry.npmjs.org'
+          # No `cache:` input is set on purpose: npm's guidance is to never
+          # cache in release builds (cache-poisoning / stale-tarball risk).
+          # setup-node@v4 only caches when `cache:` is provided.
+
+      - name: Install dependencies (frozen lockfile)
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+
+      - name: Verify Nitrogen specs are up to date
+        # Fails the release if the committed generated files don't match the spec.
+        run: |
+          bun run specs
+          git diff --exit-code -- nitrogen/generated || \
+            (echo "::error::nitrogen/generated is stale — run 'bun run specs' and commit before releasing." && exit 1)
+
+      - name: Publish (OIDC, no token)
+        run: npm publish --access public

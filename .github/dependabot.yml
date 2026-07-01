@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      nitro:
+        patterns:
+          - 'react-native-nitro-modules'
+          - 'nitrogen'
+          - '@release-it/*'
+      react-native:
+        patterns:
+          - 'react'
+          - 'react-native'
+          - '@react-native/*'
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
