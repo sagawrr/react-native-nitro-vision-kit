@@ -1,18 +1,7 @@
 name: OpenSSF Scorecard
 
-# Runs OpenSSF Scorecard on the default branch and reports findings to GitHub's
-# code-scanning (Security tab). This is the security value — posture gaps show
-# up as actionable alerts.
-#
-# `publish_results` is intentionally FALSE. Publishing to the public Scorecards
-# API runs a sigstore signing step that dumps a 40-line ephemeral certificate to
-# the logs (public-by-construction, not a secret, but noisy). Leaving it off
-# keeps logs clean; findings still land in the Security tab.
-#
-# Global permissions are read-only; job-level `id-token: write` is kept narrow.
 on:
   schedule:
-    # Weekly (Sunday 00:00 UTC).
     - cron: '0 0 * * 0'
   push:
     branches: [main]
@@ -27,9 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      # Required by the scorecard action to sign results.
       id-token: write
-      # Required to upload SARIF to code scanning.
       security-events: write
     steps:
       - name: Checkout

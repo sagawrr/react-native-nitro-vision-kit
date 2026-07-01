@@ -1,13 +1,5 @@
 name: Dependency Review
 
-# Runs on every PR and FAILS it if the diff introduces packages with known
-# security advisories (GitHub Advisory Database) or, optionally, packages that
-# fail your license policy. This is the GitHub-native supply-chain gate and is
-# package-manager agnostic — it analyzes manifests/lockfiles, not the install.
-#
-# Complements (does not replace) Socket/sfw: dependency-review catches
-# *known-vulnerable* versions; Socket/sfw catch *malicious* behavior
-# (typosquatting, install scripts, post-install network exfil).
 on:
   pull_request:
     branches: [main]
@@ -24,12 +16,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Dependency Review
-        # Blocks the PR if any changed dependency has a known GHSA advisory.
-        # Pinned to immutable commit SHA (v5.0.0) to prevent action retagging.
         uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
         with:
-          # Fail on any vulnerability, regardless of severity.
           fail-on-severity: moderate
-          # Optional: uncomment to also enforce an allow-list of licenses.
-          # license-check: true
-          # deny-licenses: GPL-3.0, AGPL-3.0

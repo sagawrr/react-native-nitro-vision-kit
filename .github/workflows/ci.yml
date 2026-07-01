@@ -19,19 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        # Pinned to immutable commit SHA to prevent action-tag retagging attacks.
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
 
       - name: Install dependencies
-        # Non-frozen: Dependabot regenerates bun.lock with its own resolver,
-        # which differs from CI's bun, so --frozen-lockfile is permanently red
-        # on dependency PRs. The published tarball contains no lockfile or
-        # node_modules, so install-time resolution never reaches npm publish —
-        # supply-chain integrity is carried by OIDC trusted publishing,
-        # automatic provenance, no package-manager cache, and SHA-pinned actions.
         run: bun install
 
       - name: Lint
