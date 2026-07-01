@@ -1,0 +1,43 @@
+name: OpenSSF Scorecard
+
+# Runs OpenSSF Scorecard on the default branch to surface supply-chain posture
+# gaps (missing branch protection, unpinned actions, no provenance, etc.) and
+# publishes results to the public Scorecards API for the badge.
+#
+# Requires a PUBLIC repository. If this repo is private, delete this file —
+# Scorecard publishing only works for public repos.
+on:
+  schedule:
+    # Weekly (Sunday 00:00 UTC). Keeps the scorecard fresh without CI noise.
+    - cron: '0 0 * * 0'
+  push:
+    branches: [main]
+  # Allow manual runs from the Actions tab.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Required to publish results to the OpenSSF Scorecards API.
+  id-token: write
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - name: Scorecard analysis
+        uses: ossf/scorecard-action@f49aabe0b5af0936a0987cfb85d86b75731b0186 # v2.4.1
+        with:
+          results_format: sarif
+          results_file: results.sarif
+          publish_results: true
+      - name: Upload SARIF to code scanning
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: SARIF file
+          path: results.sarif
+          retention-days: 5
