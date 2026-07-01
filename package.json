@@ -1,0 +1,90 @@
+{
+  "name": "react-native-nitro-vision-kit",
+  "version": "0.1.0",
+  "description": "On-device computer vision for React Native — background removal and image classification via native Vision (iOS) and ML Kit (Android), with zero-copy pixel access. Built with Nitro Modules.",
+  "main": "lib/index",
+  "module": "lib/index",
+  "types": "lib/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "react-native.config.js",
+    "lib",
+    "nitrogen",
+    "android/build.gradle",
+    "android/gradle.properties",
+    "android/fix-prefab.gradle",
+    "android/CMakeLists.txt",
+    "android/src",
+    "cpp",
+    "ios/**/*.h",
+    "ios/**/*.m",
+    "ios/**/*.mm",
+    "ios/**/*.cpp",
+    "ios/**/*.swift",
+    "nitro.json",
+    "*.podspec",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "prepublishOnly": "bun run build",
+    "clean": "rm -rf android/build node_modules/**/android/build lib",
+    "lint": "eslint \"src/**/*.{js,ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
+    "lint-ci": "eslint \"src/**/*.{js,ts,tsx}\" --max-warnings 0",
+    "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\""
+  },
+  "keywords": [
+    "react-native",
+    "nitro-modules",
+    "nitro",
+    "vision",
+    "background-removal",
+    "image-classification",
+    "subject-segmentation",
+    "mlkit",
+    "ios",
+    "android"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sagawrr/react-native-nitro-vision-kit.git"
+  },
+  "author": "sagawrr <sagawrr@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sagawrr/react-native-nitro-vision-kit/issues"
+  },
+  "homepage": "https://github.com/sagawrr/react-native-nitro-vision-kit#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@react-native/eslint-config": "0.85.3",
+    "@types/react": "^19.2.15",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "nitrogen": "*",
+    "prettier": "^3.8.3",
+    "react": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-nitro-modules": "*",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-nitro-modules": "*"
+  },
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false,
+    "semi": false
+  }
+}
