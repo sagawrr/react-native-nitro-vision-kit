@@ -1,29 +1,36 @@
 name: OpenSSF Scorecard
 
-# Runs OpenSSF Scorecard on the default branch to surface supply-chain posture
-# gaps (missing branch protection, unpinned actions, no provenance, etc.) and
-# publishes results to the public Scorecards API for the badge.
+# Runs OpenSSF Scorecard on the default branch and reports findings to GitHub's
+# code-scanning (Security tab). This is the security value — posture gaps show
+# up as actionable alerts.
 #
-# Requires a PUBLIC repository. If this repo is private, delete this file —
-# Scorecard publishing only works for public repos.
+# `publish_results` is intentionally FALSE. Publishing to the public Scorecards
+# API runs a sigstore signing step that dumps a 40-line ephemeral certificate to
+# the logs (public-by-construction, not a secret, but noisy). Leaving it off
+# keeps logs clean; findings still land in the Security tab.
+#
+# Global permissions are read-only; job-level `id-token: write` is kept narrow.
 on:
   schedule:
-    # Weekly (Sunday 00:00 UTC). Keeps the scorecard fresh without CI noise.
+    # Weekly (Sunday 00:00 UTC).
     - cron: '0 0 * * 0'
   push:
     branches: [main]
-  # Allow manual runs from the Actions tab.
   workflow_dispatch:
 
 permissions:
   contents: read
-  # Required to publish results to the OpenSSF Scorecards API.
-  id-token: write
 
 jobs:
   analysis:
     name: Scorecard analysis
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required by the scorecard action to sign results.
+      id-token: write
+      # Required to upload SARIF to code scanning.
+      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -34,10 +41,8 @@ jobs:
         with:
           results_format: sarif
           results_file: results.sarif
-          publish_results: true
-      - name: Upload SARIF to code scanning
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+          publish_results: false
+      - name: Upload to GitHub code scanning
+        uses: github/codeql-action/upload-sarif@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
         with:
-          name: SARIF file
-          path: results.sarif
-          retention-days: 5
+          sarif_file: results.sarif

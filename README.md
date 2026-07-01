@@ -4,7 +4,6 @@
 [![CI](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml)
 [![Release](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/release.yml/badge.svg)](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/npm/l/react-native-nitro-vision-kit?color=blue)](https://github.com/sagawrr/react-native-nitro-vision-kit/blob/main/LICENSE)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/sagawrr/react-native-nitro-vision-kit/badge)](https://scorecard.dev/viewer/?uri=github.com/sagawrr/react-native-nitro-vision-kit)
 ![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-blueviolet)
 ![supply chain](https://img.shields.io/badge/supply--chain-Socket%20%2B%20OIDC%20%2B%20provenance-success?logo=socket)
 
