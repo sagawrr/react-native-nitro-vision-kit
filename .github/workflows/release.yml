@@ -41,17 +41,16 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
 
-      - name: Setup Node (npm CLI w/ OIDC + registry auth)
+      - name: Setup Node (npm CLI w/ OIDC)
         # node 22.14+ ships npm 11.5.1+, required for Trusted Publishing.
+        # NOTE: no `registry-url` on purpose. setup-node's registry-url writes
+        # an .npmrc that pulls auth from $NODE_AUTH_TOKEN; if that var is set to
+        # anything (e.g. a masked default), npm uses it and SKIPS the OIDC
+        # exchange, yielding a 404. Native npm trusted publishing needs no
+        # registry-url — npm auto-detects the OIDC environment.
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: '22.14'
-          registry-url: 'https://registry.npmjs.org'
-          # Explicitly disabled: npm's guidance is to never cache in release
-          # builds (cache-poisoning / stale-tarball risk). setup-node v5+ enables
-          # caching by default, so this MUST be set to false to preserve the
-          # no-cache release posture. Without it, the publish path silently gains
-          # a package-manager cache that CI (tag-only workflow) cannot catch.
           package-manager-cache: false
 
       - name: Install dependencies
