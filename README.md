@@ -1,5 +1,14 @@
 # react-native-nitro-vision-kit
 
+[![npm version](https://img.shields.io/npm/v/react-native-nitro-vision-kit?logo=npm&label=npm)](https://www.npmjs.com/package/react-native-nitro-vision-kit)
+[![npm downloads](https://img.shields.io/npm/dm/react-native-nitro-vision-kit?logo=npm)](https://www.npmjs.com/package/react-native-nitro-vision-kit)
+[![CI](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml)
+[![Release](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/release.yml/badge.svg)](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/release.yml)
+[![License: MIT](https://img.shields.io/npm/l/react-native-nitro-vision-kit?color=blue)](https://github.com/sagawrr/react-native-nitro-vision-kit/blob/main/LICENSE)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/sagawrr/react-native-nitro-vision-kit?label=Scorecard&logo=openssf)](https://scorecard.dev/viewer/?uri=github.com/sagawrr/react-native-nitro-vision-kit)
+![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-blueviolet)
+![supply chain](https://img.shields.io/badge/supply--chain-Socket%20%2B%20OIDC%20%2B%20provenance-success?logo=socket)
+
 **On-device computer vision for React Native** — background removal and image classification, powered by native Vision (iOS) and ML Kit (Android), with zero-copy pixel access. Built with [Nitro Modules](https://nitro.margelo.com).
 
 - 🎯 **Subject segmentation** — lift the primary subject with a soft alpha matte, no server round-trip.
