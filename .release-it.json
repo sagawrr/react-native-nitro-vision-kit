@@ -12,7 +12,7 @@
     "publish": false
   },
   "hooks": {
-    "before:init": ["bun install --frozen-lockfile", "bun run lint-ci", "bun run typecheck", "bun run build", "bun run specs"]
+    "before:init": ["bun install", "bun run lint-ci", "bun run typecheck", "bun run build", "bun run specs"]
   },
   "plugins": {
     "@release-it/conventional-changelog": {
