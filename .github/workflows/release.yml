@@ -46,5 +46,6 @@ jobs:
             (echo "::error::nitrogen/generated is stale — run 'bun run specs' and commit before releasing." && exit 1)
 
       - name: Publish
-        # ponytail: unset NODE_AUTH_TOKEN — setup-node injects it (GITHUB_TOKEN), any value blocks OIDC auto-detection
-        run: unset NODE_AUTH_TOKEN && npm publish --access public --provenance
+        run: |
+          sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
+          npm publish --access public --provenance
