@@ -45,6 +45,9 @@ jobs:
           git diff --exit-code -- nitrogen/generated || \
             (echo "::error::nitrogen/generated is stale — run 'bun run specs' and commit before releasing." && exit 1)
 
+      - name: Upgrade npm
+        run: npm install -g npm@latest
+
       - name: Publish
         run: |
           sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG"
