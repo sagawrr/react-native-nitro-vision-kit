@@ -25,6 +25,12 @@ jobs:
     # Recommended: create a `release` environment in repo settings with required
     # reviewers + tag-protection rules on `v*` so only maintainers can trigger.
     environment: release
+    # Job-level permissions are REQUIRED for OIDC: GitHub only grants id-token:write
+    # to the job when it's declared at job scope (top-level alone can be dropped
+    # by account/org default-permission handling). Keep it explicit and narrow.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout tag
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
