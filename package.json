@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-vision-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "On-device computer vision for React Native — background removal and image classification via native Vision (iOS) and ML Kit (Android), with zero-copy pixel access. Built with Nitro Modules.",
   "main": "lib/index",
   "module": "lib/index",
