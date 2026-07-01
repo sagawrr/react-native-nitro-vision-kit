@@ -71,4 +71,9 @@ jobs:
             (echo "::error::nitrogen/generated is stale — run 'bun run specs' and commit before releasing." && exit 1)
 
       - name: Publish (OIDC, no token)
-        run: npm publish --access public
+        run: |
+          echo "=== OIDC claims npm verifies against (compare to npm form) ==="
+          curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+               "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=npm:registry.npmjs.org" \
+            | jq -r '.value' | cut -d. -f2 | base64 -d | jq '{repository, workflow, ref, environment, actor, repository_owner, job_workflow_ref}'
+          npm publish --access public
