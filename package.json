@@ -1,7 +1,7 @@
 {
   "name": "react-native-nitro-vision-kit",
   "version": "0.1.1",
-  "description": "On-device computer vision for React Native — background removal and image classification via native Vision (iOS) and ML Kit (Android), with zero-copy pixel access. Built with Nitro Modules.",
+  "description": "Subject segmentation and image classification for React Native. Vision on iOS, ML Kit on Android. Built with Nitro Modules.",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",
@@ -17,11 +17,9 @@
     "android/fix-prefab.gradle",
     "android/CMakeLists.txt",
     "android/src",
-    "cpp",
     "ios/**/*.h",
     "ios/**/*.m",
     "ios/**/*.mm",
-    "ios/**/*.cpp",
     "ios/**/*.swift",
     "nitro.json",
     "*.podspec",
@@ -73,14 +71,14 @@
     "prettier": "^3.8.3",
     "react": "19.2.7",
     "react-native": "0.86.0",
-    "react-native-nitro-modules": "*",
+    "react-native-nitro-modules": "0.35.10",
     "release-it": "^20.2.1",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*",
-    "react-native-nitro-modules": "*"
+    "react-native": ">=0.75.0",
+    "react-native-nitro-modules": "^0.35.10"
   },
   "prettier": {
     "quoteProps": "consistent",

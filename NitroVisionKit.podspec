@@ -11,15 +11,11 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => min_ios_version_supported, :visionos => 1.0 }
-  s.source       = { :git => "https://github.com/mrousavy/nitro.git", :tag => "#{s.version}" }
+  s.source       = { :git => package["repository"]["url"].sub(".git", ""), :tag => "v#{s.version}" }
 
   s.source_files = [
-    # Implementation (Swift)
     "ios/**/*.{swift}",
-    # Autolinking/Registration (Objective-C++)
     "ios/**/*.{m,mm}",
-    # Implementation (C++ objects)
-    "cpp/**/*.{hpp,cpp}",
   ]
 
   load 'nitrogen/generated/ios/NitroVisionKit+autolinking.rb'
