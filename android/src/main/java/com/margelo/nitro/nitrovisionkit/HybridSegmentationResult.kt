@@ -10,7 +10,7 @@ import java.io.FileOutputStream
 
 @Keep
 @DoNotStrip
-class HybridSegmentationResult(
+class HybridSegmentationResult internal constructor(
   output: SegmentationOutput,
   private val tempDir: File,
 ) : HybridSegmentationResultSpec() {
