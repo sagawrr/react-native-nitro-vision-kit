@@ -4,11 +4,24 @@
 [![CI](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/npm/l/react-native-nitro-vision-kit?color=blue)](https://github.com/sagawrr/react-native-nitro-vision-kit/blob/main/LICENSE)
 
-Subject segmentation and image classification for React Native.
+**react-native-nitro-vision-kit** runs subject segmentation and image classification on-device in React Native. It uses [Nitro Modules](https://nitro.margelo.com) for a type-safe bridge to Vision on iOS and ML Kit on Android.
 
-iOS: [Vision](https://developer.apple.com/documentation/vision). Android: [ML Kit](https://developers.google.com/ml-kit).
+## Overview
 
-## Install
+- **Segmentation** — cut out foreground subjects with transparent backgrounds
+- **Classification** — label images with on-device confidence scores
+- **Single decode** — run both operations in one pass with `analyzeImage`
+
+| Feature | iOS | Android |
+| --- | --- | --- |
+| Segmentation | 17.0+ | ML Kit + Play services |
+| Classification | 13.0+ | ML Kit |
+
+Check `VisionKit.capabilities` before calling segmentation APIs.
+
+## Installation
+
+Install the package and its peer dependency, then run CocoaPods:
 
 ```sh
 npm install react-native-nitro-vision-kit react-native-nitro-modules
@@ -17,77 +30,91 @@ cd ios && pod install
 
 ## Usage
 
+Pass a local file path or `file://` URI to every method.
+
+### Analyze an image
+
+Decode once and optionally segment and classify together. When both run, classification uses the subject bounds unless you pass `region`.
+
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
 
-if (!VisionKit.capabilities.supportsBackgroundRemoval) {
-  throw new Error(VisionKit.capabilities.backgroundRemovalUnavailableReason)
-}
-
-const result = await VisionKit.removeBackground(photoPath, { trim: true })
-const rgba = await result.toArrayBuffer()
-```
-
-```ts
 const { segmentation, classifications } = await VisionKit.analyzeImage(photoPath, {
   removeBackground: { trim: true },
-  classify: { maxResults: 5 },
+  classify: { maxResults: 5, minConfidence: 0.5 },
+})
+
+const pngPath = await segmentation?.saveToTemporaryFile('png', 100)
+segmentation?.dispose()
+```
+
+### Remove background
+
+```ts
+const result = await VisionKit.removeBackground(photoPath, { trim: true })
+
+const pngPath = await result.saveToTemporaryFile('png', 100)
+result.dispose()
+```
+
+### Classify an image
+
+```ts
+const labels = await VisionKit.classifyImage(photoPath, {
+  maxResults: 5,
+  minConfidence: 0.5,
 })
 ```
 
-Pass `removeBackground` and/or `classify` to `analyzeImage`. If both are set and `classify.region` is omitted, `segmentation.bounds` is used.
+## API Reference
 
-## API
+### `VisionKit.capabilities`
 
-### VisionKit
-
-| Member | Returns |
+| Field | Description |
 | --- | --- |
-| `capabilities` | `VisionCapabilities` |
-| `removeBackground(path, options?)` | `SegmentationResult` |
-| `classifyImage(path, options?)` | `Classification[]` |
-| `analyzeImage(path, options)` | `ImageAnalysisResult` |
+| `supportsBackgroundRemoval` | Whether segmentation is available |
+| `supportsImageClassification` | Whether classification is available |
+| `backgroundRemovalUnavailableReason` | Set when background removal is unavailable |
 
-`path`: file path or `file://` URI.
+### `removeBackground(path, options?)`
 
-### SegmentationResult
+Returns a `SegmentationResult`. Call `dispose()` when finished.
 
-| Member | |
-| --- | --- |
-| `width`, `height` | Output size (px) |
-| `bounds` | Foreground bounds (0–1) |
-| `sourceWidth`, `sourceHeight` | Input size (px) |
-| `foregroundCoverage` | Foreground ratio (0–1, threshold 0.5) |
-| `centroid` | Foreground center (0–1) |
-| `pixelBounds` | Foreground bounds (px) |
-| `trimOrigin` | Output origin when `trim: true` |
-| `instanceCount` | Detected instances |
-| `hasMask` | `true` if `retainMask: true` was passed |
-| `toArrayBuffer()` | RGBA buffer (async) |
-| `toMaskBuffer()` | Float32 mask (async, `retainMask: true` required) |
-| `saveToTemporaryFile(format, quality)` | Temp file path |
-
-### Types
-
-| Type | Fields |
-| --- | --- |
-| `BackgroundRemovalOptions` | `trim` (default `true`), `maxPixels` (default `6_000_000`), `retainMask` (default `false`) |
-| `ClassificationOptions` | `maxResults`, `minConfidence` (default `0.5`), `region` |
-| `AnalyzeImageOptions` | `removeBackground?`, `classify?` (one required) |
-| `ImageAnalysisResult` | `segmentation?`, `classifications?` |
-| `Classification` | `label`, `confidence`, `index` |
-| `VisionCapabilities` | `supportsBackgroundRemoval`, `backgroundRemovalUnavailableReason?`, `supportsImageClassification` |
-| `Rect`, `NormalizedPoint`, `PixelRect` | Geometry types |
-| `ImageFormat` | `'png'` \| `'jpeg'` |
-
-## Requirements
-
-| | iOS | Android |
+| Option | Default | Description |
 | --- | --- | --- |
-| Segmentation | 17+, device only | ML Kit, Play services |
-| Classification | 13+ | ML Kit |
+| `trim` | `true` | Crop to foreground bounds |
+| `maxPixels` | `6_000_000` | Max decoded pixels |
+| `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
 
-Segmentation is not available on the iOS Simulator.
+### `classifyImage(path, options?)`
+
+Returns `{ label, confidence, index }[]` sorted by confidence.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `maxResults` | `0` | Max labels (`0` = all above threshold) |
+| `minConfidence` | `0.5` | Minimum confidence |
+| `region` | full image | Normalized ROI (`0–1`) |
+
+### `analyzeImage(path, options)`
+
+Pass `removeBackground`, `classify`, or both. Returns `{ segmentation?, classifications? }`.
+
+### `SegmentationResult`
+
+| Method | Description |
+| --- | --- |
+| `saveToTemporaryFile(format, quality)` | Write PNG or JPEG to a temp file |
+| `toArrayBuffer()` | Premultiplied RGBA bytes |
+| `toMaskBuffer()` | Float32 mask (`retainMask: true`) |
+| `dispose()` | Release native memory |
+
+| Property | Description |
+| --- | --- |
+| `width`, `height` | Output size in pixels |
+| `bounds` | Subject bounds, normalized `0–1` |
+| `foregroundCoverage` | Foreground pixel ratio |
+| `hasMask` | Whether `toMaskBuffer()` is available |
 
 ## License
 
