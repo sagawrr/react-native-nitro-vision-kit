@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-vision-kit",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "Subject segmentation and image classification for React Native. Vision on iOS, ML Kit on Android. Built with Nitro Modules.",
   "main": "lib/index",
   "module": "lib/index",
