@@ -13,9 +13,18 @@ public protocol HybridSegmentationResultSpec_protocol: HybridObject {
   var width: Double { get }
   var height: Double { get }
   var bounds: Rect { get }
+  var sourceWidth: Double { get }
+  var sourceHeight: Double { get }
+  var foregroundCoverage: Double { get }
+  var centroid: NormalizedPoint { get }
+  var instanceCount: Double { get }
+  var pixelBounds: PixelRect { get }
+  var trimOrigin: NormalizedPoint { get }
+  var hasMask: Bool { get }
 
   // Methods
-  func toArrayBuffer() throws -> ArrayBuffer
+  func toMaskBuffer() throws -> Promise<ArrayBuffer>
+  func toArrayBuffer() throws -> Promise<ArrayBuffer>
   func saveToTemporaryFile(format: ImageFormat, quality: Double) throws -> Promise<String>
 }
 

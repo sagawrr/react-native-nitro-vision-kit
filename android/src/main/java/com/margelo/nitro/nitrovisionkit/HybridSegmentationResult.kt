@@ -8,43 +8,59 @@ import com.margelo.nitro.core.Promise
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * Holds the masked subject pixels produced by a segmentation. The native byte
- * buffer stays on the native side and is accessed lazily through
- * [toArrayBuffer] (zero-copy, premultiplied RGBA) or [saveToTemporaryFile]
- * (encoded file), so the caller only pays for the conversion they need.
- *
- * The pixels are premultiplied RGBA so they can be handed straight to
- * `react-native-nitro-image`'s `loadFromRawPixelData` without re-encoding.
- */
 @Keep
 @DoNotStrip
 class HybridSegmentationResult(
-  private val rgba: ByteArray,
-  pixelWidth: Int,
-  pixelHeight: Int,
-  override val bounds: Rect,
+  output: SegmentationOutput,
   private val tempDir: File,
 ) : HybridSegmentationResultSpec() {
 
-  private val _width: Double = pixelWidth.toDouble()
-  private val _height: Double = pixelHeight.toDouble()
+  private var rgba = output.pixels
+  private var mask = output.mask
+  private val pixelWidth = output.width
+  private val pixelHeight = output.height
+
+  override val bounds: Rect = output.bounds
+  override val sourceWidth: Double = output.sourceWidth.toDouble()
+  override val sourceHeight: Double = output.sourceHeight.toDouble()
+  override val foregroundCoverage: Double = output.foregroundCoverage
+  override val centroid: NormalizedPoint = output.centroid
+  override val instanceCount: Double = output.instanceCount
+  override val pixelBounds: PixelRect = output.pixelBounds
+  override val trimOrigin: NormalizedPoint = output.trimOrigin
+  override val hasMask: Boolean = output.hasMask
 
   override val width: Double
-    get() = _width
+    get() = pixelWidth.toDouble()
 
   override val height: Double
-    get() = _height
+    get() = pixelHeight.toDouble()
 
-  /**
-   * Bytes owned by this HybridObject; reported so the JS VM can reclaim it
-   * under memory pressure.
-   */
   override val memorySize: Long
-    get() = rgba.size.toLong() + 128L
+    get() = rgba.size.toLong() + mask.size.toLong() + HybridMemorySize.OVERHEAD
 
-  override fun toArrayBuffer(): ArrayBuffer {
-    return ArrayBuffer.copy(rgba)
+  override fun dispose() {
+    rgba = ByteArray(0)
+    mask = ByteArray(0)
+  }
+
+  override fun toMaskBuffer(): Promise<ArrayBuffer> {
+    if (!hasMask) {
+      return Promise.rejected(
+        RuntimeException("No mask retained. Pass retainMask: true to removeBackground."),
+      )
+    }
+    val maskCopy = mask
+    return Promise.async {
+      ArrayBuffer.copy(maskCopy)
+    }
+  }
+
+  override fun toArrayBuffer(): Promise<ArrayBuffer> {
+    val rgbaCopy = rgba
+    return Promise.async {
+      ArrayBuffer.copy(rgbaCopy)
+    }
   }
 
   override fun saveToTemporaryFile(format: ImageFormat, quality: Double): Promise<String> {

@@ -41,10 +41,11 @@ namespace margelo::nitro::nitrovisionkit {
   public:
     std::optional<bool> trim     SWIFT_PRIVATE;
     std::optional<double> maxPixels     SWIFT_PRIVATE;
+    std::optional<bool> retainMask     SWIFT_PRIVATE;
 
   public:
     BackgroundRemovalOptions() = default;
-    explicit BackgroundRemovalOptions(std::optional<bool> trim, std::optional<double> maxPixels): trim(trim), maxPixels(maxPixels) {}
+    explicit BackgroundRemovalOptions(std::optional<bool> trim, std::optional<double> maxPixels, std::optional<bool> retainMask): trim(trim), maxPixels(maxPixels), retainMask(retainMask) {}
 
   public:
     friend bool operator==(const BackgroundRemovalOptions& lhs, const BackgroundRemovalOptions& rhs) = default;
@@ -61,13 +62,15 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrovisionkit::BackgroundRemovalOptions(
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "trim"))),
-        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maxPixels")))
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maxPixels"))),
+        JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "retainMask")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrovisionkit::BackgroundRemovalOptions& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "trim"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.trim));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "maxPixels"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.maxPixels));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "retainMask"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.retainMask));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -80,6 +83,7 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "trim")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maxPixels")))) return false;
+      if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "retainMask")))) return false;
       return true;
     }
   };

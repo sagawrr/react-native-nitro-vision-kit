@@ -1,52 +1,38 @@
 import type { HybridObject } from 'react-native-nitro-modules'
 import type { ImageFormat } from '../types/ImageFormat'
+import type { NormalizedPoint } from '../types/NormalizedPoint'
+import type { PixelRect } from '../types/PixelRect'
 import type { Rect } from '../types/Rect'
 
-/**
- * Owns the masked subject pixels produced by
- * `VisionKit.removeBackground()`.
- *
- * The native bitmap lives on the native side; access its bytes lazily through
- * {@linkcode toArrayBuffer} (zero-copy RGBA) or
- * {@linkcode saveToTemporaryFile} (encoded file). Avoiding eager conversion is
- * what removes the encode/decode round-trips that dominated the old pipeline.
- *
- * Hold the reference for as long as you need the pixels; once it is
- * garbage-collected (or {@linkcode HybridObject.dispose dispose}d) the native
- * buffer is released.
- */
+/** Segmentation result from `removeBackground` or `analyzeImage`. */
 export interface SegmentationResult
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  /** Pixel width of the masked cutout this result holds. */
+  /** Output width in pixels. Affected by `trim`. */
   readonly width: number
-  /** Pixel height of the masked cutout this result holds. */
+  /** Output height in pixels. Affected by `trim`. */
   readonly height: number
-  /**
-   * Where the subject sat inside the *original* image, normalized to `0`–`1`.
-   * Useful for positioning fly-to animations. See {@linkcode Rect}.
-   */
+  /** Foreground bounds in normalized coordinates (0–1). */
   readonly bounds: Rect
-  /**
-   * Returns the masked pixels as **premultiplied RGBA_8888** (alpha last),
-   * zero-copy from the native buffer. Width and height come from
-   * {@linkcode width} and {@linkcode height}. The alpha channel carries the
-   * model's soft matte.
-   *
-   * Premultiplied to match `react-native-nitro-image`'s
-   * `loadFromRawPixelData` contract — hand the buffer straight in without
-   * re-encoding:
-   * ```ts
-   * const r = await VisionKit.removeBackground(path)
-   * const image = ImageFactory.loadFromRawPixelData({
-   *   buffer: r.toArrayBuffer(), width: r.width, height: r.height, pixelFormat: 'RGBA',
-   * })
-   * ```
-   */
-  toArrayBuffer(): ArrayBuffer
-  /**
-   * Encodes the masked pixels to a temporary file and returns its path.
-   * `quality` is `0`–`100` (ignored for `'png'`). Use `'png'` to keep the alpha
-   * matte, `'jpeg'` for smaller opaque output.
-   */
+  /** Width of the input image in pixels. */
+  readonly sourceWidth: number
+  /** Height of the input image in pixels. */
+  readonly sourceHeight: number
+  /** Foreground pixel ratio. Threshold: 0.5. */
+  readonly foregroundCoverage: number
+  /** Foreground center in normalized coordinates (0–1). */
+  readonly centroid: NormalizedPoint
+  /** Number of detected foreground instances. */
+  readonly instanceCount: number
+  /** Foreground bounds in pixel coordinates. */
+  readonly pixelBounds: PixelRect
+  /** Output origin in source space when `trim` is enabled. */
+  readonly trimOrigin: NormalizedPoint
+  /** Whether `toMaskBuffer` is available. Requires `retainMask: true`. */
+  readonly hasMask: boolean
+  /** Float32 confidence mask, row-major. Requires `retainMask: true`. */
+  toMaskBuffer(): Promise<ArrayBuffer>
+  /** Premultiplied RGBA_8888. `width × height × 4` bytes. */
+  toArrayBuffer(): Promise<ArrayBuffer>
+  /** Writes the result to a temp file. `quality` is 0–100 (JPEG only). */
   saveToTemporaryFile(format: ImageFormat, quality: number): Promise<string>
 }

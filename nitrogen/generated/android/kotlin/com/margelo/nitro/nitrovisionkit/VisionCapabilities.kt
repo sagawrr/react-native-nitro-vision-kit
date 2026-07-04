@@ -23,6 +23,9 @@ data class VisionCapabilities(
   val supportsBackgroundRemoval: Boolean,
   @DoNotStrip
   @Keep
+  val backgroundRemovalUnavailableReason: String?,
+  @DoNotStrip
+  @Keep
   val supportsImageClassification: Boolean
 ) {
   /* primary constructor */
@@ -31,12 +34,14 @@ data class VisionCapabilities(
     if (this === other) return true
     if (other !is VisionCapabilities) return false
     return Objects.deepEquals(this.supportsBackgroundRemoval, other.supportsBackgroundRemoval)
+      && Objects.deepEquals(this.backgroundRemovalUnavailableReason, other.backgroundRemovalUnavailableReason)
       && Objects.deepEquals(this.supportsImageClassification, other.supportsImageClassification)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
       supportsBackgroundRemoval,
+      backgroundRemovalUnavailableReason,
       supportsImageClassification
     ).contentDeepHashCode()
   }
@@ -49,8 +54,8 @@ data class VisionCapabilities(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(supportsBackgroundRemoval: Boolean, supportsImageClassification: Boolean): VisionCapabilities {
-      return VisionCapabilities(supportsBackgroundRemoval, supportsImageClassification)
+    private fun fromCpp(supportsBackgroundRemoval: Boolean, backgroundRemovalUnavailableReason: String?, supportsImageClassification: Boolean): VisionCapabilities {
+      return VisionCapabilities(supportsBackgroundRemoval, backgroundRemovalUnavailableReason, supportsImageClassification)
     }
   }
 }

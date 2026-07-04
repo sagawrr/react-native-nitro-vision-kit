@@ -10,7 +10,8 @@
 #include <fbjni/fbjni.h>
 #include "VisionCapabilities.hpp"
 
-
+#include <optional>
+#include <string>
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -33,10 +34,13 @@ namespace margelo::nitro::nitrovisionkit {
       static const auto clazz = javaClassStatic();
       static const auto fieldSupportsBackgroundRemoval = clazz->getField<jboolean>("supportsBackgroundRemoval");
       jboolean supportsBackgroundRemoval = this->getFieldValue(fieldSupportsBackgroundRemoval);
+      static const auto fieldBackgroundRemovalUnavailableReason = clazz->getField<jni::JString>("backgroundRemovalUnavailableReason");
+      jni::local_ref<jni::JString> backgroundRemovalUnavailableReason = this->getFieldValue(fieldBackgroundRemovalUnavailableReason);
       static const auto fieldSupportsImageClassification = clazz->getField<jboolean>("supportsImageClassification");
       jboolean supportsImageClassification = this->getFieldValue(fieldSupportsImageClassification);
       return VisionCapabilities(
         static_cast<bool>(supportsBackgroundRemoval),
+        backgroundRemovalUnavailableReason != nullptr ? std::make_optional(backgroundRemovalUnavailableReason->toStdString()) : std::nullopt,
         static_cast<bool>(supportsImageClassification)
       );
     }
@@ -47,12 +51,13 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JVisionCapabilities::javaobject> fromCpp(const VisionCapabilities& value) {
-      using JSignature = JVisionCapabilities(jboolean, jboolean);
+      using JSignature = JVisionCapabilities(jboolean, jni::alias_ref<jni::JString>, jboolean);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.supportsBackgroundRemoval,
+        value.backgroundRemovalUnavailableReason.has_value() ? jni::make_jstring(value.backgroundRemovalUnavailableReason.value()) : nullptr,
         value.supportsImageClassification
       );
     }

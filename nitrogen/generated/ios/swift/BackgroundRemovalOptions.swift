@@ -18,7 +18,7 @@ public extension BackgroundRemovalOptions {
   /**
    * Create a new instance of `BackgroundRemovalOptions`.
    */
-  init(trim: Bool?, maxPixels: Double?) {
+  init(trim: Bool?, maxPixels: Double?, retainMask: Bool?) {
     self.init({ () -> bridge.std__optional_bool_ in
       if let __unwrappedValue = trim {
         return bridge.create_std__optional_bool_(__unwrappedValue)
@@ -28,6 +28,12 @@ public extension BackgroundRemovalOptions {
     }(), { () -> bridge.std__optional_double_ in
       if let __unwrappedValue = maxPixels {
         return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_bool_ in
+      if let __unwrappedValue = retainMask {
+        return bridge.create_std__optional_bool_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -51,6 +57,18 @@ public extension BackgroundRemovalOptions {
     return { () -> Double? in
       if bridge.has_value_std__optional_double_(self.__maxPixels) {
         let __unwrapped = bridge.get_std__optional_double_(self.__maxPixels)
+        return __unwrapped
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var retainMask: Bool? {
+    return { () -> Bool? in
+      if bridge.has_value_std__optional_bool_(self.__retainMask) {
+        let __unwrapped = bridge.get_std__optional_bool_(self.__retainMask)
         return __unwrapped
       } else {
         return nil

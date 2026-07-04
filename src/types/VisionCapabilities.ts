@@ -1,16 +1,8 @@
-/**
- * Reports which on-device vision features the current platform supports.
- *
- * Returned by `VisionKit.capabilities`. Inspect it before calling
- * `VisionKit.removeBackground` or `VisionKit.classifyImage`; calling an
- * unsupported capability rejects with a descriptive error.
- */
+/** Device feature flags from `VisionKit.capabilities`. */
 export interface VisionCapabilities {
-  /**
-   * Whether `VisionKit.removeBackground` can run on this device. Requires
-   * iOS 17+ (Vision) or Android with Google Play Services (ML Kit).
-   */
+  /** iOS 17+ device, or Android with Play services. Not available on Simulator. */
   readonly supportsBackgroundRemoval: boolean
-  /** Whether `VisionKit.classifyImage` can run on this device. */
+  /** Set when `supportsBackgroundRemoval` is false. */
+  readonly backgroundRemovalUnavailableReason?: string
   readonly supportsImageClassification: boolean
 }

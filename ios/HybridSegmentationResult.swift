@@ -2,52 +2,78 @@ import Foundation
 import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
-import UIKit
 import NitroModules
 
-/// Holds the masked subject pixels produced by a segmentation. The native byte
-/// buffer stays on the native side and is accessed lazily through
-/// `toArrayBuffer` (zero-copy, premultiplied RGBA) or `saveToTemporaryFile`
-/// (encoded file), so the caller only pays for the conversion they need.
-///
-/// The pixels are premultiplied RGBA so they can be handed straight to
-/// `react-native-nitro-image`'s `loadFromRawPixelData` without re-encoding.
 final class HybridSegmentationResult: HybridSegmentationResultSpec {
-  private let rgba: Data
+  private var rgba: Data
+  private var mask: Data
   private let pixelWidth: Int
   private let pixelHeight: Int
 
-  init(rgba: Data, width: Int, height: Int, bounds: Rect) {
-    self.rgba = rgba
-    self.pixelWidth = width
-    self.pixelHeight = height
-    self.bounds = bounds
+  init(output: SegmentationOutput) {
+    self.rgba = output.rgba
+    self.pixelWidth = output.width
+    self.pixelHeight = output.height
+    self.bounds = output.bounds
+    self.sourceWidth = Double(output.sourceWidth)
+    self.sourceHeight = Double(output.sourceHeight)
+    self.foregroundCoverage = output.foregroundCoverage
+    self.centroid = output.centroid
+    self.instanceCount = output.instanceCount
+    self.pixelBounds = output.pixelBounds
+    self.trimOrigin = output.trimOrigin
+    self.mask = output.mask
+    self.hasMask = output.hasMask
     super.init()
   }
 
   let bounds: Rect
+  let sourceWidth: Double
+  let sourceHeight: Double
+  let foregroundCoverage: Double
+  let centroid: NormalizedPoint
+  let instanceCount: Double
+  let pixelBounds: PixelRect
+  let trimOrigin: NormalizedPoint
+  let hasMask: Bool
 
   var width: Double { Double(pixelWidth) }
   var height: Double { Double(pixelHeight) }
 
-  /// Bytes owned by this HybridObject; reported so the JS VM can reclaim it
-  /// under memory pressure.
   var memorySize: Int {
-    return rgba.count + 128
+    rgba.count + mask.count + HybridMemorySize.overhead
   }
 
-  func toArrayBuffer() throws -> ArrayBuffer {
-    return try ArrayBuffer.copy(data: rgba)
+  override func dispose() {
+    rgba = Data()
+    mask = Data()
+  }
+
+  func toMaskBuffer() throws -> Promise<ArrayBuffer> {
+    guard hasMask else {
+      throw RuntimeError("No mask retained. Pass retainMask: true to removeBackground.")
+    }
+    let maskCopy = mask
+    return Promise.parallel(VisionKitQueue.queue) {
+      try ArrayBuffer.copy(data: maskCopy)
+    }
+  }
+
+  func toArrayBuffer() throws -> Promise<ArrayBuffer> {
+    let rgbaCopy = rgba
+    return Promise.parallel(VisionKitQueue.queue) {
+      try ArrayBuffer.copy(data: rgbaCopy)
+    }
   }
 
   func saveToTemporaryFile(format: ImageFormat, quality: Double) throws -> Promise<String> {
     let qualityClamped = min(100, max(0, Int(quality.rounded())))
     let width = pixelWidth
     let height = pixelHeight
-    let bytes = rgba
+    let rgbaCopy = rgba
     let formatCopy = format
-    return Promise.async {
-      guard let cgImage = RgbaImageConversion.cgImage(fromPremultipliedRgba: bytes, width: width, height: height) else {
+    return Promise.parallel(VisionKitQueue.queue) {
+      guard let cgImage = RgbaImageConversion.cgImage(fromPremultipliedRgba: rgbaCopy, width: width, height: height) else {
         throw RuntimeError("Failed to build image from masked pixels.")
       }
       let ext = formatCopy == .png ? "png" : "jpg"

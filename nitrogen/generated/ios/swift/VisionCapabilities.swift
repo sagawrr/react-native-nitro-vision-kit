@@ -18,13 +18,31 @@ public extension VisionCapabilities {
   /**
    * Create a new instance of `VisionCapabilities`.
    */
-  init(supportsBackgroundRemoval: Bool, supportsImageClassification: Bool) {
-    self.init(supportsBackgroundRemoval, supportsImageClassification)
+  init(supportsBackgroundRemoval: Bool, backgroundRemovalUnavailableReason: String?, supportsImageClassification: Bool) {
+    self.init(supportsBackgroundRemoval, { () -> bridge.std__optional_std__string_ in
+      if let __unwrappedValue = backgroundRemovalUnavailableReason {
+        return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
+      } else {
+        return .init()
+      }
+    }(), supportsImageClassification)
   }
 
   @inline(__always)
   var supportsBackgroundRemoval: Bool {
     return self.__supportsBackgroundRemoval
+  }
+  
+  @inline(__always)
+  var backgroundRemovalUnavailableReason: String? {
+    return { () -> String? in
+      if bridge.has_value_std__optional_std__string_(self.__backgroundRemovalUnavailableReason) {
+        let __unwrapped = bridge.get_std__optional_std__string_(self.__backgroundRemovalUnavailableReason)
+        return String(__unwrapped)
+      } else {
+        return nil
+      }
+    }()
   }
   
   @inline(__always)

@@ -141,17 +141,99 @@ open class HybridSegmentationResultSpec_cxx {
       return self.__implementation.bounds
     }
   }
+  
+  public final var sourceWidth: Double {
+    @inline(__always)
+    get {
+      return self.__implementation.sourceWidth
+    }
+  }
+  
+  public final var sourceHeight: Double {
+    @inline(__always)
+    get {
+      return self.__implementation.sourceHeight
+    }
+  }
+  
+  public final var foregroundCoverage: Double {
+    @inline(__always)
+    get {
+      return self.__implementation.foregroundCoverage
+    }
+  }
+  
+  public final var centroid: NormalizedPoint {
+    @inline(__always)
+    get {
+      return self.__implementation.centroid
+    }
+  }
+  
+  public final var instanceCount: Double {
+    @inline(__always)
+    get {
+      return self.__implementation.instanceCount
+    }
+  }
+  
+  public final var pixelBounds: PixelRect {
+    @inline(__always)
+    get {
+      return self.__implementation.pixelBounds
+    }
+  }
+  
+  public final var trimOrigin: NormalizedPoint {
+    @inline(__always)
+    get {
+      return self.__implementation.trimOrigin
+    }
+  }
+  
+  public final var hasMask: Bool {
+    @inline(__always)
+    get {
+      return self.__implementation.hasMask
+    }
+  }
 
   // Methods
   @inline(__always)
-  public final func toArrayBuffer() -> bridge.Result_std__shared_ptr_ArrayBuffer__ {
+  public final func toMaskBuffer() -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____ {
     do {
-      let __result = try self.__implementation.toArrayBuffer()
-      let __resultCpp = __result.getArrayBuffer()
-      return bridge.create_Result_std__shared_ptr_ArrayBuffer__(__resultCpp)
+      let __result = try self.__implementation.toMaskBuffer()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result.getArrayBuffer()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____(__resultCpp)
     } catch (let __error) {
       let __exceptionPtr = __error.toCpp()
-      return bridge.create_Result_std__shared_ptr_ArrayBuffer__(__exceptionPtr)
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
+  public final func toArrayBuffer() -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____ {
+    do {
+      let __result = try self.__implementation.toArrayBuffer()
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve(__result.getArrayBuffer()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____(__exceptionPtr)
     }
   }
   

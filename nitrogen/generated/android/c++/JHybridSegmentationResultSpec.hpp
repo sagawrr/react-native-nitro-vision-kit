@@ -53,10 +53,19 @@ namespace margelo::nitro::nitrovisionkit {
     double getWidth() override;
     double getHeight() override;
     Rect getBounds() override;
+    double getSourceWidth() override;
+    double getSourceHeight() override;
+    double getForegroundCoverage() override;
+    NormalizedPoint getCentroid() override;
+    double getInstanceCount() override;
+    PixelRect getPixelBounds() override;
+    NormalizedPoint getTrimOrigin() override;
+    bool getHasMask() override;
 
   public:
     // Methods
-    std::shared_ptr<ArrayBuffer> toArrayBuffer() override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toMaskBuffer() override;
+    std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toArrayBuffer() override;
     std::shared_ptr<Promise<std::string>> saveToTemporaryFile(ImageFormat format, double quality) override;
 
   private:

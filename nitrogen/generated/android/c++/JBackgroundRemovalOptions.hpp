@@ -35,9 +35,12 @@ namespace margelo::nitro::nitrovisionkit {
       jni::local_ref<jni::JBoolean> trim = this->getFieldValue(fieldTrim);
       static const auto fieldMaxPixels = clazz->getField<jni::JDouble>("maxPixels");
       jni::local_ref<jni::JDouble> maxPixels = this->getFieldValue(fieldMaxPixels);
+      static const auto fieldRetainMask = clazz->getField<jni::JBoolean>("retainMask");
+      jni::local_ref<jni::JBoolean> retainMask = this->getFieldValue(fieldRetainMask);
       return BackgroundRemovalOptions(
         trim != nullptr ? std::make_optional(static_cast<bool>(trim->value())) : std::nullopt,
-        maxPixels != nullptr ? std::make_optional(maxPixels->value()) : std::nullopt
+        maxPixels != nullptr ? std::make_optional(maxPixels->value()) : std::nullopt,
+        retainMask != nullptr ? std::make_optional(static_cast<bool>(retainMask->value())) : std::nullopt
       );
     }
 
@@ -47,13 +50,14 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JBackgroundRemovalOptions::javaobject> fromCpp(const BackgroundRemovalOptions& value) {
-      using JSignature = JBackgroundRemovalOptions(jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>);
+      using JSignature = JBackgroundRemovalOptions(jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.trim.has_value() ? jni::JBoolean::valueOf(value.trim.value()) : nullptr,
-        value.maxPixels.has_value() ? jni::JDouble::valueOf(value.maxPixels.value()) : nullptr
+        value.maxPixels.has_value() ? jni::JDouble::valueOf(value.maxPixels.value()) : nullptr,
+        value.retainMask.has_value() ? jni::JBoolean::valueOf(value.retainMask.value()) : nullptr
       );
     }
   };

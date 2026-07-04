@@ -38,11 +38,47 @@ abstract class HybridSegmentationResultSpec: HybridObject() {
   @get:DoNotStrip
   @get:Keep
   abstract val bounds: Rect
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val sourceWidth: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val sourceHeight: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val foregroundCoverage: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val centroid: NormalizedPoint
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val instanceCount: Double
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val pixelBounds: PixelRect
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val trimOrigin: NormalizedPoint
+  
+  @get:DoNotStrip
+  @get:Keep
+  abstract val hasMask: Boolean
 
   // Methods
   @DoNotStrip
   @Keep
-  abstract fun toArrayBuffer(): ArrayBuffer
+  abstract fun toMaskBuffer(): Promise<ArrayBuffer>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun toArrayBuffer(): Promise<ArrayBuffer>
   
   @DoNotStrip
   @Keep

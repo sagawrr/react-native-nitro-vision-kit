@@ -17,6 +17,15 @@ namespace margelo::nitro::nitrovisionkit {
       prototype.registerHybridGetter("width", &HybridSegmentationResultSpec::getWidth);
       prototype.registerHybridGetter("height", &HybridSegmentationResultSpec::getHeight);
       prototype.registerHybridGetter("bounds", &HybridSegmentationResultSpec::getBounds);
+      prototype.registerHybridGetter("sourceWidth", &HybridSegmentationResultSpec::getSourceWidth);
+      prototype.registerHybridGetter("sourceHeight", &HybridSegmentationResultSpec::getSourceHeight);
+      prototype.registerHybridGetter("foregroundCoverage", &HybridSegmentationResultSpec::getForegroundCoverage);
+      prototype.registerHybridGetter("centroid", &HybridSegmentationResultSpec::getCentroid);
+      prototype.registerHybridGetter("instanceCount", &HybridSegmentationResultSpec::getInstanceCount);
+      prototype.registerHybridGetter("pixelBounds", &HybridSegmentationResultSpec::getPixelBounds);
+      prototype.registerHybridGetter("trimOrigin", &HybridSegmentationResultSpec::getTrimOrigin);
+      prototype.registerHybridGetter("hasMask", &HybridSegmentationResultSpec::getHasMask);
+      prototype.registerHybridMethod("toMaskBuffer", &HybridSegmentationResultSpec::toMaskBuffer);
       prototype.registerHybridMethod("toArrayBuffer", &HybridSegmentationResultSpec::toArrayBuffer);
       prototype.registerHybridMethod("saveToTemporaryFile", &HybridSegmentationResultSpec::saveToTemporaryFile);
     });

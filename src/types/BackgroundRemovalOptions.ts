@@ -1,17 +1,9 @@
-/**
- * Optional preferences for `VisionKit.removeBackground`.
- */
+/** Options for `removeBackground` and `analyzeImage.removeBackground`. */
 export interface BackgroundRemovalOptions {
-  /**
-   * When `true`, the returned `SegmentationResult` is cropped to the subject's
-   * bounding box. Defaults to `true`.
-   */
+  /** Crop to foreground bounds. @default true */
   readonly trim?: boolean
-  /**
-   * Upper bound on decoded pixel count (`width * height`) used while
-   * segmenting. Larger values preserve detail at the cost of memory and time;
-   * the native side may lower this under memory pressure. When omitted, uses a
-   * platform default tuned for typical phone captures.
-   */
+  /** Max decoded pixels (`width × height`). @default 6_000_000 */
   readonly maxPixels?: number
+  /** Keep confidence mask for `toMaskBuffer`. @default false */
+  readonly retainMask?: boolean
 }

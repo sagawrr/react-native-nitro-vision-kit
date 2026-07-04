@@ -15,13 +15,19 @@
 
 // Forward declaration of `Rect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `NormalizedPoint` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
+// Forward declaration of `PixelRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct PixelRect; }
 // Forward declaration of `ImageFormat` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
 
 #include "Rect.hpp"
+#include "NormalizedPoint.hpp"
+#include "PixelRect.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
-#include <string>
 #include <NitroModules/Promise.hpp>
+#include <string>
 #include "ImageFormat.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
@@ -54,10 +60,19 @@ namespace margelo::nitro::nitrovisionkit {
       virtual double getWidth() = 0;
       virtual double getHeight() = 0;
       virtual Rect getBounds() = 0;
+      virtual double getSourceWidth() = 0;
+      virtual double getSourceHeight() = 0;
+      virtual double getForegroundCoverage() = 0;
+      virtual NormalizedPoint getCentroid() = 0;
+      virtual double getInstanceCount() = 0;
+      virtual PixelRect getPixelBounds() = 0;
+      virtual NormalizedPoint getTrimOrigin() = 0;
+      virtual bool getHasMask() = 0;
 
     public:
       // Methods
-      virtual std::shared_ptr<ArrayBuffer> toArrayBuffer() = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toMaskBuffer() = 0;
+      virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toArrayBuffer() = 0;
       virtual std::shared_ptr<Promise<std::string>> saveToTemporaryFile(ImageFormat format, double quality) = 0;
 
     protected:
