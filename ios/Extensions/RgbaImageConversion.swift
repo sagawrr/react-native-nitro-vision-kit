@@ -49,4 +49,25 @@ enum RgbaImageConversion {
     }
     return out
   }
+
+  static func cropFloatMask(_ mask: Data, width: Int, x: Int, y: Int, right: Int, bottom: Int) -> Data {
+    let cropW = right - x + 1
+    let cropH = bottom - y + 1
+    var out = Data(count: cropW * cropH * MemoryLayout<Float32>.size)
+    guard !mask.isEmpty else { return out }
+    mask.withUnsafeBytes { src in
+      out.withUnsafeMutableBytes { dst in
+        let srcFloats = src.bindMemory(to: Float32.self)
+        let dstFloats = dst.bindMemory(to: Float32.self)
+        for row in 0..<cropH {
+          let srcRow = (y + row) * width + x
+          let dstRow = row * cropW
+          for col in 0..<cropW {
+            dstFloats[dstRow + col] = srcFloats[srcRow + col]
+          }
+        }
+      }
+    }
+    return out
+  }
 }

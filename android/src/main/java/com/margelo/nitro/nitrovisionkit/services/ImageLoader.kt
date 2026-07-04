@@ -18,7 +18,7 @@ import kotlin.math.sqrt
  */
 internal object ImageLoader {
   /**
-   * Loads [path] as an editable `ARGB_8888` [Bitmap], downscaling so the pixel
+   * Loads [path] as a software `ARGB_8888` [Bitmap], downscaling so the pixel
    * count does not exceed [maxPixels]. Software-allocated to avoid GPU/ashmem
    * pressure during pixel reads.
    */
@@ -38,7 +38,8 @@ internal object ImageLoader {
         decoder.isMutableRequired = true
         decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
       }
-      return decoded.copy(Bitmap.Config.ARGB_8888, true)
+      return decoded.copy(Bitmap.Config.ARGB_8888, false)
+        ?: throw RuntimeException("Failed to copy decoded image to ARGB_8888.")
     }
     return decodeLegacy(context, uri, maxPixels)
   }

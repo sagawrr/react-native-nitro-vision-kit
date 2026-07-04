@@ -8,20 +8,39 @@ import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 
 internal object SubjectSegmenter {
   private val segmenter: SubjectSegmenter by lazy {
-    val subjectResultOptions = SubjectSegmenterOptions.SubjectResultOptions.Builder()
-      .enableConfidenceMask()
-      .build()
     val options = SubjectSegmenterOptions.Builder()
       .enableForegroundConfidenceMask()
-      .enableMultipleSubjects(subjectResultOptions)
       .build()
     SubjectSegmentation.getClient(options)
   }
 
   suspend fun segment(bitmap: Bitmap, trim: Boolean, retainMask: Boolean): SegmentationOutput {
-    val result = segmenter.process(InputImage.fromBitmap(bitmap, 0)).await()
-    val mask = result.foregroundConfidenceMask
+    val mlInput = bitmap.toMlKitInput()
+    val ownsMlInput = mlInput !== bitmap
+    try {
+      return segmentInternal(mlInput, bitmap, trim, retainMask)
+    } finally {
+      if (ownsMlInput) {
+        mlInput.recycle()
+      }
+    }
+  }
+
+  private suspend fun segmentInternal(
+    mlInput: Bitmap,
+    bitmap: Bitmap,
+    trim: Boolean,
+    retainMask: Boolean,
+  ): SegmentationOutput {
+    val result = segmenter.process(InputImage.fromBitmap(mlInput, 0)).await()
+    val rawMask = result.foregroundConfidenceMask
       ?: throw RuntimeException("No foreground subject detected.")
+    val mask = rawMask.upscaleMask(
+      sourceWidth = mlInput.width,
+      sourceHeight = mlInput.height,
+      targetWidth = bitmap.width,
+      targetHeight = bitmap.height,
+    )
 
     val sourceWidth = bitmap.width
     val sourceHeight = bitmap.height
@@ -66,11 +85,18 @@ internal object SubjectSegmenter {
     val pad = 2
     val cropX = (pixelBounds.x.toInt() - pad).coerceAtLeast(0)
     val cropY = (pixelBounds.y.toInt() - pad).coerceAtLeast(0)
-    val cropRight = (pixelBounds.x + pixelBounds.width - 1).toInt().coerceAtMost(sourceWidth - 1) + pad
-    val cropBottom = (pixelBounds.y + pixelBounds.height - 1).toInt().coerceAtMost(sourceHeight - 1) + pad
+    val cropRight =
+      ((pixelBounds.x + pixelBounds.width - 1).toInt() + pad).coerceAtMost(sourceWidth - 1)
+    val cropBottom =
+      ((pixelBounds.y + pixelBounds.height - 1).toInt() + pad).coerceAtMost(sourceHeight - 1)
     val cropW = cropRight - cropX + 1
     val cropH = cropBottom - cropY + 1
     val cropped = colors.cropArgbPixels(sourceWidth, cropX, cropY, cropW, cropH)
+    val croppedMask = if (processed.hasMask) {
+      processed.mask.cropFloatMask(sourceWidth, cropX, cropY, cropW, cropH)
+    } else {
+      processed.mask
+    }
 
     return SegmentationOutput(
       pixels = RgbaConversions.colorsToPremultipliedRgba(cropped, cropW, cropH),
@@ -87,7 +113,7 @@ internal object SubjectSegmenter {
         x = cropX.toDouble() / sourceWidth,
         y = cropY.toDouble() / sourceHeight,
       ),
-      mask = processed.mask,
+      mask = croppedMask,
       hasMask = processed.hasMask,
     )
   }

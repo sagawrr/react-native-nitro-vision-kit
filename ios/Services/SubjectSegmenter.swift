@@ -92,10 +92,22 @@ enum SubjectSegmenter {
       full, width: sourceWidth,
       x: cropX, y: cropY, right: cropRight, bottom: cropBottom
     )
+    let cropW = cropRight - cropX + 1
+    let cropH = cropBottom - cropY + 1
+    let croppedMask = retainMask
+      ? RgbaImageConversion.cropFloatMask(
+        analysis.mask,
+        width: sourceWidth,
+        x: cropX,
+        y: cropY,
+        right: cropRight,
+        bottom: cropBottom
+      )
+      : analysis.mask
     return SegmentationOutput(
       rgba: Data(cropped),
-      width: cropRight - cropX + 1,
-      height: cropBottom - cropY + 1,
+      width: cropW,
+      height: cropH,
       bounds: normalizedBounds,
       sourceWidth: sourceWidth,
       sourceHeight: sourceHeight,
@@ -107,7 +119,7 @@ enum SubjectSegmenter {
         x: Double(cropX) / Double(sourceWidth),
         y: Double(cropY) / Double(sourceHeight),
       ),
-      mask: analysis.mask,
+      mask: croppedMask,
       hasMask: retainMask,
     )
   }

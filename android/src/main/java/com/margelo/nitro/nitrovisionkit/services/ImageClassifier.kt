@@ -13,9 +13,11 @@ internal object ImageClassifier {
   ): List<Classification> {
     val cropped = if (region != null) bitmap.cropToRegion(region) else null
     val source = cropped ?: bitmap
+    val mlInput = source.toMlKitInput()
+    val ownsMlInput = mlInput !== source
     try {
       val labeler = ImageLabelerCache.labeler(minConfidence)
-      val labels = labeler.process(InputImage.fromBitmap(source, 0)).await()
+      val labels = labeler.process(InputImage.fromBitmap(mlInput, 0)).await()
       val sorted = labels.sortedByDescending(ImageLabel::getConfidence)
       val limited = if (maxResults > 0) sorted.take(maxResults) else sorted
       return limited.mapIndexed { index, label ->
@@ -26,6 +28,9 @@ internal object ImageClassifier {
         )
       }
     } finally {
+      if (ownsMlInput) {
+        mlInput.recycle()
+      }
       if (cropped != null && cropped !== bitmap) {
         cropped.recycle()
       }
