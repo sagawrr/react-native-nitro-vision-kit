@@ -38,6 +38,10 @@ abstract class HybridVisionKitFactorySpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun classifyImage(path: String, options: ClassificationOptions?): Promise<Array<Classification>>
+  
+  @DoNotStrip
+  @Keep
+  abstract fun analyzeImage(path: String, options: AnalyzeImageOptions): Promise<ImageAnalysisResult>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {

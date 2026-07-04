@@ -10,6 +10,8 @@
 #include <fbjni/fbjni.h>
 #include "ClassificationOptions.hpp"
 
+#include "JRect.hpp"
+#include "Rect.hpp"
 #include <optional>
 
 namespace margelo::nitro::nitrovisionkit {
@@ -35,9 +37,12 @@ namespace margelo::nitro::nitrovisionkit {
       jni::local_ref<jni::JDouble> maxResults = this->getFieldValue(fieldMaxResults);
       static const auto fieldMinConfidence = clazz->getField<jni::JDouble>("minConfidence");
       jni::local_ref<jni::JDouble> minConfidence = this->getFieldValue(fieldMinConfidence);
+      static const auto fieldRegion = clazz->getField<JRect>("region");
+      jni::local_ref<JRect> region = this->getFieldValue(fieldRegion);
       return ClassificationOptions(
         maxResults != nullptr ? std::make_optional(maxResults->value()) : std::nullopt,
-        minConfidence != nullptr ? std::make_optional(minConfidence->value()) : std::nullopt
+        minConfidence != nullptr ? std::make_optional(minConfidence->value()) : std::nullopt,
+        region != nullptr ? std::make_optional(region->toCpp()) : std::nullopt
       );
     }
 
@@ -47,13 +52,14 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JClassificationOptions::javaobject> fromCpp(const ClassificationOptions& value) {
-      using JSignature = JClassificationOptions(jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>);
+      using JSignature = JClassificationOptions(jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JDouble>, jni::alias_ref<JRect>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.maxResults.has_value() ? jni::JDouble::valueOf(value.maxResults.value()) : nullptr,
-        value.minConfidence.has_value() ? jni::JDouble::valueOf(value.minConfidence.value()) : nullptr
+        value.minConfidence.has_value() ? jni::JDouble::valueOf(value.minConfidence.value()) : nullptr,
+        value.region.has_value() ? JRect::fromCpp(value.region.value()) : nullptr
       );
     }
   };

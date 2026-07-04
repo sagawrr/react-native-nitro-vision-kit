@@ -56,6 +56,7 @@ namespace margelo::nitro::nitrovisionkit {
     // Methods
     std::shared_ptr<Promise<std::shared_ptr<HybridSegmentationResultSpec>>> removeBackground(const std::string& path, const std::optional<BackgroundRemovalOptions>& options) override;
     std::shared_ptr<Promise<std::vector<Classification>>> classifyImage(const std::string& path, const std::optional<ClassificationOptions>& options) override;
+    std::shared_ptr<Promise<ImageAnalysisResult>> analyzeImage(const std::string& path, const AnalyzeImageOptions& options) override;
 
   private:
     jni::global_ref<JHybridVisionKitFactorySpec::JavaPart> _javaPart;

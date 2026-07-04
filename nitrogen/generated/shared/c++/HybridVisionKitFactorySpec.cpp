@@ -17,6 +17,7 @@ namespace margelo::nitro::nitrovisionkit {
       prototype.registerHybridGetter("capabilities", &HybridVisionKitFactorySpec::getCapabilities);
       prototype.registerHybridMethod("removeBackground", &HybridVisionKitFactorySpec::removeBackground);
       prototype.registerHybridMethod("classifyImage", &HybridVisionKitFactorySpec::classifyImage);
+      prototype.registerHybridMethod("analyzeImage", &HybridVisionKitFactorySpec::analyzeImage);
     });
   }
 

@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `ArrayBufferHolder` to properly resolve imports.
+namespace NitroModules { class ArrayBufferHolder; }
 // Forward declaration of `BackgroundRemovalOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
@@ -18,6 +20,10 @@ namespace margelo::nitro::nitrovisionkit { struct Classification; }
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
 // Forward declaration of `HybridVisionKitFactorySpec` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { class HybridVisionKitFactorySpec; }
+// Forward declaration of `ImageAnalysisResult` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
+// Forward declaration of `Rect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct Rect; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridSegmentationResultSpec_cxx` to properly resolve imports.
@@ -31,7 +37,10 @@ namespace NitroVisionKit { class HybridVisionKitFactorySpec_cxx; }
 #include "ClassificationOptions.hpp"
 #include "HybridSegmentationResultSpec.hpp"
 #include "HybridVisionKitFactorySpec.hpp"
+#include "ImageAnalysisResult.hpp"
+#include "Rect.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
+#include <NitroModules/ArrayBufferHolder.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/PromiseHolder.hpp>
 #include <NitroModules/Result.hpp>
@@ -48,6 +57,62 @@ namespace NitroVisionKit { class HybridVisionKitFactorySpec_cxx; }
  */
 namespace margelo::nitro::nitrovisionkit::bridge::swift {
 
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___ = std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> create_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___() noexcept {
+    return Promise<std::shared_ptr<ArrayBuffer>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<ArrayBuffer>> wrap_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer___(std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<ArrayBuffer>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<ArrayBuffer>&)>`.
+   */
+  using Func_void_std__shared_ptr_ArrayBuffer_ = std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<ArrayBuffer>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_ArrayBuffer__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_ArrayBuffer__Wrapper(std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>>(std::move(func))) {}
+    inline void call(ArrayBufferHolder result) const noexcept {
+      _function->operator()(result.getArrayBuffer());
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_ArrayBuffer_ create_Func_void_std__shared_ptr_ArrayBuffer_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_ArrayBuffer__Wrapper wrap_Func_void_std__shared_ptr_ArrayBuffer_(Func_void_std__shared_ptr_ArrayBuffer_ value) noexcept {
+    return Func_void_std__shared_ptr_ArrayBuffer__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
+  /**
+   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
+   */
+  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__exception_ptr_Wrapper final {
+  public:
+    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
+    inline void call(std::exception_ptr error) const noexcept {
+      _function->operator()(error);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
+    return Func_void_std__exception_ptr_Wrapper(std::move(value));
+  }
+  
   // pragma MARK: std::shared_ptr<Promise<std::string>>
   /**
    * Specialized version of `std::shared_ptr<Promise<std::string>>`.
@@ -82,28 +147,6 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return Func_void_std__string_Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::function<void(const std::exception_ptr& /* error */)>
-  /**
-   * Specialized version of `std::function<void(const std::exception_ptr&)>`.
-   */
-  using Func_void_std__exception_ptr = std::function<void(const std::exception_ptr& /* error */)>;
-  /**
-   * Wrapper class for a `std::function<void(const std::exception_ptr& / * error * /)>`, this can be used from Swift.
-   */
-  class Func_void_std__exception_ptr_Wrapper final {
-  public:
-    explicit Func_void_std__exception_ptr_Wrapper(std::function<void(const std::exception_ptr& /* error */)>&& func): _function(std::make_unique<std::function<void(const std::exception_ptr& /* error */)>>(std::move(func))) {}
-    inline void call(std::exception_ptr error) const noexcept {
-      _function->operator()(error);
-    }
-  private:
-    std::unique_ptr<std::function<void(const std::exception_ptr& /* error */)>> _function;
-  } SWIFT_NONCOPYABLE;
-  Func_void_std__exception_ptr create_Func_void_std__exception_ptr(void* NON_NULL swiftClosureWrapper) noexcept;
-  inline Func_void_std__exception_ptr_Wrapper wrap_Func_void_std__exception_ptr(Func_void_std__exception_ptr value) noexcept {
-    return Func_void_std__exception_ptr_Wrapper(std::move(value));
-  }
-  
   // pragma MARK: std::shared_ptr<HybridSegmentationResultSpec>
   /**
    * Specialized version of `std::shared_ptr<HybridSegmentationResultSpec>`.
@@ -116,13 +159,13 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   using std__weak_ptr_HybridSegmentationResultSpec_ = std::weak_ptr<HybridSegmentationResultSpec>;
   inline std__weak_ptr_HybridSegmentationResultSpec_ weakify_std__shared_ptr_HybridSegmentationResultSpec_(const std::shared_ptr<HybridSegmentationResultSpec>& strong) noexcept { return strong; }
   
-  // pragma MARK: Result<std::shared_ptr<ArrayBuffer>>
-  using Result_std__shared_ptr_ArrayBuffer__ = Result<std::shared_ptr<ArrayBuffer>>;
-  inline Result_std__shared_ptr_ArrayBuffer__ create_Result_std__shared_ptr_ArrayBuffer__(const std::shared_ptr<ArrayBuffer>& value) noexcept {
-    return Result<std::shared_ptr<ArrayBuffer>>::withValue(value);
+  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>>
+  using Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____ = Result<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>>;
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____ create_Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____(const std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>>::withValue(value);
   }
-  inline Result_std__shared_ptr_ArrayBuffer__ create_Result_std__shared_ptr_ArrayBuffer__(const std::exception_ptr& error) noexcept {
-    return Result<std::shared_ptr<ArrayBuffer>>::withError(error);
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____ create_Result_std__shared_ptr_Promise_std__shared_ptr_ArrayBuffer____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>>>::withError(error);
   }
   
   // pragma MARK: Result<std::shared_ptr<Promise<std::string>>>
@@ -132,6 +175,21 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_std__string___ create_Result_std__shared_ptr_Promise_std__string___(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::string>>>::withError(error);
+  }
+  
+  // pragma MARK: std::optional<std::string>
+  /**
+   * Specialized version of `std::optional<std::string>`.
+   */
+  using std__optional_std__string_ = std::optional<std::string>;
+  inline std::optional<std::string> create_std__optional_std__string_(const std::string& value) noexcept {
+    return std::optional<std::string>(value);
+  }
+  inline bool has_value_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
+    return optional.value();
   }
   
   // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridSegmentationResultSpec>>>
@@ -258,6 +316,21 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return Func_void_std__vector_Classification__Wrapper(std::move(value));
   }
   
+  // pragma MARK: std::optional<Rect>
+  /**
+   * Specialized version of `std::optional<Rect>`.
+   */
+  using std__optional_Rect_ = std::optional<Rect>;
+  inline std::optional<Rect> create_std__optional_Rect_(const Rect& value) noexcept {
+    return std::optional<Rect>(value);
+  }
+  inline bool has_value_std__optional_Rect_(const std::optional<Rect>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline Rect get_std__optional_Rect_(const std::optional<Rect>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<ClassificationOptions>
   /**
    * Specialized version of `std::optional<ClassificationOptions>`.
@@ -271,6 +344,70 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   }
   inline ClassificationOptions get_std__optional_ClassificationOptions_(const std::optional<ClassificationOptions>& optional) noexcept {
     return optional.value();
+  }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridSegmentationResultSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridSegmentationResultSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridSegmentationResultSpec__ = std::optional<std::shared_ptr<HybridSegmentationResultSpec>>;
+  inline std::optional<std::shared_ptr<HybridSegmentationResultSpec>> create_std__optional_std__shared_ptr_HybridSegmentationResultSpec__(const std::shared_ptr<HybridSegmentationResultSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridSegmentationResultSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridSegmentationResultSpec__(const std::optional<std::shared_ptr<HybridSegmentationResultSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridSegmentationResultSpec> get_std__optional_std__shared_ptr_HybridSegmentationResultSpec__(const std::optional<std::shared_ptr<HybridSegmentationResultSpec>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<std::vector<Classification>>
+  /**
+   * Specialized version of `std::optional<std::vector<Classification>>`.
+   */
+  using std__optional_std__vector_Classification__ = std::optional<std::vector<Classification>>;
+  inline std::optional<std::vector<Classification>> create_std__optional_std__vector_Classification__(const std::vector<Classification>& value) noexcept {
+    return std::optional<std::vector<Classification>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_Classification__(const std::optional<std::vector<Classification>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<Classification> get_std__optional_std__vector_Classification__(const std::optional<std::vector<Classification>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::shared_ptr<Promise<ImageAnalysisResult>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<ImageAnalysisResult>>`.
+   */
+  using std__shared_ptr_Promise_ImageAnalysisResult__ = std::shared_ptr<Promise<ImageAnalysisResult>>;
+  inline std::shared_ptr<Promise<ImageAnalysisResult>> create_std__shared_ptr_Promise_ImageAnalysisResult__() noexcept {
+    return Promise<ImageAnalysisResult>::create();
+  }
+  inline PromiseHolder<ImageAnalysisResult> wrap_std__shared_ptr_Promise_ImageAnalysisResult__(std::shared_ptr<Promise<ImageAnalysisResult>> promise) noexcept {
+    return PromiseHolder<ImageAnalysisResult>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const ImageAnalysisResult& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const ImageAnalysisResult&)>`.
+   */
+  using Func_void_ImageAnalysisResult = std::function<void(const ImageAnalysisResult& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const ImageAnalysisResult& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_ImageAnalysisResult_Wrapper final {
+  public:
+    explicit Func_void_ImageAnalysisResult_Wrapper(std::function<void(const ImageAnalysisResult& /* result */)>&& func): _function(std::make_unique<std::function<void(const ImageAnalysisResult& /* result */)>>(std::move(func))) {}
+    inline void call(ImageAnalysisResult result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const ImageAnalysisResult& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_ImageAnalysisResult create_Func_void_ImageAnalysisResult(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_ImageAnalysisResult_Wrapper wrap_Func_void_ImageAnalysisResult(Func_void_ImageAnalysisResult value) noexcept {
+    return Func_void_ImageAnalysisResult_Wrapper(std::move(value));
   }
   
   // pragma MARK: std::shared_ptr<HybridVisionKitFactorySpec>
@@ -301,6 +438,15 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_std__vector_Classification____ create_Result_std__shared_ptr_Promise_std__vector_Classification____(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::vector<Classification>>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<ImageAnalysisResult>>>
+  using Result_std__shared_ptr_Promise_ImageAnalysisResult___ = Result<std::shared_ptr<Promise<ImageAnalysisResult>>>;
+  inline Result_std__shared_ptr_Promise_ImageAnalysisResult___ create_Result_std__shared_ptr_Promise_ImageAnalysisResult___(const std::shared_ptr<Promise<ImageAnalysisResult>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<ImageAnalysisResult>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_ImageAnalysisResult___ create_Result_std__shared_ptr_Promise_ImageAnalysisResult___(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<ImageAnalysisResult>>>::withError(error);
   }
 
 } // namespace margelo::nitro::nitrovisionkit::bridge::swift

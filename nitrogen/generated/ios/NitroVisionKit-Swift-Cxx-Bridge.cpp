@@ -15,11 +15,11 @@
 
 namespace margelo::nitro::nitrovisionkit::bridge::swift {
 
-  // pragma MARK: std::function<void(const std::string& /* result */)>
-  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
-    auto swiftClosure = NitroVisionKit::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
-    return [swiftClosure = std::move(swiftClosure)](const std::string& result) mutable -> void {
-      swiftClosure.call(result);
+  // pragma MARK: std::function<void(const std::shared_ptr<ArrayBuffer>& /* result */)>
+  Func_void_std__shared_ptr_ArrayBuffer_ create_Func_void_std__shared_ptr_ArrayBuffer_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroVisionKit::Func_void_std__shared_ptr_ArrayBuffer_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<ArrayBuffer>& result) mutable -> void {
+      swiftClosure.call(ArrayBufferHolder(result));
     };
   }
   
@@ -28,6 +28,14 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     auto swiftClosure = NitroVisionKit::Func_void_std__exception_ptr::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::exception_ptr& error) mutable -> void {
       swiftClosure.call(error);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::string& /* result */)>
+  Func_void_std__string create_Func_void_std__string(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroVisionKit::Func_void_std__string::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::string& result) mutable -> void {
+      swiftClosure.call(result);
     };
   }
   
@@ -59,6 +67,14 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   Func_void_std__vector_Classification_ create_Func_void_std__vector_Classification_(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroVisionKit::Func_void_std__vector_Classification_::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::vector<Classification>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const ImageAnalysisResult& /* result */)>
+  Func_void_ImageAnalysisResult create_Func_void_ImageAnalysisResult(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroVisionKit::Func_void_ImageAnalysisResult::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const ImageAnalysisResult& result) mutable -> void {
       swiftClosure.call(result);
     };
   }

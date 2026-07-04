@@ -3,18 +3,23 @@ import CoreImage
 import Vision
 import NitroModules
 
-/// Runs a Vision `VNClassifyImageRequest` to label the contents of an image.
 enum ImageClassifier {
-  /// Classifies `ciImage`, returning labels ranked by confidence. Labels below
-  /// `minConfidence` are dropped, and at most `maxResults` are returned (when
-  /// `maxResults` is positive).
   static func classify(
     ciImage: CIImage,
     maxResults: Int,
-    minConfidence: Double
+    minConfidence: Double,
+    region: Rect?,
   ) throws -> [Classification] {
     let handler = VNImageRequestHandler(ciImage: ciImage, orientation: .up)
     let request = VNClassifyImageRequest()
+    if let region {
+      request.regionOfInterest = CGRect(
+        x: region.x,
+        y: 1.0 - region.y - region.height,
+        width: region.width,
+        height: region.height,
+      )
+    }
     try handler.perform([request])
 
     let observations = (request.results ?? [])

@@ -8,6 +8,8 @@
 #pragma once
 
 // Forward declarations of C++ defined types
+// Forward declaration of `AnalyzeImageOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 // Forward declaration of `BackgroundRemovalOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
@@ -18,20 +20,30 @@ namespace margelo::nitro::nitrovisionkit { struct Classification; }
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
 // Forward declaration of `HybridVisionKitFactorySpec` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { class HybridVisionKitFactorySpec; }
+// Forward declaration of `ImageAnalysisResult` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
 // Forward declaration of `ImageFormat` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
+// Forward declaration of `NormalizedPoint` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
+// Forward declaration of `PixelRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct PixelRect; }
 // Forward declaration of `Rect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Rect; }
 // Forward declaration of `VisionCapabilities` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 
 // Include C++ defined types
+#include "AnalyzeImageOptions.hpp"
 #include "BackgroundRemovalOptions.hpp"
 #include "Classification.hpp"
 #include "ClassificationOptions.hpp"
 #include "HybridSegmentationResultSpec.hpp"
 #include "HybridVisionKitFactorySpec.hpp"
+#include "ImageAnalysisResult.hpp"
 #include "ImageFormat.hpp"
+#include "NormalizedPoint.hpp"
+#include "PixelRect.hpp"
 #include "Rect.hpp"
 #include "VisionCapabilities.hpp"
 #include <NitroModules/ArrayBuffer.hpp>

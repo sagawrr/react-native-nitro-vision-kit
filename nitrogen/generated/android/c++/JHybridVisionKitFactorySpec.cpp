@@ -13,13 +13,21 @@ namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
 // Forward declaration of `Classification` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
+// Forward declaration of `ImageAnalysisResult` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
 // Forward declaration of `BackgroundRemovalOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
+// Forward declaration of `Rect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `AnalyzeImageOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 
 #include "VisionCapabilities.hpp"
 #include "JVisionCapabilities.hpp"
+#include <string>
+#include <optional>
 #include <memory>
 #include "HybridSegmentationResultSpec.hpp"
 #include <NitroModules/Promise.hpp>
@@ -28,12 +36,16 @@ namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
 #include "Classification.hpp"
 #include <vector>
 #include "JClassification.hpp"
-#include <string>
+#include "ImageAnalysisResult.hpp"
+#include "JImageAnalysisResult.hpp"
 #include "BackgroundRemovalOptions.hpp"
-#include <optional>
 #include "JBackgroundRemovalOptions.hpp"
 #include "ClassificationOptions.hpp"
 #include "JClassificationOptions.hpp"
+#include "Rect.hpp"
+#include "JRect.hpp"
+#include "AnalyzeImageOptions.hpp"
+#include "JAnalyzeImageOptions.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -105,6 +117,22 @@ namespace margelo::nitro::nitrovisionkit {
           }
           return __vector;
         }(__result));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<ImageAnalysisResult>> JHybridVisionKitFactorySpec::analyzeImage(const std::string& path, const AnalyzeImageOptions& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* path */, jni::alias_ref<JAnalyzeImageOptions> /* options */)>("analyzeImage");
+    auto __result = method(_javaPart, jni::make_jstring(path), JAnalyzeImageOptions::fromCpp(options));
+    return [&]() {
+      auto __promise = Promise<ImageAnalysisResult>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JImageAnalysisResult>(__boxedResult);
+        __promise->resolve(__result->toCpp());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);

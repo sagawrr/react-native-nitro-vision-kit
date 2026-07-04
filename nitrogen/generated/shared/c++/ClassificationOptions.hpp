@@ -28,9 +28,11 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-
+// Forward declaration of `Rect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct Rect; }
 
 #include <optional>
+#include "Rect.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -41,10 +43,11 @@ namespace margelo::nitro::nitrovisionkit {
   public:
     std::optional<double> maxResults     SWIFT_PRIVATE;
     std::optional<double> minConfidence     SWIFT_PRIVATE;
+    std::optional<Rect> region     SWIFT_PRIVATE;
 
   public:
     ClassificationOptions() = default;
-    explicit ClassificationOptions(std::optional<double> maxResults, std::optional<double> minConfidence): maxResults(maxResults), minConfidence(minConfidence) {}
+    explicit ClassificationOptions(std::optional<double> maxResults, std::optional<double> minConfidence, std::optional<Rect> region): maxResults(maxResults), minConfidence(minConfidence), region(region) {}
 
   public:
     friend bool operator==(const ClassificationOptions& lhs, const ClassificationOptions& rhs) = default;
@@ -61,13 +64,15 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrovisionkit::ClassificationOptions(
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maxResults"))),
-        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "minConfidence")))
+        JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "minConfidence"))),
+        JSIConverter<std::optional<margelo::nitro::nitrovisionkit::Rect>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "region")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrovisionkit::ClassificationOptions& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "maxResults"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.maxResults));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "minConfidence"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.minConfidence));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "region"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::Rect>>::toJSI(runtime, arg.region));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -80,6 +85,7 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "maxResults")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "minConfidence")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::Rect>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "region")))) return false;
       return true;
     }
   };

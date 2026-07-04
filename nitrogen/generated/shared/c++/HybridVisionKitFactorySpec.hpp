@@ -23,6 +23,10 @@ namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
+// Forward declaration of `ImageAnalysisResult` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
+// Forward declaration of `AnalyzeImageOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 
 #include "VisionCapabilities.hpp"
 #include <memory>
@@ -34,6 +38,8 @@ namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
 #include "Classification.hpp"
 #include <vector>
 #include "ClassificationOptions.hpp"
+#include "ImageAnalysisResult.hpp"
+#include "AnalyzeImageOptions.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -68,6 +74,7 @@ namespace margelo::nitro::nitrovisionkit {
       // Methods
       virtual std::shared_ptr<Promise<std::shared_ptr<HybridSegmentationResultSpec>>> removeBackground(const std::string& path, const std::optional<BackgroundRemovalOptions>& options) = 0;
       virtual std::shared_ptr<Promise<std::vector<Classification>>> classifyImage(const std::string& path, const std::optional<ClassificationOptions>& options) = 0;
+      virtual std::shared_ptr<Promise<ImageAnalysisResult>> analyzeImage(const std::string& path, const AnalyzeImageOptions& options) = 0;
 
     protected:
       // Hybrid Setup

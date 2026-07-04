@@ -18,7 +18,7 @@ public extension ClassificationOptions {
   /**
    * Create a new instance of `ClassificationOptions`.
    */
-  init(maxResults: Double?, minConfidence: Double?) {
+  init(maxResults: Double?, minConfidence: Double?, region: Rect?) {
     self.init({ () -> bridge.std__optional_double_ in
       if let __unwrappedValue = maxResults {
         return bridge.create_std__optional_double_(__unwrappedValue)
@@ -28,6 +28,12 @@ public extension ClassificationOptions {
     }(), { () -> bridge.std__optional_double_ in
       if let __unwrappedValue = minConfidence {
         return bridge.create_std__optional_double_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_Rect_ in
+      if let __unwrappedValue = region {
+        return bridge.create_std__optional_Rect_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -56,5 +62,10 @@ public extension ClassificationOptions {
         return nil
       }
     }()
+  }
+  
+  @inline(__always)
+  var region: Rect? {
+    return self.__region.value
   }
 }

@@ -15,6 +15,7 @@ public protocol HybridVisionKitFactorySpec_protocol: HybridObject {
   // Methods
   func removeBackground(path: String, options: BackgroundRemovalOptions?) throws -> Promise<(any HybridSegmentationResultSpec)>
   func classifyImage(path: String, options: ClassificationOptions?) throws -> Promise<[Classification]>
+  func analyzeImage(path: String, options: AnalyzeImageOptions) throws -> Promise<ImageAnalysisResult>
 }
 
 public extension HybridVisionKitFactorySpec_protocol {

@@ -22,17 +22,26 @@ namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
+// Forward declaration of `Rect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `ImageAnalysisResult` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
+// Forward declaration of `AnalyzeImageOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 
 #include "VisionCapabilities.hpp"
+#include <string>
+#include <optional>
 #include <memory>
 #include "HybridSegmentationResultSpec.hpp"
 #include <NitroModules/Promise.hpp>
-#include <string>
 #include "BackgroundRemovalOptions.hpp"
-#include <optional>
 #include "Classification.hpp"
 #include <vector>
 #include "ClassificationOptions.hpp"
+#include "Rect.hpp"
+#include "ImageAnalysisResult.hpp"
+#include "AnalyzeImageOptions.hpp"
 
 #include "NitroVisionKit-Swift-Cxx-Umbrella.hpp"
 
@@ -96,6 +105,14 @@ namespace margelo::nitro::nitrovisionkit {
     }
     inline std::shared_ptr<Promise<std::vector<Classification>>> classifyImage(const std::string& path, const std::optional<ClassificationOptions>& options) override {
       auto __result = _swiftPart.classifyImage(path, options);
+      if (__result.hasError()) [[unlikely]] {
+        std::rethrow_exception(__result.error());
+      }
+      auto __value = std::move(__result.value());
+      return __value;
+    }
+    inline std::shared_ptr<Promise<ImageAnalysisResult>> analyzeImage(const std::string& path, const AnalyzeImageOptions& options) override {
+      auto __result = _swiftPart.analyzeImage(path, std::forward<decltype(options)>(options));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());
       }

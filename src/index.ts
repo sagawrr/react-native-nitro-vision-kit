@@ -1,11 +1,6 @@
 import { NitroModules } from 'react-native-nitro-modules'
 import type { VisionKitFactory } from './specs/VisionKitFactory.nitro'
 
-/**
- * Singleton entry point for on-device vision. Use
- * {@linkcode VisionKit.capabilities}, {@linkcode VisionKit.removeBackground},
- * and {@linkcode VisionKit.classifyImage}.
- */
 export const VisionKit =
   NitroModules.createHybridObject<VisionKitFactory>('VisionKitFactory')
 
@@ -17,3 +12,7 @@ export type { VisionCapabilities } from './types/VisionCapabilities'
 export type { BackgroundRemovalOptions } from './types/BackgroundRemovalOptions'
 export type { ClassificationOptions } from './types/ClassificationOptions'
 export type { Classification } from './types/Classification'
+export type { NormalizedPoint } from './types/NormalizedPoint'
+export type { PixelRect } from './types/PixelRect'
+export type { AnalyzeImageOptions } from './types/AnalyzeImageOptions'
+export type { ImageAnalysisResult } from './types/ImageAnalysisResult'
