@@ -147,3 +147,11 @@ dependencies {
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1"
 }
 
+if (isNewArchitectureEnabled()) {
+  react {
+    jsRootDir = file("../src/")
+    libraryName = "NitroVisionKit"
+    codegenJavaPackageName = "com.margelo.nitro.nitrovisionkit"
+  }
+}
+

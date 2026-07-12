@@ -1,0 +1,14 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "types": [],
+    "paths": {
+      "react-native-nitro-vision-kit": ["../src/index.ts"],
+      "react-native-nitro-modules": [
+        "./node_modules/react-native-nitro-modules"
+      ]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["**/node_modules", "**/Pods"]
+}

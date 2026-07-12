@@ -41,10 +41,10 @@ local.properties
 android.iml
 *.iml
 
-# Cocoapods (consumer apps / future example)
+# Cocoapods (consumer apps / example)
 **/Pods/
 
-# Ruby (future example)
+# Ruby (example)
 **/vendor/bundle/
 
 # Node
@@ -53,6 +53,7 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 package-lock.json
+!example/package-lock.json
 yarn.lock
 *.tgz
 

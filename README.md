@@ -19,6 +19,25 @@
 
 Check `VisionKit.capabilities` before calling segmentation APIs.
 
+## Example
+
+A bare React Native demo lives in [`example/`](./example):
+
+```sh
+cd example
+npm install
+cd ios && bundle install && bundle exec pod install && cd ..
+npm run ios
+# or
+npm run android
+```
+
+Pick a photo, choose **Lift**, **Read**, or **Both**, then run on-device.
+**Both** uses `analyzeImage` (single decode). **Keep** saves a cutout to the
+photo library. See [`example/README.md`](./example/README.md).
+
+> The example app uses npm; the library package at the repo root uses Bun.
+
 ## Installation
 
 Install the package and its peer dependency, then run CocoaPods:

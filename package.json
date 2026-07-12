@@ -80,6 +80,14 @@
     "react-native": ">=0.75.0",
     "react-native-nitro-modules": "^0.35.10"
   },
+  "codegenConfig": {
+    "name": "NitroVisionKitSpec",
+    "type": "modules",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.margelo.nitro.nitrovisionkit"
+    }
+  },
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,
