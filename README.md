@@ -8,15 +8,35 @@
   <a href="./LICENSE"><img src="https://img.shields.io/npm/l/react-native-nitro-vision-kit?style=flat-square" alt="MIT" /></a>
 </p>
 
-<p align="center">
-  <strong>Cut subjects free. Label what's in the frame.</strong><br />
-  On-device vision for React Native — Vision on iOS, ML Kit on Android,<br />
-  bridged with <a href="https://nitro.margelo.com">Nitro Modules</a>.
-</p>
+<h1 align="center">Nitro Vision</h1>
 
 <p align="center">
-  <img src="assets/demo.gif" alt="Nitro Vision playground — lift a subject, read labels, keep the cutout" width="280" />
+  <strong>Lift the subject. Read the frame. Keep the cutout.</strong><br />
+  On-device vision for React Native — nothing leaves the phone.<br />
+  <sub>Vision on iOS · ML Kit on Android · <a href="https://nitro.margelo.com">Nitro Modules</a></sub>
 </p>
+
+---
+
+<table>
+  <tr>
+    <td width="42%" align="center" valign="top">
+      <img src="assets/demo.gif" alt="Playground: Lift subject, see the cutout, read labels, keep to Photos" width="260" />
+    </td>
+    <td valign="middle">
+      <p><strong>The playground in motion</strong></p>
+      <p>
+        <code>Lift</code> frees the subject from its background.<br />
+        <code>Read</code> names what’s in the frame.<br />
+        <code>Both</code> does it in one pass — then <strong>Keep</strong> saves the cutout.
+      </p>
+      <p>
+        All on-device. Orientation handled for you.<br />
+        Run it yourself in <a href="./example"><code>example/</code></a>.
+      </p>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -29,8 +49,7 @@ cd ios && pod install
 
 ## Quick start
 
-Pass a **local** path or `file://` URI. Remote images need to be cached first.
-Orientation is handled for you — pass the file as-is.
+Pass a **local** path or `file://` URI (cache remote images first).
 
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
@@ -44,7 +63,7 @@ const png = await segmentation?.saveToTemporaryFile('png', 100)
 segmentation?.dispose()
 ```
 
-Prefer separate calls? Same idea:
+Or call them apart:
 
 ```ts
 const cutout = await VisionKit.removeBackground(path, { trim: true })
@@ -54,17 +73,17 @@ await cutout.saveToTemporaryFile('png', 100)
 cutout.dispose()
 ```
 
-> Always call `dispose()` when you're done with a segmentation result.
+> Always `dispose()` a segmentation result when you’re done with it.
 
-## What you get
+## API
 
-| | Method | Notes |
+Three verbs. Same kit.
+
+| | Method | What it does |
 | --- | --- | --- |
 | **Lift** | `removeBackground` | Transparent subject cutout |
 | **Read** | `classifyImage` | Labels with confidence |
 | **Both** | `analyzeImage` | One decode — segment and/or classify |
-
-Check availability before lifting:
 
 ```ts
 const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
@@ -78,7 +97,8 @@ const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
 
 ## Options
 
-**`removeBackground` / `analyzeImage.removeBackground`**
+<details>
+<summary><strong>removeBackground</strong> / <code>analyzeImage.removeBackground</code></summary>
 
 | Option | Default | |
 | --- | --- | --- |
@@ -86,7 +106,10 @@ const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
 | `maxPixels` | `6_000_000` | Decode cap (`width × height`) |
 | `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
 
-**`classifyImage` / `analyzeImage.classify`**
+</details>
+
+<details>
+<summary><strong>classifyImage</strong> / <code>analyzeImage.classify</code></summary>
 
 | Option | Default | |
 | --- | --- | --- |
@@ -95,6 +118,8 @@ const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
 | `region` | full image | Normalized ROI (`0–1`) |
 
 When `analyzeImage` runs both and you omit `region`, classification uses the subject bounds.
+
+</details>
 
 ## Segmentation result
 
@@ -108,9 +133,7 @@ When `analyzeImage` runs both and you omit `region`, classification uses the sub
 | `bounds` | Subject box, normalized `0–1` |
 | `foregroundCoverage` | Foreground pixel ratio |
 
-## Example
-
-A small playground lives in [`example/`](./example). The GIF above is that flow: **Lift** → cutout → **Both** → labels → **Keep**.
+## Playground
 
 ```bash
 cd example
@@ -119,7 +142,7 @@ cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios   # or: npm run android
 ```
 
-Pick a photo → **Lift**, **Read**, or **Both** → **Keep** to save a cutout.
+Pick a photo → **Lift**, **Read**, or **Both** → **Keep** to Photos.
 
 ## License
 
