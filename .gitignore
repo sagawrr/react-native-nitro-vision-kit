@@ -1,96 +1,57 @@
-# OSX
+# OS
 .DS_Store
 
-# XDE / Expo
-.expo/
-.expo-shared/
-
-# VSCode
+# Editors
 .vscode/
-jsconfig.json
+.idea/
+*.iml
 
 # Xcode
 build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
+DerivedData/
 *.xcuserstate
-project.xcworkspace
+xcuserdata/
 **/.xcode.env.local
 
-# Android / IntelliJ
-.kotlin
+# Android / Gradle
+.kotlin/
+.cxx/
+.gradle/
 .classpath
-.cxx
-.gradle
-.idea
 .project
-.settings
+.settings/
 local.properties
-android.iml
-*.iml
 
-# Cocoapods (consumer apps / example)
+# CocoaPods / Ruby (example)
 **/Pods/
-
-# Ruby (example)
 **/vendor/bundle/
 
 # Node
 node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tgz
 package-lock.json
 !example/package-lock.json
-yarn.lock
-*.tgz
 
-# Bun (keep bun.lock committed)
-**/*.bun
-
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
-android/keystores/debug.keystore
-
-# Yarn Berry
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Turborepo
-.turbo/
-
-# TypeScript build output (published via prepublishOnly, not committed)
+# TypeScript build (emitted on publish via prepublishOnly)
 lib/
-
-# Caches
-.eslintcache
-.cache
 *.tsbuildinfo
 
-# Testing
+# Caches / coverage
+.eslintcache
+.cache/
+.turbo/
 coverage/
 
-# Env / secrets
+# Env
 .env
 .env.*
 !.env.example
 
-# NOTE: nitrogen/generated/ is intentionally committed (see nitro-test README).
+# Local brag / Hyperframes output
+brag-output/
+brag-output-*/
+
+# NOTE: nitrogen/generated/ is intentionally committed.

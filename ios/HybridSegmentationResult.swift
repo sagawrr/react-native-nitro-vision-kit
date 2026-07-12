@@ -44,7 +44,7 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
     rgba.count + mask.count + HybridMemorySize.overhead
   }
 
-  override func dispose() {
+  func dispose() {
     rgba = Data()
     mask = Data()
   }

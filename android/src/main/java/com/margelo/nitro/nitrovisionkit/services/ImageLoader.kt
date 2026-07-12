@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import java.io.File
@@ -74,8 +76,52 @@ internal object ImageLoader {
       inPreferredConfig = Bitmap.Config.ARGB_8888
       inSampleSize = sampleSize
     }
-    return context.contentResolver.openInputStream(uri)?.use {
+    val decoded = context.contentResolver.openInputStream(uri)?.use {
       BitmapFactory.decodeStream(it, null, opts)
     } ?: throw RuntimeException("Failed to decode image: $uri")
+
+    // BitmapFactory ignores EXIF orientation; bake it so pixels match display
+    // (ImageDecoder on API 28+ already does this). Same contract as iOS
+    // kCGImageSourceCreateThumbnailWithTransform.
+    val orientation = context.contentResolver.openInputStream(uri)?.use { stream ->
+      ExifInterface(stream).getAttributeInt(
+        ExifInterface.TAG_ORIENTATION,
+        ExifInterface.ORIENTATION_NORMAL,
+      )
+    } ?: ExifInterface.ORIENTATION_NORMAL
+    return applyExifOrientation(decoded, orientation)
+  }
+
+  private fun applyExifOrientation(bitmap: Bitmap, orientation: Int): Bitmap {
+    val degrees = when (orientation) {
+      ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+      ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+      ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+      else -> 0f
+    }
+    val mirror = orientation == ExifInterface.ORIENTATION_FLIP_HORIZONTAL ||
+      orientation == ExifInterface.ORIENTATION_FLIP_VERTICAL ||
+      orientation == ExifInterface.ORIENTATION_TRANSPOSE ||
+      orientation == ExifInterface.ORIENTATION_TRANSVERSE
+
+    if (degrees == 0f && !mirror) return bitmap
+
+    val matrix = Matrix()
+    when (orientation) {
+      ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.preScale(-1f, 1f)
+      ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.preScale(1f, -1f)
+      ExifInterface.ORIENTATION_TRANSPOSE -> {
+        matrix.preRotate(90f)
+        matrix.preScale(-1f, 1f)
+      }
+      ExifInterface.ORIENTATION_TRANSVERSE -> {
+        matrix.preRotate(270f)
+        matrix.preScale(-1f, 1f)
+      }
+      else -> if (degrees != 0f) matrix.preRotate(degrees)
+    }
+    val oriented = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    if (oriented !== bitmap) bitmap.recycle()
+    return oriented
   }
 }

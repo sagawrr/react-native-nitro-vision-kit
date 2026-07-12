@@ -32,8 +32,10 @@ enum RgbaImageConversion {
     ) else {
       return bytes
     }
-    context.translateBy(x: 0, y: CGFloat(height))
-    context.scaleBy(x: 1, y: -1)
+    // CGImage / ImageIO use top-left row order. Do not apply a Quartz Y-flip here —
+    // that inverts cutouts relative to the source and to React Native's Image display.
+    // See CGImagePropertyOrientation / kCGImageSourceCreateThumbnailWithTransform:
+    // orientation is baked at load time; this path must preserve upright pixels.
     context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
     return bytes
   }

@@ -1,140 +1,126 @@
-<img src="assets/banner.png" alt="react-native-nitro-vision-kit" width="100%" />
+<p align="center">
+  <img src="assets/banner.png" alt="react-native-nitro-vision-kit" width="100%" />
+</p>
 
-[![npm version](https://img.shields.io/npm/v/react-native-nitro-vision-kit?logo=npm&label=npm)](https://www.npmjs.com/package/react-native-nitro-vision-kit)
-[![CI](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/npm/l/react-native-nitro-vision-kit?color=blue)](https://github.com/sagawrr/react-native-nitro-vision-kit/blob/main/LICENSE)
+<p align="center">
+  <a href="https://www.npmjs.com/package/react-native-nitro-vision-kit"><img src="https://img.shields.io/npm/v/react-native-nitro-vision-kit?style=flat-square&logo=npm&label=npm" alt="npm" /></a>
+  <a href="https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sagawrr/react-native-nitro-vision-kit/ci.yml?branch=main&style=flat-square&label=ci" alt="CI" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/react-native-nitro-vision-kit?style=flat-square" alt="MIT" /></a>
+</p>
 
-**react-native-nitro-vision-kit** runs subject segmentation and image classification on-device in React Native. It uses [Nitro Modules](https://nitro.margelo.com) for a type-safe bridge to Vision on iOS and ML Kit on Android.
+<p align="center">
+  <strong>Cut subjects free. Label what's in the frame.</strong><br />
+  On-device vision for React Native — Vision on iOS, ML Kit on Android,<br />
+  bridged with <a href="https://nitro.margelo.com">Nitro Modules</a>.
+</p>
 
-## Overview
+<p align="center">
+  <img src="assets/demo.gif" alt="Nitro Vision playground — lift a subject, read labels, keep the cutout" width="280" />
+</p>
 
-- **Segmentation** — cut out foreground subjects with transparent backgrounds
-- **Classification** — label images with on-device confidence scores
-- **Single decode** — run both operations in one pass with `analyzeImage`
+---
 
-| Feature | iOS | Android |
-| --- | --- | --- |
-| Segmentation | 17.0+ | ML Kit + Play services |
-| Classification | 13.0+ | ML Kit |
+## Install
 
-Check `VisionKit.capabilities` before calling segmentation APIs.
-
-## Example
-
-A bare React Native demo lives in [`example/`](./example):
-
-```sh
-cd example
-npm install
-cd ios && bundle install && bundle exec pod install && cd ..
-npm run ios
-# or
-npm run android
-```
-
-Pick a photo, choose **Lift**, **Read**, or **Both**, then run on-device.
-**Both** uses `analyzeImage` (single decode). **Keep** saves a cutout to the
-photo library. See [`example/README.md`](./example/README.md).
-
-> The example app uses npm; the library package at the repo root uses Bun.
-
-## Installation
-
-Install the package and its peer dependency, then run CocoaPods:
-
-```sh
+```bash
 npm install react-native-nitro-vision-kit react-native-nitro-modules
 cd ios && pod install
 ```
 
-## Usage
+## Quick start
 
-Pass a local file path or `file://` URI to every method.
-
-### Analyze an image
-
-Decode once and optionally segment and classify together. When both run, classification uses the subject bounds unless you pass `region`.
+Pass a **local** path or `file://` URI. Remote images need to be cached first.
+Orientation is handled for you — pass the file as-is.
 
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
 
-const { segmentation, classifications } = await VisionKit.analyzeImage(photoPath, {
+const { segmentation, classifications } = await VisionKit.analyzeImage(path, {
   removeBackground: { trim: true },
   classify: { maxResults: 5, minConfidence: 0.5 },
 })
 
-const pngPath = await segmentation?.saveToTemporaryFile('png', 100)
+const png = await segmentation?.saveToTemporaryFile('png', 100)
 segmentation?.dispose()
 ```
 
-### Remove background
+Prefer separate calls? Same idea:
 
 ```ts
-const result = await VisionKit.removeBackground(photoPath, { trim: true })
+const cutout = await VisionKit.removeBackground(path, { trim: true })
+const labels = await VisionKit.classifyImage(path, { maxResults: 5 })
 
-const pngPath = await result.saveToTemporaryFile('png', 100)
-result.dispose()
+await cutout.saveToTemporaryFile('png', 100)
+cutout.dispose()
 ```
 
-### Classify an image
+> Always call `dispose()` when you're done with a segmentation result.
 
-```ts
-const labels = await VisionKit.classifyImage(photoPath, {
-  maxResults: 5,
-  minConfidence: 0.5,
-})
-```
+## What you get
 
-## API Reference
-
-### `VisionKit.capabilities`
-
-| Field | Description |
-| --- | --- |
-| `supportsBackgroundRemoval` | Whether segmentation is available |
-| `supportsImageClassification` | Whether classification is available |
-| `backgroundRemovalUnavailableReason` | Set when background removal is unavailable |
-
-### `removeBackground(path, options?)`
-
-Returns a `SegmentationResult`. Call `dispose()` when finished.
-
-| Option | Default | Description |
+| | Method | Notes |
 | --- | --- | --- |
-| `trim` | `true` | Crop to foreground bounds |
-| `maxPixels` | `6_000_000` | Max decoded pixels |
+| **Lift** | `removeBackground` | Transparent subject cutout |
+| **Read** | `classifyImage` | Labels with confidence |
+| **Both** | `analyzeImage` | One decode — segment and/or classify |
+
+Check availability before lifting:
+
+```ts
+const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
+  VisionKit.capabilities
+```
+
+| Platform | Segment | Classify |
+| --- | --- | --- |
+| iOS | 17.0+ | 13.0+ |
+| Android | ML Kit + Play services | ML Kit |
+
+## Options
+
+**`removeBackground` / `analyzeImage.removeBackground`**
+
+| Option | Default | |
+| --- | --- | --- |
+| `trim` | `true` | Crop to the subject |
+| `maxPixels` | `6_000_000` | Decode cap (`width × height`) |
 | `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
 
-### `classifyImage(path, options?)`
+**`classifyImage` / `analyzeImage.classify`**
 
-Returns `{ label, confidence, index }[]` sorted by confidence.
-
-| Option | Default | Description |
+| Option | Default | |
 | --- | --- | --- |
-| `maxResults` | `0` | Max labels (`0` = all above threshold) |
-| `minConfidence` | `0.5` | Minimum confidence |
+| `maxResults` | `0` | Cap labels (`0` = all above threshold) |
+| `minConfidence` | `0.5` | Minimum score |
 | `region` | full image | Normalized ROI (`0–1`) |
 
-### `analyzeImage(path, options)`
+When `analyzeImage` runs both and you omit `region`, classification uses the subject bounds.
 
-Pass `removeBackground`, `classify`, or both. Returns `{ segmentation?, classifications? }`.
+## Segmentation result
 
-### `SegmentationResult`
-
-| Method | Description |
+| | |
 | --- | --- |
-| `saveToTemporaryFile(format, quality)` | Write PNG or JPEG to a temp file |
+| `saveToTemporaryFile(format, quality)` | Write a PNG or JPEG |
 | `toArrayBuffer()` | Premultiplied RGBA bytes |
-| `toMaskBuffer()` | Float32 mask (`retainMask: true`) |
-| `dispose()` | Release native memory |
-
-| Property | Description |
-| --- | --- |
-| `width`, `height` | Output size in pixels |
-| `bounds` | Subject bounds, normalized `0–1` |
+| `toMaskBuffer()` | Float32 mask (needs `retainMask`) |
+| `dispose()` | Free native memory |
+| `width` / `height` | Output size |
+| `bounds` | Subject box, normalized `0–1` |
 | `foregroundCoverage` | Foreground pixel ratio |
-| `hasMask` | Whether `toMaskBuffer()` is available |
+
+## Example
+
+A small playground lives in [`example/`](./example). The GIF above is that flow: **Lift** → cutout → **Both** → labels → **Keep**.
+
+```bash
+cd example
+npm install
+cd ios && bundle install && bundle exec pod install && cd ..
+npm run ios   # or: npm run android
+```
+
+Pick a photo → **Lift**, **Read**, or **Both** → **Keep** to save a cutout.
 
 ## License
 
-MIT
+[MIT](./LICENSE)

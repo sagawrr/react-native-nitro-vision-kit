@@ -18,6 +18,8 @@ enum SubjectSegmenter {
       throw RuntimeError("Image has no readable pixels.")
     }
 
+    // ImageLoader bakes EXIF into upright pixels; Vision must get `.up`.
+    // https://developer.apple.com/documentation/vision/vnimagerequesthandler
     let handler = VNImageRequestHandler(ciImage: ciImage, orientation: .up)
     let request = VNGenerateForegroundInstanceMaskRequest()
     try handler.perform([request])
@@ -57,9 +59,8 @@ enum SubjectSegmenter {
       throw RuntimeError("Failed to composite subject mask.")
     }
 
-    guard
-      let cgImage = renderContext.createCGImage(composited, from: CGRect(origin: .zero, size: ciImage.extent.size))
-    else {
+    // Render the CI extent directly (same pattern as Apple's Vision cutout samples).
+    guard let cgImage = renderContext.createCGImage(composited, from: composited.extent) else {
       throw RuntimeError("Failed to render masked image.")
     }
 
