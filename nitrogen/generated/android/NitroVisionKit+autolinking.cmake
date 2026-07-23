@@ -34,9 +34,11 @@ target_sources(
   ../nitrogen/generated/android/NitroVisionKitOnLoad.cpp
   # Shared Nitrogen C++ sources
   ../nitrogen/generated/shared/c++/HybridSegmentationResultSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridTextRecognitionResultSpec.cpp
   ../nitrogen/generated/shared/c++/HybridVisionKitFactorySpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridSegmentationResultSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridTextRecognitionResultSpec.cpp
   ../nitrogen/generated/android/c++/JHybridVisionKitFactorySpec.cpp
 )
 

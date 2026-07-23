@@ -16,6 +16,7 @@
 #include <NitroModules/HybridObjectRegistry.hpp>
 
 #include "JHybridSegmentationResultSpec.hpp"
+#include "JHybridTextRecognitionResultSpec.hpp"
 #include "JHybridVisionKitFactorySpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
@@ -42,6 +43,7 @@ void registerAllNatives() {
 
   // Register native JNI methods
   margelo::nitro::nitrovisionkit::JHybridSegmentationResultSpec::CxxPart::registerNatives();
+  margelo::nitro::nitrovisionkit::JHybridTextRecognitionResultSpec::CxxPart::registerNatives();
   margelo::nitro::nitrovisionkit::JHybridVisionKitFactorySpec::CxxPart::registerNatives();
 
   // Register Nitro Hybrid Objects

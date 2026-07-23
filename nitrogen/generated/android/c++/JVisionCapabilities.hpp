@@ -12,6 +12,7 @@
 
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -38,10 +39,25 @@ namespace margelo::nitro::nitrovisionkit {
       jni::local_ref<jni::JString> backgroundRemovalUnavailableReason = this->getFieldValue(fieldBackgroundRemovalUnavailableReason);
       static const auto fieldSupportsImageClassification = clazz->getField<jboolean>("supportsImageClassification");
       jboolean supportsImageClassification = this->getFieldValue(fieldSupportsImageClassification);
+      static const auto fieldSupportsTextRecognition = clazz->getField<jboolean>("supportsTextRecognition");
+      jboolean supportsTextRecognition = this->getFieldValue(fieldSupportsTextRecognition);
+      static const auto fieldSupportedTextLanguages = clazz->getField<jni::JArrayClass<jni::JString>>("supportedTextLanguages");
+      jni::local_ref<jni::JArrayClass<jni::JString>> supportedTextLanguages = this->getFieldValue(fieldSupportedTextLanguages);
       return VisionCapabilities(
         static_cast<bool>(supportsBackgroundRemoval),
         backgroundRemovalUnavailableReason != nullptr ? std::make_optional(backgroundRemovalUnavailableReason->toStdString()) : std::nullopt,
-        static_cast<bool>(supportsImageClassification)
+        static_cast<bool>(supportsImageClassification),
+        static_cast<bool>(supportsTextRecognition),
+        [&](auto&& __input) {
+          size_t __size = __input->size();
+          std::vector<std::string> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = __input->getElement(__i);
+            __vector.push_back(__element->toStdString());
+          }
+          return __vector;
+        }(supportedTextLanguages)
       );
     }
 
@@ -51,14 +67,25 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JVisionCapabilities::javaobject> fromCpp(const VisionCapabilities& value) {
-      using JSignature = JVisionCapabilities(jboolean, jni::alias_ref<jni::JString>, jboolean);
+      using JSignature = JVisionCapabilities(jboolean, jni::alias_ref<jni::JString>, jboolean, jboolean, jni::alias_ref<jni::JArrayClass<jni::JString>>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.supportsBackgroundRemoval,
         value.backgroundRemovalUnavailableReason.has_value() ? jni::make_jstring(value.backgroundRemovalUnavailableReason.value()) : nullptr,
-        value.supportsImageClassification
+        value.supportsImageClassification,
+        value.supportsTextRecognition,
+        [&](auto&& __input) {
+          size_t __size = __input.size();
+          jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            const auto& __element = __input[__i];
+            auto __elementJni = jni::make_jstring(__element);
+            __array->setElement(__i, *__elementJni);
+          }
+          return __array;
+        }(value.supportedTextLanguages)
       );
     }
   };

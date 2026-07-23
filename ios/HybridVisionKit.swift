@@ -1,5 +1,4 @@
 import Foundation
-import CoreImage
 import NitroModules
 
 final class HybridVisionKit: HybridVisionKitFactorySpec {
@@ -9,6 +8,8 @@ final class HybridVisionKit: HybridVisionKitFactorySpec {
       supportsBackgroundRemoval: supported,
       backgroundRemovalUnavailableReason: supported ? nil : VisionAvailability.backgroundRemovalUnavailableReason,
       supportsImageClassification: VisionAvailability.supportsImageClassification,
+      supportsTextRecognition: VisionAvailability.supportsTextRecognition,
+      supportedTextLanguages: TextRecognizer.supportedLanguages(),
     )
   }
 
@@ -39,13 +40,44 @@ final class HybridVisionKit: HybridVisionKitFactorySpec {
     }
   }
 
+  func readText(path: String, options: TextRecognitionOptions?) throws -> Promise<any HybridTextRecognitionResultSpec> {
+    try VisionAvailability.requireTextRecognition()
+    let languages = options?.languages
+    let recognitionLevel = options?.recognitionLevel
+    let region = options?.region
+    let minTextHeightFraction = options?.minTextHeightFraction
+    let usesLanguageCorrection = options?.usesLanguageCorrection
+    let customWords = options?.customWords
+    let maxCandidates = options?.maxCandidates
+    return Promise.async(.userInitiated) {
+      guard #available(iOS 18.0, *) else {
+        throw RuntimeError(VisionAvailability.textRecognitionUnavailableReason)
+      }
+      let ciImage = try ImageLoader.loadCIImage(path: path, maxPixels: VisionKitLimits.textMaxPixels)
+      let output = try await TextRecognizer.recognize(
+        ciImage: ciImage,
+        languages: languages,
+        recognitionLevel: recognitionLevel,
+        region: region,
+        minTextHeightFraction: minTextHeightFraction,
+        usesLanguageCorrection: usesLanguageCorrection,
+        customWords: customWords,
+        maxCandidates: maxCandidates,
+      )
+      return HybridTextRecognitionResult(output: output) as any HybridTextRecognitionResultSpec
+    }
+  }
+
   func analyzeImage(path: String, options: AnalyzeImageOptions) throws -> Promise<ImageAnalysisResult> {
     try VisionKitOptions.requireAnalyzeOperations(options)
     if options.removeBackground != nil {
       try VisionAvailability.requireBackgroundRemoval()
     }
-    return Promise.parallel(VisionKitQueue.queue) {
-      try ImageAnalyzer.analyze(path: path, options: options)
+    if options.readText != nil {
+      try VisionAvailability.requireTextRecognition()
+    }
+    return Promise.async(.userInitiated) {
+      try await ImageAnalyzer.analyze(path: path, options: options)
     }
   }
 }

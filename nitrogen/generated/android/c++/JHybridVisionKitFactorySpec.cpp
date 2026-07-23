@@ -13,6 +13,8 @@ namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
 // Forward declaration of `Classification` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
+// Forward declaration of `HybridTextRecognitionResultSpec` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { class HybridTextRecognitionResultSpec; }
 // Forward declaration of `ImageAnalysisResult` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
 // Forward declaration of `BackgroundRemovalOptions` to properly resolve imports.
@@ -21,6 +23,10 @@ namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
 // Forward declaration of `Rect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `TextRecognitionOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
+// Forward declaration of `TextRecognitionLevel` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class TextRecognitionLevel; }
 // Forward declaration of `AnalyzeImageOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 
@@ -28,14 +34,16 @@ namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 #include "JVisionCapabilities.hpp"
 #include <string>
 #include <optional>
+#include <vector>
 #include <memory>
 #include "HybridSegmentationResultSpec.hpp"
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/JPromise.hpp>
 #include "JHybridSegmentationResultSpec.hpp"
 #include "Classification.hpp"
-#include <vector>
 #include "JClassification.hpp"
+#include "HybridTextRecognitionResultSpec.hpp"
+#include "JHybridTextRecognitionResultSpec.hpp"
 #include "ImageAnalysisResult.hpp"
 #include "JImageAnalysisResult.hpp"
 #include "BackgroundRemovalOptions.hpp"
@@ -44,6 +52,10 @@ namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 #include "JClassificationOptions.hpp"
 #include "Rect.hpp"
 #include "JRect.hpp"
+#include "TextRecognitionOptions.hpp"
+#include "JTextRecognitionOptions.hpp"
+#include "TextRecognitionLevel.hpp"
+#include "JTextRecognitionLevel.hpp"
 #include "AnalyzeImageOptions.hpp"
 #include "JAnalyzeImageOptions.hpp"
 
@@ -117,6 +129,22 @@ namespace margelo::nitro::nitrovisionkit {
           }
           return __vector;
         }(__result));
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
+  }
+  std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>> JHybridVisionKitFactorySpec::readText(const std::string& path, const std::optional<TextRecognitionOptions>& options) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* path */, jni::alias_ref<JTextRecognitionOptions> /* options */)>("readText");
+    auto __result = method(_javaPart, jni::make_jstring(path), options.has_value() ? JTextRecognitionOptions::fromCpp(options.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JHybridTextRecognitionResultSpec::JavaPart>(__boxedResult);
+        __promise->resolve(__result->getJHybridTextRecognitionResultSpec());
       });
       __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
         jni::JniException __jniError(__throwable);

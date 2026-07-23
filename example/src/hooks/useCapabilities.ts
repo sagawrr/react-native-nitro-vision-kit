@@ -5,12 +5,14 @@ export function useCapabilities() {
   const [error, setError] = useState<string | null>(null)
   const [canSegment, setCanSegment] = useState(false)
   const [canClassify, setCanClassify] = useState(false)
+  const [canOcr, setCanOcr] = useState(false)
 
   useEffect(() => {
     try {
       const capabilities = VisionKit.capabilities
       setCanSegment(capabilities.supportsBackgroundRemoval)
       setCanClassify(capabilities.supportsImageClassification)
+      setCanOcr(capabilities.supportsTextRecognition)
     } catch (err) {
       setError(
         err instanceof Error
@@ -24,5 +26,6 @@ export function useCapabilities() {
     error,
     canSegment,
     canClassify,
+    canOcr,
   }
 }

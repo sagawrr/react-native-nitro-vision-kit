@@ -7,6 +7,7 @@ type Props = {
   onSelect: (id: Mode) => void
   canSegment: boolean
   canClassify: boolean
+  canOcr: boolean
   disabled?: boolean
 }
 
@@ -15,6 +16,7 @@ export function ModeLine({
   onSelect,
   canSegment,
   canClassify,
+  canOcr,
   disabled,
 }: Props) {
   const purpose = MODES.find(m => m.id === selectedId)?.purpose
@@ -25,7 +27,8 @@ export function ModeLine({
         {MODES.map((mode, i) => {
           const on = mode.id === selectedId
           const off =
-            !!disabled || !modeAvailable(mode.id, canSegment, canClassify)
+            !!disabled ||
+            !modeAvailable(mode.id, canSegment, canClassify, canOcr)
           return (
             <View key={mode.id} style={styles.item}>
               {i > 0 ? <Text style={styles.sep}>  </Text> : null}

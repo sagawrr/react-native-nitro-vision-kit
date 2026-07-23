@@ -24,6 +24,8 @@ class HybridVisionKit : HybridVisionKitFactorySpec() {
           VisionAvailability.backgroundRemovalUnavailableReason(context)
         },
         supportsImageClassification = VisionAvailability.supportsImageClassification,
+        supportsTextRecognition = VisionAvailability.supportsTextRecognition(context),
+        supportedTextLanguages = TextRecognizer.latinSupportedLanguages,
       )
     }
 
@@ -63,6 +65,24 @@ class HybridVisionKit : HybridVisionKitFactorySpec() {
     }
   }
 
+  override fun readText(
+    path: String,
+    options: TextRecognitionOptions?,
+  ): Promise<HybridTextRecognitionResultSpec> {
+    VisionAvailability.requireTextRecognition(context)
+    val region = options?.region
+    val minTextHeightFraction = options?.minTextHeightFraction
+    return Promise.async {
+      val loaded = ImageLoader.load(context, path, VisionKitLimits.TEXT_MAX_PIXELS)
+      try {
+        val output = TextRecognizer.recognize(loaded, region, minTextHeightFraction)
+        HybridTextRecognitionResult(output)
+      } finally {
+        loaded.recycle()
+      }
+    }
+  }
+
   override fun analyzeImage(
     path: String,
     options: AnalyzeImageOptions,
@@ -70,6 +90,9 @@ class HybridVisionKit : HybridVisionKitFactorySpec() {
     VisionKitOptions.requireAnalyzeOperations(options)
     if (options.removeBackground != null) {
       VisionAvailability.requireBackgroundRemoval(context)
+    }
+    if (options.readText != null) {
+      VisionAvailability.requireTextRecognition(context)
     }
     return Promise.async {
       ImageAnalyzer.analyze(context, path, options)

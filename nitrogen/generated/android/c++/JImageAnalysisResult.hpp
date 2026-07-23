@@ -12,8 +12,10 @@
 
 #include "Classification.hpp"
 #include "HybridSegmentationResultSpec.hpp"
+#include "HybridTextRecognitionResultSpec.hpp"
 #include "JClassification.hpp"
 #include "JHybridSegmentationResultSpec.hpp"
+#include "JHybridTextRecognitionResultSpec.hpp"
 #include <memory>
 #include <optional>
 #include <string>
@@ -42,6 +44,8 @@ namespace margelo::nitro::nitrovisionkit {
       jni::local_ref<JHybridSegmentationResultSpec::JavaPart> segmentation = this->getFieldValue(fieldSegmentation);
       static const auto fieldClassifications = clazz->getField<jni::JArrayClass<JClassification>>("classifications");
       jni::local_ref<jni::JArrayClass<JClassification>> classifications = this->getFieldValue(fieldClassifications);
+      static const auto fieldText = clazz->getField<JHybridTextRecognitionResultSpec::JavaPart>("text");
+      jni::local_ref<JHybridTextRecognitionResultSpec::JavaPart> text = this->getFieldValue(fieldText);
       return ImageAnalysisResult(
         segmentation != nullptr ? std::make_optional(segmentation->getJHybridSegmentationResultSpec()) : std::nullopt,
         classifications != nullptr ? std::make_optional([&](auto&& __input) {
@@ -53,7 +57,8 @@ namespace margelo::nitro::nitrovisionkit {
             __vector.push_back(__element->toCpp());
           }
           return __vector;
-        }(classifications)) : std::nullopt
+        }(classifications)) : std::nullopt,
+        text != nullptr ? std::make_optional(text->getJHybridTextRecognitionResultSpec()) : std::nullopt
       );
     }
 
@@ -63,7 +68,7 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JImageAnalysisResult::javaobject> fromCpp(const ImageAnalysisResult& value) {
-      using JSignature = JImageAnalysisResult(jni::alias_ref<JHybridSegmentationResultSpec::JavaPart>, jni::alias_ref<jni::JArrayClass<JClassification>>);
+      using JSignature = JImageAnalysisResult(jni::alias_ref<JHybridSegmentationResultSpec::JavaPart>, jni::alias_ref<jni::JArrayClass<JClassification>>, jni::alias_ref<JHybridTextRecognitionResultSpec::JavaPart>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -78,7 +83,8 @@ namespace margelo::nitro::nitrovisionkit {
             __array->setElement(__i, *__elementJni);
           }
           return __array;
-        }(value.classifications.value()) : nullptr
+        }(value.classifications.value()) : nullptr,
+        value.text.has_value() ? std::dynamic_pointer_cast<JHybridTextRecognitionResultSpec>(value.text.value())->getJavaPart() : nullptr
       );
     }
   };

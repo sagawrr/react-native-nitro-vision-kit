@@ -3,8 +3,8 @@ import NitroModules
 
 enum VisionKitOptions {
   static func requireAnalyzeOperations(_ options: AnalyzeImageOptions) throws {
-    guard options.removeBackground != nil || options.classify != nil else {
-      throw RuntimeError("analyzeImage requires removeBackground and/or classify options.")
+    guard options.removeBackground != nil || options.classify != nil || options.readText != nil else {
+      throw RuntimeError("analyzeImage requires removeBackground, classify, and/or readText options.")
     }
   }
 

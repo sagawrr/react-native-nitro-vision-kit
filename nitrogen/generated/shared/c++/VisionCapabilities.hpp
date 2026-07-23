@@ -32,6 +32,7 @@
 
 #include <string>
 #include <optional>
+#include <vector>
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -43,10 +44,12 @@ namespace margelo::nitro::nitrovisionkit {
     bool supportsBackgroundRemoval     SWIFT_PRIVATE;
     std::optional<std::string> backgroundRemovalUnavailableReason     SWIFT_PRIVATE;
     bool supportsImageClassification     SWIFT_PRIVATE;
+    bool supportsTextRecognition     SWIFT_PRIVATE;
+    std::vector<std::string> supportedTextLanguages     SWIFT_PRIVATE;
 
   public:
     VisionCapabilities() = default;
-    explicit VisionCapabilities(bool supportsBackgroundRemoval, std::optional<std::string> backgroundRemovalUnavailableReason, bool supportsImageClassification): supportsBackgroundRemoval(supportsBackgroundRemoval), backgroundRemovalUnavailableReason(backgroundRemovalUnavailableReason), supportsImageClassification(supportsImageClassification) {}
+    explicit VisionCapabilities(bool supportsBackgroundRemoval, std::optional<std::string> backgroundRemovalUnavailableReason, bool supportsImageClassification, bool supportsTextRecognition, std::vector<std::string> supportedTextLanguages): supportsBackgroundRemoval(supportsBackgroundRemoval), backgroundRemovalUnavailableReason(backgroundRemovalUnavailableReason), supportsImageClassification(supportsImageClassification), supportsTextRecognition(supportsTextRecognition), supportedTextLanguages(supportedTextLanguages) {}
 
   public:
     friend bool operator==(const VisionCapabilities& lhs, const VisionCapabilities& rhs) = default;
@@ -64,7 +67,9 @@ namespace margelo::nitro {
       return margelo::nitro::nitrovisionkit::VisionCapabilities(
         JSIConverter<bool>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsBackgroundRemoval"))),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "backgroundRemovalUnavailableReason"))),
-        JSIConverter<bool>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsImageClassification")))
+        JSIConverter<bool>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsImageClassification"))),
+        JSIConverter<bool>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsTextRecognition"))),
+        JSIConverter<std::vector<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportedTextLanguages")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrovisionkit::VisionCapabilities& arg) {
@@ -72,6 +77,8 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "supportsBackgroundRemoval"), JSIConverter<bool>::toJSI(runtime, arg.supportsBackgroundRemoval));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "backgroundRemovalUnavailableReason"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.backgroundRemovalUnavailableReason));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "supportsImageClassification"), JSIConverter<bool>::toJSI(runtime, arg.supportsImageClassification));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "supportsTextRecognition"), JSIConverter<bool>::toJSI(runtime, arg.supportsTextRecognition));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "supportedTextLanguages"), JSIConverter<std::vector<std::string>>::toJSI(runtime, arg.supportedTextLanguages));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -85,6 +92,8 @@ namespace margelo::nitro {
       if (!JSIConverter<bool>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsBackgroundRemoval")))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "backgroundRemovalUnavailableReason")))) return false;
       if (!JSIConverter<bool>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsImageClassification")))) return false;
+      if (!JSIConverter<bool>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportsTextRecognition")))) return false;
+      if (!JSIConverter<std::vector<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "supportedTextLanguages")))) return false;
       return true;
     }
   };

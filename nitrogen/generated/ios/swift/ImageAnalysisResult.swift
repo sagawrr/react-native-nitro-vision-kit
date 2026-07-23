@@ -18,7 +18,7 @@ public extension ImageAnalysisResult {
   /**
    * Create a new instance of `ImageAnalysisResult`.
    */
-  init(segmentation: (any HybridSegmentationResultSpec)?, classifications: [Classification]?) {
+  init(segmentation: (any HybridSegmentationResultSpec)?, classifications: [Classification]?, text: (any HybridTextRecognitionResultSpec)?) {
     self.init({ () -> bridge.std__optional_std__shared_ptr_HybridSegmentationResultSpec__ in
       if let __unwrappedValue = segmentation {
         return bridge.create_std__optional_std__shared_ptr_HybridSegmentationResultSpec__({ () -> bridge.std__shared_ptr_HybridSegmentationResultSpec_ in
@@ -36,6 +36,15 @@ public extension ImageAnalysisResult {
             __vector.push_back(__item)
           }
           return __vector
+        }())
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__ in
+      if let __unwrappedValue = text {
+        return bridge.create_std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__({ () -> bridge.std__shared_ptr_HybridTextRecognitionResultSpec_ in
+          let __cxxWrapped = __unwrappedValue.getCxxWrapper()
+          return __cxxWrapped.getCxxPart()
         }())
       } else {
         return .init()
@@ -65,6 +74,22 @@ public extension ImageAnalysisResult {
       if bridge.has_value_std__optional_std__vector_Classification__(self.__classifications) {
         let __unwrapped = bridge.get_std__optional_std__vector_Classification__(self.__classifications)
         return __unwrapped.map({ __item in __item })
+      } else {
+        return nil
+      }
+    }()
+  }
+  
+  @inline(__always)
+  var text: (any HybridTextRecognitionResultSpec)? {
+    return { () -> (any HybridTextRecognitionResultSpec)? in
+      if bridge.has_value_std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__(self.__text) {
+        let __unwrapped = bridge.get_std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__(self.__text)
+        return { () -> any HybridTextRecognitionResultSpec in
+          let __unsafePointer = bridge.get_std__shared_ptr_HybridTextRecognitionResultSpec_(__unwrapped)
+          let __instance = HybridTextRecognitionResultSpec_cxx.fromUnsafe(__unsafePointer)
+          return __instance.getHybridTextRecognitionResultSpec()
+        }()
       } else {
         return nil
       }

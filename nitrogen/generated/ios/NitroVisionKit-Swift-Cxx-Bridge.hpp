@@ -18,16 +18,32 @@ namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
 // Forward declaration of `HybridSegmentationResultSpec` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
+// Forward declaration of `HybridTextRecognitionResultSpec` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { class HybridTextRecognitionResultSpec; }
 // Forward declaration of `HybridVisionKitFactorySpec` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { class HybridVisionKitFactorySpec; }
 // Forward declaration of `ImageAnalysisResult` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
+// Forward declaration of `NormalizedPoint` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
+// Forward declaration of `RecognizedTextBlock` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct RecognizedTextBlock; }
+// Forward declaration of `RecognizedTextCandidate` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
+// Forward declaration of `RecognizedTextLine` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct RecognizedTextLine; }
 // Forward declaration of `Rect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `TextRecognitionLevel` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class TextRecognitionLevel; }
+// Forward declaration of `TextRecognitionOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridSegmentationResultSpec_cxx` to properly resolve imports.
 namespace NitroVisionKit { class HybridSegmentationResultSpec_cxx; }
+// Forward declaration of `HybridTextRecognitionResultSpec_cxx` to properly resolve imports.
+namespace NitroVisionKit { class HybridTextRecognitionResultSpec_cxx; }
 // Forward declaration of `HybridVisionKitFactorySpec_cxx` to properly resolve imports.
 namespace NitroVisionKit { class HybridVisionKitFactorySpec_cxx; }
 
@@ -36,9 +52,16 @@ namespace NitroVisionKit { class HybridVisionKitFactorySpec_cxx; }
 #include "Classification.hpp"
 #include "ClassificationOptions.hpp"
 #include "HybridSegmentationResultSpec.hpp"
+#include "HybridTextRecognitionResultSpec.hpp"
 #include "HybridVisionKitFactorySpec.hpp"
 #include "ImageAnalysisResult.hpp"
+#include "NormalizedPoint.hpp"
+#include "RecognizedTextBlock.hpp"
+#include "RecognizedTextCandidate.hpp"
+#include "RecognizedTextLine.hpp"
 #include "Rect.hpp"
+#include "TextRecognitionLevel.hpp"
+#include "TextRecognitionOptions.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 #include <NitroModules/Promise.hpp>
@@ -177,6 +200,21 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return Result<std::shared_ptr<Promise<std::string>>>::withError(error);
   }
   
+  // pragma MARK: std::optional<double>
+  /**
+   * Specialized version of `std::optional<double>`.
+   */
+  using std__optional_double_ = std::optional<double>;
+  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
+    return std::optional<double>(value);
+  }
+  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<std::string>
   /**
    * Specialized version of `std::optional<std::string>`.
@@ -190,6 +228,112 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   }
   inline std::string get_std__optional_std__string_(const std::optional<std::string>& optional) noexcept {
     return optional.value();
+  }
+  
+  // pragma MARK: std::vector<NormalizedPoint>
+  /**
+   * Specialized version of `std::vector<NormalizedPoint>`.
+   */
+  using std__vector_NormalizedPoint_ = std::vector<NormalizedPoint>;
+  inline std::vector<NormalizedPoint> create_std__vector_NormalizedPoint_(size_t size) noexcept {
+    std::vector<NormalizedPoint> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<NormalizedPoint>>
+  /**
+   * Specialized version of `std::optional<std::vector<NormalizedPoint>>`.
+   */
+  using std__optional_std__vector_NormalizedPoint__ = std::optional<std::vector<NormalizedPoint>>;
+  inline std::optional<std::vector<NormalizedPoint>> create_std__optional_std__vector_NormalizedPoint__(const std::vector<NormalizedPoint>& value) noexcept {
+    return std::optional<std::vector<NormalizedPoint>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_NormalizedPoint__(const std::optional<std::vector<NormalizedPoint>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<NormalizedPoint> get_std__optional_std__vector_NormalizedPoint__(const std::optional<std::vector<NormalizedPoint>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<RecognizedTextCandidate>
+  /**
+   * Specialized version of `std::vector<RecognizedTextCandidate>`.
+   */
+  using std__vector_RecognizedTextCandidate_ = std::vector<RecognizedTextCandidate>;
+  inline std::vector<RecognizedTextCandidate> create_std__vector_RecognizedTextCandidate_(size_t size) noexcept {
+    std::vector<RecognizedTextCandidate> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::optional<std::vector<RecognizedTextCandidate>>
+  /**
+   * Specialized version of `std::optional<std::vector<RecognizedTextCandidate>>`.
+   */
+  using std__optional_std__vector_RecognizedTextCandidate__ = std::optional<std::vector<RecognizedTextCandidate>>;
+  inline std::optional<std::vector<RecognizedTextCandidate>> create_std__optional_std__vector_RecognizedTextCandidate__(const std::vector<RecognizedTextCandidate>& value) noexcept {
+    return std::optional<std::vector<RecognizedTextCandidate>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_RecognizedTextCandidate__(const std::optional<std::vector<RecognizedTextCandidate>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<RecognizedTextCandidate> get_std__optional_std__vector_RecognizedTextCandidate__(const std::optional<std::vector<RecognizedTextCandidate>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::vector<RecognizedTextLine>
+  /**
+   * Specialized version of `std::vector<RecognizedTextLine>`.
+   */
+  using std__vector_RecognizedTextLine_ = std::vector<RecognizedTextLine>;
+  inline std::vector<RecognizedTextLine> create_std__vector_RecognizedTextLine_(size_t size) noexcept {
+    std::vector<RecognizedTextLine> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::vector<RecognizedTextBlock>
+  /**
+   * Specialized version of `std::vector<RecognizedTextBlock>`.
+   */
+  using std__vector_RecognizedTextBlock_ = std::vector<RecognizedTextBlock>;
+  inline std::vector<RecognizedTextBlock> create_std__vector_RecognizedTextBlock_(size_t size) noexcept {
+    std::vector<RecognizedTextBlock> vector;
+    vector.reserve(size);
+    return vector;
+  }
+  
+  // pragma MARK: std::shared_ptr<HybridTextRecognitionResultSpec>
+  /**
+   * Specialized version of `std::shared_ptr<HybridTextRecognitionResultSpec>`.
+   */
+  using std__shared_ptr_HybridTextRecognitionResultSpec_ = std::shared_ptr<HybridTextRecognitionResultSpec>;
+  std::shared_ptr<HybridTextRecognitionResultSpec> create_std__shared_ptr_HybridTextRecognitionResultSpec_(void* NON_NULL swiftUnsafePointer) noexcept;
+  void* NON_NULL get_std__shared_ptr_HybridTextRecognitionResultSpec_(std__shared_ptr_HybridTextRecognitionResultSpec_ cppType);
+  
+  // pragma MARK: std::weak_ptr<HybridTextRecognitionResultSpec>
+  using std__weak_ptr_HybridTextRecognitionResultSpec_ = std::weak_ptr<HybridTextRecognitionResultSpec>;
+  inline std__weak_ptr_HybridTextRecognitionResultSpec_ weakify_std__shared_ptr_HybridTextRecognitionResultSpec_(const std::shared_ptr<HybridTextRecognitionResultSpec>& strong) noexcept { return strong; }
+  
+  // pragma MARK: Result<RecognizedTextBlock>
+  using Result_RecognizedTextBlock_ = Result<RecognizedTextBlock>;
+  inline Result_RecognizedTextBlock_ create_Result_RecognizedTextBlock_(const RecognizedTextBlock& value) noexcept {
+    return Result<RecognizedTextBlock>::withValue(value);
+  }
+  inline Result_RecognizedTextBlock_ create_Result_RecognizedTextBlock_(const std::exception_ptr& error) noexcept {
+    return Result<RecognizedTextBlock>::withError(error);
+  }
+  
+  // pragma MARK: std::vector<std::string>
+  /**
+   * Specialized version of `std::vector<std::string>`.
+   */
+  using std__vector_std__string_ = std::vector<std::string>;
+  inline std::vector<std::string> create_std__vector_std__string_(size_t size) noexcept {
+    std::vector<std::string> vector;
+    vector.reserve(size);
+    return vector;
   }
   
   // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridSegmentationResultSpec>>>
@@ -238,21 +382,6 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return optional.has_value();
   }
   inline bool get_std__optional_bool_(const std::optional<bool>& optional) noexcept {
-    return optional.value();
-  }
-  
-  // pragma MARK: std::optional<double>
-  /**
-   * Specialized version of `std::optional<double>`.
-   */
-  using std__optional_double_ = std::optional<double>;
-  inline std::optional<double> create_std__optional_double_(const double& value) noexcept {
-    return std::optional<double>(value);
-  }
-  inline bool has_value_std__optional_double_(const std::optional<double>& optional) noexcept {
-    return optional.has_value();
-  }
-  inline double get_std__optional_double_(const std::optional<double>& optional) noexcept {
     return optional.value();
   }
   
@@ -346,6 +475,85 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return optional.value();
   }
   
+  // pragma MARK: std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>
+  /**
+   * Specialized version of `std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>`.
+   */
+  using std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec___ = std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>;
+  inline std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>> create_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec___() noexcept {
+    return Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>::create();
+  }
+  inline PromiseHolder<std::shared_ptr<HybridTextRecognitionResultSpec>> wrap_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec___(std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>> promise) noexcept {
+    return PromiseHolder<std::shared_ptr<HybridTextRecognitionResultSpec>>(std::move(promise));
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& /* result */)>
+  /**
+   * Specialized version of `std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>&)>`.
+   */
+  using Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_ = std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& /* result */)>;
+  /**
+   * Wrapper class for a `std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& / * result * /)>`, this can be used from Swift.
+   */
+  class Func_void_std__shared_ptr_HybridTextRecognitionResultSpec__Wrapper final {
+  public:
+    explicit Func_void_std__shared_ptr_HybridTextRecognitionResultSpec__Wrapper(std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& /* result */)>&& func): _function(std::make_unique<std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& /* result */)>>(std::move(func))) {}
+    inline void call(std::shared_ptr<HybridTextRecognitionResultSpec> result) const noexcept {
+      _function->operator()(result);
+    }
+  private:
+    std::unique_ptr<std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& /* result */)>> _function;
+  } SWIFT_NONCOPYABLE;
+  Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_ create_Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_(void* NON_NULL swiftClosureWrapper) noexcept;
+  inline Func_void_std__shared_ptr_HybridTextRecognitionResultSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_(Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_ value) noexcept {
+    return Func_void_std__shared_ptr_HybridTextRecognitionResultSpec__Wrapper(std::move(value));
+  }
+  
+  // pragma MARK: std::optional<std::vector<std::string>>
+  /**
+   * Specialized version of `std::optional<std::vector<std::string>>`.
+   */
+  using std__optional_std__vector_std__string__ = std::optional<std::vector<std::string>>;
+  inline std::optional<std::vector<std::string>> create_std__optional_std__vector_std__string__(const std::vector<std::string>& value) noexcept {
+    return std::optional<std::vector<std::string>>(value);
+  }
+  inline bool has_value_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::vector<std::string> get_std__optional_std__vector_std__string__(const std::optional<std::vector<std::string>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextRecognitionLevel>
+  /**
+   * Specialized version of `std::optional<TextRecognitionLevel>`.
+   */
+  using std__optional_TextRecognitionLevel_ = std::optional<TextRecognitionLevel>;
+  inline std::optional<TextRecognitionLevel> create_std__optional_TextRecognitionLevel_(const TextRecognitionLevel& value) noexcept {
+    return std::optional<TextRecognitionLevel>(value);
+  }
+  inline bool has_value_std__optional_TextRecognitionLevel_(const std::optional<TextRecognitionLevel>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextRecognitionLevel get_std__optional_TextRecognitionLevel_(const std::optional<TextRecognitionLevel>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<TextRecognitionOptions>
+  /**
+   * Specialized version of `std::optional<TextRecognitionOptions>`.
+   */
+  using std__optional_TextRecognitionOptions_ = std::optional<TextRecognitionOptions>;
+  inline std::optional<TextRecognitionOptions> create_std__optional_TextRecognitionOptions_(const TextRecognitionOptions& value) noexcept {
+    return std::optional<TextRecognitionOptions>(value);
+  }
+  inline bool has_value_std__optional_TextRecognitionOptions_(const std::optional<TextRecognitionOptions>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline TextRecognitionOptions get_std__optional_TextRecognitionOptions_(const std::optional<TextRecognitionOptions>& optional) noexcept {
+    return optional.value();
+  }
+  
   // pragma MARK: std::optional<std::shared_ptr<HybridSegmentationResultSpec>>
   /**
    * Specialized version of `std::optional<std::shared_ptr<HybridSegmentationResultSpec>>`.
@@ -373,6 +581,21 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return optional.has_value();
   }
   inline std::vector<Classification> get_std__optional_std__vector_Classification__(const std::optional<std::vector<Classification>>& optional) noexcept {
+    return optional.value();
+  }
+  
+  // pragma MARK: std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>>
+  /**
+   * Specialized version of `std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>>`.
+   */
+  using std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__ = std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>>;
+  inline std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>> create_std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__(const std::shared_ptr<HybridTextRecognitionResultSpec>& value) noexcept {
+    return std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>>(value);
+  }
+  inline bool has_value_std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__(const std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>>& optional) noexcept {
+    return optional.has_value();
+  }
+  inline std::shared_ptr<HybridTextRecognitionResultSpec> get_std__optional_std__shared_ptr_HybridTextRecognitionResultSpec__(const std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>>& optional) noexcept {
     return optional.value();
   }
   
@@ -438,6 +661,15 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   }
   inline Result_std__shared_ptr_Promise_std__vector_Classification____ create_Result_std__shared_ptr_Promise_std__vector_Classification____(const std::exception_ptr& error) noexcept {
     return Result<std::shared_ptr<Promise<std::vector<Classification>>>>::withError(error);
+  }
+  
+  // pragma MARK: Result<std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>>
+  using Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____ = Result<std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>>;
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____(const std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>& value) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>>::withValue(value);
+  }
+  inline Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____ create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____(const std::exception_ptr& error) noexcept {
+    return Result<std::shared_ptr<Promise<std::shared_ptr<HybridTextRecognitionResultSpec>>>>::withError(error);
   }
   
   // pragma MARK: Result<std::shared_ptr<Promise<ImageAnalysisResult>>>

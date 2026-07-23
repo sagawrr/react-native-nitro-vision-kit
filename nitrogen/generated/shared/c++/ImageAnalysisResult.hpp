@@ -32,12 +32,15 @@
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
 // Forward declaration of `Classification` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
+// Forward declaration of `HybridTextRecognitionResultSpec` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { class HybridTextRecognitionResultSpec; }
 
 #include <memory>
 #include "HybridSegmentationResultSpec.hpp"
 #include <optional>
 #include "Classification.hpp"
 #include <vector>
+#include "HybridTextRecognitionResultSpec.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -48,10 +51,11 @@ namespace margelo::nitro::nitrovisionkit {
   public:
     std::optional<std::shared_ptr<HybridSegmentationResultSpec>> segmentation     SWIFT_PRIVATE;
     std::optional<std::vector<Classification>> classifications     SWIFT_PRIVATE;
+    std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>> text     SWIFT_PRIVATE;
 
   public:
     ImageAnalysisResult() = default;
-    explicit ImageAnalysisResult(std::optional<std::shared_ptr<HybridSegmentationResultSpec>> segmentation, std::optional<std::vector<Classification>> classifications): segmentation(segmentation), classifications(classifications) {}
+    explicit ImageAnalysisResult(std::optional<std::shared_ptr<HybridSegmentationResultSpec>> segmentation, std::optional<std::vector<Classification>> classifications, std::optional<std::shared_ptr<HybridTextRecognitionResultSpec>> text): segmentation(segmentation), classifications(classifications), text(text) {}
 
   public:
     friend bool operator==(const ImageAnalysisResult& lhs, const ImageAnalysisResult& rhs) = default;
@@ -68,13 +72,15 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrovisionkit::ImageAnalysisResult(
         JSIConverter<std::optional<std::shared_ptr<margelo::nitro::nitrovisionkit::HybridSegmentationResultSpec>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "segmentation"))),
-        JSIConverter<std::optional<std::vector<margelo::nitro::nitrovisionkit::Classification>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "classifications")))
+        JSIConverter<std::optional<std::vector<margelo::nitro::nitrovisionkit::Classification>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "classifications"))),
+        JSIConverter<std::optional<std::shared_ptr<margelo::nitro::nitrovisionkit::HybridTextRecognitionResultSpec>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrovisionkit::ImageAnalysisResult& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "segmentation"), JSIConverter<std::optional<std::shared_ptr<margelo::nitro::nitrovisionkit::HybridSegmentationResultSpec>>>::toJSI(runtime, arg.segmentation));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "classifications"), JSIConverter<std::optional<std::vector<margelo::nitro::nitrovisionkit::Classification>>>::toJSI(runtime, arg.classifications));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "text"), JSIConverter<std::optional<std::shared_ptr<margelo::nitro::nitrovisionkit::HybridTextRecognitionResultSpec>>>::toJSI(runtime, arg.text));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -87,6 +93,7 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::optional<std::shared_ptr<margelo::nitro::nitrovisionkit::HybridSegmentationResultSpec>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "segmentation")))) return false;
       if (!JSIConverter<std::optional<std::vector<margelo::nitro::nitrovisionkit::Classification>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "classifications")))) return false;
+      if (!JSIConverter<std::optional<std::shared_ptr<margelo::nitro::nitrovisionkit::HybridTextRecognitionResultSpec>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text")))) return false;
       return true;
     }
   };

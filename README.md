@@ -18,82 +18,121 @@
 
 ---
 
+## What it does
+
+| Verb | Method | Output |
+| --- | --- | --- |
+| **Lift** | `removeBackground` | Transparent subject cutout + bounds |
+| **Read** | `classifyImage` | Labels with confidence |
+| **Text** | `readText` | On-device OCR (blocks / lines) |
+| **Compose** | `analyzeImage` | One decode → any mix of the three |
+
+All on-device. Local path or `file://` only (cache remotes first). Orientation handled for you.
+
+| | Lift | Read | Text |
+| --- | --- | --- | --- |
+| **iOS** | 17+ device (not Simulator) | 13+ | **18+** `RecognizeTextRequest` |
+| **Android** | API 24+ · Play services | ML Kit | ML Kit Latin · Play services |
+
+---
+
 <table>
   <tr>
     <td width="42%" align="center" valign="top">
-      <img src="assets/demo.gif" alt="Playground: Lift subject, see the cutout, read labels, keep to Photos" width="260" />
+      <img src="assets/demo.gif" alt="Playground: Lift, Read, Text, All" width="260" />
     </td>
     <td valign="middle">
-      <p><strong>The playground in motion</strong></p>
+      <p><strong>Playground</strong></p>
       <p>
-        <code>Lift</code> frees the subject from its background.<br />
-        <code>Read</code> names what’s in the frame.<br />
-        <code>Both</code> does it in one pass — then <strong>Keep</strong> saves the cutout.
+        <code>Lift</code> · <code>Read</code> · <code>Text</code> · <code>All</code><br />
+        then <strong>Keep</strong> saves the cutout.
       </p>
-      <p>
-        All on-device. Orientation handled for you.<br />
-        Run it yourself in <a href="./example"><code>example/</code></a>.
-      </p>
+      <p><a href="./example"><code>example/</code></a></p>
     </td>
   </tr>
 </table>
 
 ---
 
-## Install
+## 1. Install
 
 ```bash
 npm install react-native-nitro-vision-kit react-native-nitro-modules
 cd ios && pod install
 ```
 
-## Quick start
-
-Pass a **local** path or `file://` URI (cache remote images first).
+## 2. Check capabilities
 
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
 
-const { segmentation, classifications } = await VisionKit.analyzeImage(path, {
-  removeBackground: { trim: true },
-  classify: { maxResults: 5, minConfidence: 0.5 },
-})
-
-const png = await segmentation?.saveToTemporaryFile('png', 100)
-segmentation?.dispose()
+const {
+  supportsBackgroundRemoval,
+  backgroundRemovalUnavailableReason,
+  supportsImageClassification,
+  supportsTextRecognition,
+  supportedTextLanguages,
+} = VisionKit.capabilities
 ```
 
-Or call them apart:
+| Flag | Gate |
+| --- | --- |
+| `supportsBackgroundRemoval` | Lift — false on Simulator / missing Play services |
+| `supportsImageClassification` | Read — usually true |
+| `supportsTextRecognition` | Text — iOS 18+ or Android Play services |
+| `supportedTextLanguages` | BCP-47 tags for OCR (empty if Text off) |
+
+## 3. Call what you need
+
+### Lift
 
 ```ts
 const cutout = await VisionKit.removeBackground(path, { trim: true })
-const labels = await VisionKit.classifyImage(path, { maxResults: 5 })
-
-await cutout.saveToTemporaryFile('png', 100)
-cutout.dispose()
+const png = await cutout.saveToTemporaryFile('png', 100)
+cutout.dispose() // always
 ```
 
-> Always `dispose()` a segmentation result when you’re done with it.
-
-## API
-
-Three verbs. Same kit.
-
-| | Method | What it does |
-| --- | --- | --- |
-| **Lift** | `removeBackground` | Transparent subject cutout |
-| **Read** | `classifyImage` | Labels with confidence |
-| **Both** | `analyzeImage` | One decode — segment and/or classify |
+### Read
 
 ```ts
-const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
-  VisionKit.capabilities
+const labels = await VisionKit.classifyImage(path, {
+  maxResults: 5,
+  minConfidence: 0.5,
+})
+// [{ label, confidence }, ...]
 ```
 
-| Platform | Segment | Classify |
-| --- | --- | --- |
-| iOS | 17.0+ | 13.0+ |
-| Android | API 24+ · ML Kit + Play services | ML Kit |
+### Text
+
+```ts
+if (!VisionKit.capabilities.supportsTextRecognition) return
+
+const ocr = await VisionKit.readText(path)
+console.log(ocr.text)
+ocr.dispose() // prefer for large docs
+```
+
+### Compose (one decode)
+
+```ts
+const { segmentation, classifications, text } = await VisionKit.analyzeImage(path, {
+  removeBackground: { trim: true },
+  classify: { maxResults: 5, minConfidence: 0.5 },
+  readText: {},
+})
+
+await segmentation?.saveToTemporaryFile('png', 100)
+segmentation?.dispose()
+text?.dispose()
+```
+
+Pass at least one of `removeBackground` / `classify` / `readText`.
+
+No subject found → `segmentation` omitted; Read/Text still run when requested.
+
+When Lift + Read/Text run and you omit `region`, Read/Text use `segmentation.bounds`.
+
+---
 
 ## Options
 
@@ -102,7 +141,7 @@ const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
 
 | Option | Default | |
 | --- | --- | --- |
-| `trim` | `true` | Crop to the subject |
+| `trim` | `true` | Crop to subject |
 | `maxPixels` | `6_000_000` | Decode cap (`width × height`) |
 | `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
 
@@ -117,21 +156,60 @@ const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
 | `minConfidence` | `0.5` | Minimum score |
 | `region` | full image | Normalized ROI (`0–1`) |
 
-When `analyzeImage` runs both and you omit `region`, classification uses the subject bounds.
+</details>
+
+<details>
+<summary><strong>readText</strong> / <code>analyzeImage.readText</code></summary>
+
+| Option | Default | Who |
+| --- | --- | --- |
+| `languages` | platform default | iOS BCP-47 · Android ignores (Latin) |
+| `recognitionLevel` | `accurate` | iOS only (`accurate` \| `fast`) |
+| `region` | full image | Both |
+| `minTextHeightFraction` | unset | Both |
+| `usesLanguageCorrection` | `true` | iOS only |
+| `customWords` | unset | iOS only (needs correction) |
+| `maxCandidates` | `1` | iOS only (`1–10`) |
+
+Decode cap: **4M pixels**. Android longest edge also capped at **2048**.
 
 </details>
 
-## Segmentation result
+---
+
+## Results
+
+### Segmentation (`removeBackground` / `analyzeImage.segmentation`)
 
 | | |
 | --- | --- |
-| `saveToTemporaryFile(format, quality)` | Write a PNG or JPEG |
-| `toArrayBuffer()` | Premultiplied RGBA bytes |
-| `toMaskBuffer()` | Float32 mask (needs `retainMask`) |
+| `saveToTemporaryFile(format, quality)` | Write PNG or JPEG |
+| `toArrayBuffer()` | Premultiplied RGBA |
+| `toMaskBuffer()` | Float32 mask (`retainMask: true`) |
 | `dispose()` | Free native memory |
 | `width` / `height` | Output size |
-| `bounds` | Subject box, normalized `0–1` |
-| `foregroundCoverage` | Foreground pixel ratio |
+| `bounds` / `pixelBounds` | Subject box |
+| `foregroundCoverage` / `centroid` / `instanceCount` | Mask stats |
+| `sourceWidth` / `sourceHeight` / `trimOrigin` | Source mapping |
+
+### Classification (`classifyImage` / `analyzeImage.classifications`)
+
+Array of `{ label: string, confidence: number }`, sorted high → low.
+
+### Text (`readText` / `analyzeImage.text`)
+
+| | |
+| --- | --- |
+| `text` | Full string (blocks joined by newlines) |
+| `blockAt(i)` | One block (preferred) |
+| `blocks` | All blocks (copies into JS) |
+| `dispose()` | Free native memory early |
+
+Prefer `text` / `blockAt` over `blocks` for large docs.
+
+Android blocks can hold many lines. iOS maps each observation to a one-line block. Optional line fields: `confidence`, `language` (ML Kit / iOS 26+), `angleDegrees` (Android), `cornerPoints`, `candidates` (iOS when `maxCandidates` > 1).
+
+---
 
 ## Playground
 
@@ -142,7 +220,7 @@ cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios   # or: npm run android
 ```
 
-Pick a photo → **Lift**, **Read**, or **Both** → **Keep** to Photos.
+Photo → **Lift** / **Read** / **Text** / **All** → **Keep**.
 
 ## License
 

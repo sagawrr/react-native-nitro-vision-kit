@@ -1,7 +1,7 @@
 {
   "name": "react-native-nitro-vision-kit",
   "version": "0.2.2",
-  "description": "Subject segmentation and image classification for React Native. Vision on iOS, ML Kit on Android. Built with Nitro Modules.",
+  "description": "Subject segmentation, image classification, and on-device OCR for React Native. Vision on iOS, ML Kit on Android. Built with Nitro Modules.",
   "main": "lib/index",
   "module": "lib/index",
   "types": "lib/index.d.ts",
@@ -47,6 +47,8 @@
     "background-removal",
     "image-classification",
     "subject-segmentation",
+    "ocr",
+    "text-recognition",
     "mlkit",
     "ios",
     "android"
@@ -81,7 +83,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.75.0",
-    "react-native-nitro-modules": "^0.35.10"
+    "react-native-nitro-modules": "^0.36.1"
   },
   "codegenConfig": {
     "name": "NitroVisionKitSpec",

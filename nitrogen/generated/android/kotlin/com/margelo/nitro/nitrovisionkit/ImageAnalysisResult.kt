@@ -23,7 +23,10 @@ data class ImageAnalysisResult(
   val segmentation: HybridSegmentationResultSpec?,
   @DoNotStrip
   @Keep
-  val classifications: Array<Classification>?
+  val classifications: Array<Classification>?,
+  @DoNotStrip
+  @Keep
+  val text: HybridTextRecognitionResultSpec?
 ) {
   /* primary constructor */
 
@@ -32,12 +35,14 @@ data class ImageAnalysisResult(
     if (other !is ImageAnalysisResult) return false
     return Objects.deepEquals(this.segmentation, other.segmentation)
       && Objects.deepEquals(this.classifications, other.classifications)
+      && Objects.deepEquals(this.text, other.text)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
       segmentation,
-      classifications
+      classifications,
+      text
     ).contentDeepHashCode()
   }
 
@@ -49,8 +54,8 @@ data class ImageAnalysisResult(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(segmentation: HybridSegmentationResultSpec?, classifications: Array<Classification>?): ImageAnalysisResult {
-      return ImageAnalysisResult(segmentation, classifications)
+    private fun fromCpp(segmentation: HybridSegmentationResultSpec?, classifications: Array<Classification>?, text: HybridTextRecognitionResultSpec?): ImageAnalysisResult {
+      return ImageAnalysisResult(segmentation, classifications, text)
     }
   }
 }

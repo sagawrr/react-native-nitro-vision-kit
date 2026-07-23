@@ -177,6 +177,28 @@ open class HybridVisionKitFactorySpec_cxx {
   }
   
   @inline(__always)
+  public final func readText(path: std.string, options: bridge.std__optional_TextRecognitionOptions_) -> bridge.Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____ {
+    do {
+      let __result = try self.__implementation.readText(path: String(path), options: options.value)
+      let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec___ in
+        let __promise = bridge.create_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec___()
+        let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec___(__promise)
+        __result
+          .then({ __result in __promiseHolder.resolve({ () -> bridge.std__shared_ptr_HybridTextRecognitionResultSpec_ in
+              let __cxxWrapped = __result.getCxxWrapper()
+              return __cxxWrapped.getCxxPart()
+            }()) })
+          .catch({ __error in __promiseHolder.reject(__error.toCpp()) })
+        return __promise
+      }()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____(__resultCpp)
+    } catch (let __error) {
+      let __exceptionPtr = __error.toCpp()
+      return bridge.create_Result_std__shared_ptr_Promise_std__shared_ptr_HybridTextRecognitionResultSpec____(__exceptionPtr)
+    }
+  }
+  
+  @inline(__always)
   public final func analyzeImage(path: std.string, options: AnalyzeImageOptions) -> bridge.Result_std__shared_ptr_Promise_ImageAnalysisResult___ {
     do {
       let __result = try self.__implementation.analyzeImage(path: String(path), options: options)

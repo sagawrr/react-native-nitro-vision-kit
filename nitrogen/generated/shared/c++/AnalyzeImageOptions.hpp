@@ -32,10 +32,13 @@
 namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
+// Forward declaration of `TextRecognitionOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
 
 #include "BackgroundRemovalOptions.hpp"
 #include <optional>
 #include "ClassificationOptions.hpp"
+#include "TextRecognitionOptions.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -46,10 +49,11 @@ namespace margelo::nitro::nitrovisionkit {
   public:
     std::optional<BackgroundRemovalOptions> removeBackground     SWIFT_PRIVATE;
     std::optional<ClassificationOptions> classify     SWIFT_PRIVATE;
+    std::optional<TextRecognitionOptions> readText     SWIFT_PRIVATE;
 
   public:
     AnalyzeImageOptions() = default;
-    explicit AnalyzeImageOptions(std::optional<BackgroundRemovalOptions> removeBackground, std::optional<ClassificationOptions> classify): removeBackground(removeBackground), classify(classify) {}
+    explicit AnalyzeImageOptions(std::optional<BackgroundRemovalOptions> removeBackground, std::optional<ClassificationOptions> classify, std::optional<TextRecognitionOptions> readText): removeBackground(removeBackground), classify(classify), readText(readText) {}
 
   public:
     friend bool operator==(const AnalyzeImageOptions& lhs, const AnalyzeImageOptions& rhs) = default;
@@ -66,13 +70,15 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrovisionkit::AnalyzeImageOptions(
         JSIConverter<std::optional<margelo::nitro::nitrovisionkit::BackgroundRemovalOptions>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "removeBackground"))),
-        JSIConverter<std::optional<margelo::nitro::nitrovisionkit::ClassificationOptions>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "classify")))
+        JSIConverter<std::optional<margelo::nitro::nitrovisionkit::ClassificationOptions>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "classify"))),
+        JSIConverter<std::optional<margelo::nitro::nitrovisionkit::TextRecognitionOptions>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "readText")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrovisionkit::AnalyzeImageOptions& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "removeBackground"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::BackgroundRemovalOptions>>::toJSI(runtime, arg.removeBackground));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "classify"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::ClassificationOptions>>::toJSI(runtime, arg.classify));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "readText"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::TextRecognitionOptions>>::toJSI(runtime, arg.readText));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -85,6 +91,7 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::BackgroundRemovalOptions>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "removeBackground")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::ClassificationOptions>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "classify")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::TextRecognitionOptions>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "readText")))) return false;
       return true;
     }
   };

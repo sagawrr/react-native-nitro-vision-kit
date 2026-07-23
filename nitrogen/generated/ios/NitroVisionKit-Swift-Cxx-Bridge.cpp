@@ -9,6 +9,7 @@
 
 // Include C++ implementation defined types
 #include "HybridSegmentationResultSpecSwift.hpp"
+#include "HybridTextRecognitionResultSpecSwift.hpp"
 #include "HybridVisionKitFactorySpecSwift.hpp"
 #include "NitroVisionKit-Swift-Cxx-Umbrella.hpp"
 #include <NitroModules/NitroDefines.hpp>
@@ -55,6 +56,22 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return swiftPart.toUnsafe();
   }
   
+  // pragma MARK: std::shared_ptr<HybridTextRecognitionResultSpec>
+  std::shared_ptr<HybridTextRecognitionResultSpec> create_std__shared_ptr_HybridTextRecognitionResultSpec_(void* NON_NULL swiftUnsafePointer) noexcept {
+    NitroVisionKit::HybridTextRecognitionResultSpec_cxx swiftPart = NitroVisionKit::HybridTextRecognitionResultSpec_cxx::fromUnsafe(swiftUnsafePointer);
+    return std::make_shared<margelo::nitro::nitrovisionkit::HybridTextRecognitionResultSpecSwift>(swiftPart);
+  }
+  void* NON_NULL get_std__shared_ptr_HybridTextRecognitionResultSpec_(std__shared_ptr_HybridTextRecognitionResultSpec_ cppType) {
+    std::shared_ptr<margelo::nitro::nitrovisionkit::HybridTextRecognitionResultSpecSwift> swiftWrapper = std::dynamic_pointer_cast<margelo::nitro::nitrovisionkit::HybridTextRecognitionResultSpecSwift>(cppType);
+    #ifdef NITRO_DEBUG
+    if (swiftWrapper == nullptr) [[unlikely]] {
+      throw std::runtime_error("Class \"HybridTextRecognitionResultSpec\" is not implemented in Swift!");
+    }
+    #endif
+    NitroVisionKit::HybridTextRecognitionResultSpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+    return swiftPart.toUnsafe();
+  }
+  
   // pragma MARK: std::function<void(const std::shared_ptr<HybridSegmentationResultSpec>& /* result */)>
   Func_void_std__shared_ptr_HybridSegmentationResultSpec_ create_Func_void_std__shared_ptr_HybridSegmentationResultSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroVisionKit::Func_void_std__shared_ptr_HybridSegmentationResultSpec_::fromUnsafe(swiftClosureWrapper);
@@ -67,6 +84,14 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
   Func_void_std__vector_Classification_ create_Func_void_std__vector_Classification_(void* NON_NULL swiftClosureWrapper) noexcept {
     auto swiftClosure = NitroVisionKit::Func_void_std__vector_Classification_::fromUnsafe(swiftClosureWrapper);
     return [swiftClosure = std::move(swiftClosure)](const std::vector<Classification>& result) mutable -> void {
+      swiftClosure.call(result);
+    };
+  }
+  
+  // pragma MARK: std::function<void(const std::shared_ptr<HybridTextRecognitionResultSpec>& /* result */)>
+  Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_ create_Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
+    auto swiftClosure = NitroVisionKit::Func_void_std__shared_ptr_HybridTextRecognitionResultSpec_::fromUnsafe(swiftClosureWrapper);
+    return [swiftClosure = std::move(swiftClosure)](const std::shared_ptr<HybridTextRecognitionResultSpec>& result) mutable -> void {
       swiftClosure.call(result);
     };
   }

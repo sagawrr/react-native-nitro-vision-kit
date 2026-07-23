@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+* On-device OCR: `readText` + `analyzeImage.readText`
+* iOS 18+: Vision `RecognizeTextRequest` only (no legacy `VNRecognizeTextRequest`)
+* Android: ML Kit Latin + Play services gate
+* Capabilities: `supportsTextRecognition`, `supportedTextLanguages`
+
 ## [0.2.2](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.2.1...v0.2.2) (2026-07-12)
 
 Photos and cutouts stay upright.

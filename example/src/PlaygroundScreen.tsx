@@ -40,7 +40,7 @@ type ExportStatus =
 export function PlaygroundScreen() {
   const insets = useSafeAreaInsets()
   const { height } = useWindowDimensions()
-  const { canSegment, canClassify, error: capError } = useCapabilities()
+  const { canSegment, canClassify, canOcr, error: capError } = useCapabilities()
   const {
     run,
     loading,
@@ -74,7 +74,13 @@ export function PlaygroundScreen() {
   const alreadySaved =
     exportStatus.kind === 'saved' && exportStatus.forUri === cutoutUri
   const runStatus =
-    mode === 'classify' ? 'Reading…' : mode === 'analyze' ? 'Working…' : 'Lifting…'
+    mode === 'classify'
+      ? 'Reading…'
+      : mode === 'ocr'
+        ? 'Scanning…'
+        : mode === 'analyze'
+          ? 'Working…'
+          : 'Lifting…'
   const stageHeight = Math.min(Math.round(height * 0.46), 400)
 
   useEffect(() => {
@@ -86,10 +92,10 @@ export function PlaygroundScreen() {
   }, [runError])
 
   useEffect(() => {
-    if (!modeAvailable(mode, canSegment, canClassify)) {
-      setModeState(firstAvailableMode(canSegment, canClassify))
+    if (!modeAvailable(mode, canSegment, canClassify, canOcr)) {
+      setModeState(firstAvailableMode(canSegment, canClassify, canOcr))
     }
-  }, [canClassify, canSegment, mode])
+  }, [canClassify, canOcr, canSegment, mode])
 
   useEffect(() => {
     if (!cutoutUri) {
@@ -147,6 +153,7 @@ export function PlaygroundScreen() {
       cacheKey: asset.fileName ?? sampleId,
       canSegment,
       canClassify,
+      canOcr,
     })
     if (next?.cutoutUri) setStageView('result')
   }
@@ -267,6 +274,7 @@ export function PlaygroundScreen() {
           onSelect={setMode}
           canSegment={canSegment}
           canClassify={canClassify}
+          canOcr={canOcr}
           disabled={busy}
         />
 

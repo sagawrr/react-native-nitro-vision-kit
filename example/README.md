@@ -1,10 +1,8 @@
 # Example
 
-Demo app for [react-native-nitro-vision-kit](../).
+Demo for [react-native-nitro-vision-kit](../).
 
-Pick a photo, then **Lift**, **Read**, or **Both**. **Keep** saves a cutout to your library.
-
-## Setup
+## Run
 
 ```bash
 cd example
@@ -13,8 +11,16 @@ cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios      # or: npm run android
 ```
 
-The example uses npm. The library at the repo root uses Bun.
+Root library uses Bun. This app uses npm.
+
+## Use
+
+1. Pick a photo
+2. Tap **Lift**, **Read**, **Text**, or **All**
+3. Tap **Keep** to save a cutout to Photos
+
+OCR needs iOS 18+ or Android Play services (`supportsTextRecognition`).
 
 ### iOS device
 
-Select your **Team** under Signing & Capabilities in Xcode. The project already uses Automatic signing and a UIScene lifecycle (required on iOS 26+ SDKs).
+Set your **Team** under Signing & Capabilities in Xcode (Automatic signing is already on).

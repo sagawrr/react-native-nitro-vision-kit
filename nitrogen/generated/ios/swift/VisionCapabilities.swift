@@ -18,14 +18,20 @@ public extension VisionCapabilities {
   /**
    * Create a new instance of `VisionCapabilities`.
    */
-  init(supportsBackgroundRemoval: Bool, backgroundRemovalUnavailableReason: String?, supportsImageClassification: Bool) {
+  init(supportsBackgroundRemoval: Bool, backgroundRemovalUnavailableReason: String?, supportsImageClassification: Bool, supportsTextRecognition: Bool, supportedTextLanguages: [String]) {
     self.init(supportsBackgroundRemoval, { () -> bridge.std__optional_std__string_ in
       if let __unwrappedValue = backgroundRemovalUnavailableReason {
         return bridge.create_std__optional_std__string_(std.string(__unwrappedValue))
       } else {
         return .init()
       }
-    }(), supportsImageClassification)
+    }(), supportsImageClassification, supportsTextRecognition, { () -> bridge.std__vector_std__string_ in
+      var __vector = bridge.create_std__vector_std__string_(supportedTextLanguages.count)
+      for __item in supportedTextLanguages {
+        __vector.push_back(std.string(__item))
+      }
+      return __vector
+    }())
   }
 
   @inline(__always)
@@ -48,5 +54,15 @@ public extension VisionCapabilities {
   @inline(__always)
   var supportsImageClassification: Bool {
     return self.__supportsImageClassification
+  }
+  
+  @inline(__always)
+  var supportsTextRecognition: Bool {
+    return self.__supportsTextRecognition
+  }
+  
+  @inline(__always)
+  var supportedTextLanguages: [String] {
+    return self.__supportedTextLanguages.map({ __item in String(__item) })
   }
 }

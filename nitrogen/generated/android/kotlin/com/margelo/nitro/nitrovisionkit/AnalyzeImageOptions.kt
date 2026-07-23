@@ -23,7 +23,10 @@ data class AnalyzeImageOptions(
   val removeBackground: BackgroundRemovalOptions?,
   @DoNotStrip
   @Keep
-  val classify: ClassificationOptions?
+  val classify: ClassificationOptions?,
+  @DoNotStrip
+  @Keep
+  val readText: TextRecognitionOptions?
 ) {
   /* primary constructor */
 
@@ -32,12 +35,14 @@ data class AnalyzeImageOptions(
     if (other !is AnalyzeImageOptions) return false
     return Objects.deepEquals(this.removeBackground, other.removeBackground)
       && Objects.deepEquals(this.classify, other.classify)
+      && Objects.deepEquals(this.readText, other.readText)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
       removeBackground,
-      classify
+      classify,
+      readText
     ).contentDeepHashCode()
   }
 
@@ -49,8 +54,8 @@ data class AnalyzeImageOptions(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(removeBackground: BackgroundRemovalOptions?, classify: ClassificationOptions?): AnalyzeImageOptions {
-      return AnalyzeImageOptions(removeBackground, classify)
+    private fun fromCpp(removeBackground: BackgroundRemovalOptions?, classify: ClassificationOptions?, readText: TextRecognitionOptions?): AnalyzeImageOptions {
+      return AnalyzeImageOptions(removeBackground, classify, readText)
     }
   }
 }

@@ -1,6 +1,6 @@
 import type { Classification } from 'react-native-nitro-vision-kit'
 
-export type Mode = 'cutout' | 'classify' | 'analyze'
+export type Mode = 'cutout' | 'classify' | 'ocr' | 'analyze'
 
 export type StageView = 'original' | 'result'
 
@@ -14,6 +14,8 @@ export type RunResult = {
   originalUri: string
   cutoutUri: string | null
   classifications: Classification[]
+  /** Full OCR string when scanned. */
+  ocrText: string | null
   meta: SegmentationMeta | null
 }
 
@@ -37,17 +39,24 @@ export const MODE_INFO: Record<Mode, ModeInfo> = {
     purpose: 'Name what’s in the frame.',
     runLabel: 'Read photo',
   },
+  ocr: {
+    id: 'ocr',
+    label: 'Text',
+    purpose: 'Pull words from the photo.',
+    runLabel: 'Scan text',
+  },
   analyze: {
     id: 'analyze',
-    label: 'Both',
-    purpose: 'Lift and read in one pass.',
-    runLabel: 'Lift & read',
+    label: 'All',
+    purpose: 'Lift, read, and scan in one pass.',
+    runLabel: 'Run all',
   },
 }
 
 export const MODES: ModeInfo[] = [
   MODE_INFO.cutout,
   MODE_INFO.classify,
+  MODE_INFO.ocr,
   MODE_INFO.analyze,
 ]
 
@@ -62,18 +71,32 @@ export function modeAvailable(
   mode: Mode,
   canSegment: boolean,
   canClassify: boolean,
+  canOcr: boolean,
 ): boolean {
-  if (mode === 'cutout') return canSegment
-  if (mode === 'classify') return canClassify
-  return canSegment && canClassify
+  switch (mode) {
+    case 'cutout':
+      return canSegment
+    case 'classify':
+      return canClassify
+    case 'ocr':
+      return canOcr
+    case 'analyze':
+      return canSegment && canClassify && canOcr
+    default: {
+      const _exhaustive: never = mode
+      void _exhaustive
+      return false
+    }
+  }
 }
 
 export function firstAvailableMode(
   canSegment: boolean,
   canClassify: boolean,
+  canOcr: boolean,
 ): Mode {
   for (const mode of MODES) {
-    if (modeAvailable(mode.id, canSegment, canClassify)) {
+    if (modeAvailable(mode.id, canSegment, canClassify, canOcr)) {
       return mode.id
     }
   }

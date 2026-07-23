@@ -3,6 +3,7 @@ import { useRef, useState } from 'react'
 import {
   VisionKit,
   type SegmentationResult,
+  type TextRecognitionResult,
 } from 'react-native-nitro-vision-kit'
 import { RUN_DEFAULTS, type Mode, type RunResult } from '../types'
 import { ensureLocalImagePath } from '../utils/ensureLocalImagePath'
@@ -33,6 +34,7 @@ type RunParams = {
   cacheKey?: string | null
   canSegment: boolean
   canClassify: boolean
+  canOcr: boolean
 }
 
 export function useVisionRun() {
@@ -74,7 +76,7 @@ export function useVisionRun() {
   }
 
   async function run(params: RunParams): Promise<RunResult | null> {
-    const { mode, photoUri, cacheKey, canSegment, canClassify } = params
+    const { mode, photoUri, cacheKey, canSegment, canClassify, canOcr } = params
     gen.current += 1
     const myGen = gen.current
     await dropTemp()
@@ -82,6 +84,7 @@ export function useVisionRun() {
     setError(null)
 
     let segmentation: SegmentationResult | null = null
+    let textResult: TextRecognitionResult | null = null
 
     try {
       const localPath = await ensureLocalImagePath(
@@ -104,6 +107,7 @@ export function useVisionRun() {
           originalUri,
           cutoutUri,
           classifications: [],
+          ocrText: null,
           meta: {
             sourceWidth: segmentation.sourceWidth,
             sourceHeight: segmentation.sourceHeight,
@@ -127,6 +131,23 @@ export function useVisionRun() {
           originalUri,
           cutoutUri: null,
           classifications,
+          ocrText: null,
+          meta: null,
+        }
+        setResult(next)
+        return next
+      }
+
+      if (mode === 'ocr') {
+        if (!canOcr) throw new Error('Text scan is not available on this device.')
+        textResult = await VisionKit.readText(localPath)
+        if (gen.current !== myGen) return null
+        const next: RunResult = {
+          mode,
+          originalUri,
+          cutoutUri: null,
+          classifications: [],
+          ocrText: textResult.text.trim().length > 0 ? textResult.text : null,
           meta: null,
         }
         setResult(next)
@@ -134,8 +155,8 @@ export function useVisionRun() {
       }
 
       if (mode === 'analyze') {
-        if (!canSegment || !canClassify) {
-          throw new Error('Lift & read is not available on this device.')
+        if (!canSegment || !canClassify || !canOcr) {
+          throw new Error('Run all is not available on this device.')
         }
         const analysis = await VisionKit.analyzeImage(localPath, {
           removeBackground: {
@@ -147,8 +168,10 @@ export function useVisionRun() {
             maxResults: RUN_DEFAULTS.maxResults,
             minConfidence: RUN_DEFAULTS.minConfidence,
           },
+          readText: {},
         })
         segmentation = analysis.segmentation ?? null
+        textResult = analysis.text ?? null
         let cutoutUri: string | null = null
         if (segmentation) {
           cutoutUri = await persistCutout(segmentation, myGen)
@@ -156,11 +179,13 @@ export function useVisionRun() {
         } else if (gen.current !== myGen) {
           return null
         }
+        const ocrText = textResult?.text.trim()
         const next: RunResult = {
           mode,
           originalUri,
           cutoutUri,
           classifications: analysis.classifications ?? [],
+          ocrText: ocrText && ocrText.length > 0 ? ocrText : null,
           meta: segmentation
             ? {
                 sourceWidth: segmentation.sourceWidth,
@@ -183,6 +208,7 @@ export function useVisionRun() {
       return null
     } finally {
       segmentation?.dispose()
+      textResult?.dispose()
       if (gen.current === myGen) setLoading(false)
     }
   }

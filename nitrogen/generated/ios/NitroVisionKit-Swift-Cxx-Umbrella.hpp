@@ -18,6 +18,8 @@ namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
 namespace margelo::nitro::nitrovisionkit { struct Classification; }
 // Forward declaration of `HybridSegmentationResultSpec` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { class HybridSegmentationResultSpec; }
+// Forward declaration of `HybridTextRecognitionResultSpec` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { class HybridTextRecognitionResultSpec; }
 // Forward declaration of `HybridVisionKitFactorySpec` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { class HybridVisionKitFactorySpec; }
 // Forward declaration of `ImageAnalysisResult` to properly resolve imports.
@@ -28,8 +30,18 @@ namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
 namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
 // Forward declaration of `PixelRect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct PixelRect; }
+// Forward declaration of `RecognizedTextBlock` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct RecognizedTextBlock; }
+// Forward declaration of `RecognizedTextCandidate` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
+// Forward declaration of `RecognizedTextLine` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct RecognizedTextLine; }
 // Forward declaration of `Rect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `TextRecognitionLevel` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class TextRecognitionLevel; }
+// Forward declaration of `TextRecognitionOptions` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
 // Forward declaration of `VisionCapabilities` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 
@@ -39,12 +51,18 @@ namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 #include "Classification.hpp"
 #include "ClassificationOptions.hpp"
 #include "HybridSegmentationResultSpec.hpp"
+#include "HybridTextRecognitionResultSpec.hpp"
 #include "HybridVisionKitFactorySpec.hpp"
 #include "ImageAnalysisResult.hpp"
 #include "ImageFormat.hpp"
 #include "NormalizedPoint.hpp"
 #include "PixelRect.hpp"
+#include "RecognizedTextBlock.hpp"
+#include "RecognizedTextCandidate.hpp"
+#include "RecognizedTextLine.hpp"
 #include "Rect.hpp"
+#include "TextRecognitionLevel.hpp"
+#include "TextRecognitionOptions.hpp"
 #include "VisionCapabilities.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
@@ -67,6 +85,8 @@ namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridSegmentationResultSpec_cxx` to properly resolve imports.
 namespace NitroVisionKit { class HybridSegmentationResultSpec_cxx; }
+// Forward declaration of `HybridTextRecognitionResultSpec_cxx` to properly resolve imports.
+namespace NitroVisionKit { class HybridTextRecognitionResultSpec_cxx; }
 // Forward declaration of `HybridVisionKitFactorySpec_cxx` to properly resolve imports.
 namespace NitroVisionKit { class HybridVisionKitFactorySpec_cxx; }
 

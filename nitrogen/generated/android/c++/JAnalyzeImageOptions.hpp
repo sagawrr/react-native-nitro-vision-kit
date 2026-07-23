@@ -15,8 +15,14 @@
 #include "JBackgroundRemovalOptions.hpp"
 #include "JClassificationOptions.hpp"
 #include "JRect.hpp"
+#include "JTextRecognitionLevel.hpp"
+#include "JTextRecognitionOptions.hpp"
 #include "Rect.hpp"
+#include "TextRecognitionLevel.hpp"
+#include "TextRecognitionOptions.hpp"
 #include <optional>
+#include <string>
+#include <vector>
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -41,9 +47,12 @@ namespace margelo::nitro::nitrovisionkit {
       jni::local_ref<JBackgroundRemovalOptions> removeBackground = this->getFieldValue(fieldRemoveBackground);
       static const auto fieldClassify = clazz->getField<JClassificationOptions>("classify");
       jni::local_ref<JClassificationOptions> classify = this->getFieldValue(fieldClassify);
+      static const auto fieldReadText = clazz->getField<JTextRecognitionOptions>("readText");
+      jni::local_ref<JTextRecognitionOptions> readText = this->getFieldValue(fieldReadText);
       return AnalyzeImageOptions(
         removeBackground != nullptr ? std::make_optional(removeBackground->toCpp()) : std::nullopt,
-        classify != nullptr ? std::make_optional(classify->toCpp()) : std::nullopt
+        classify != nullptr ? std::make_optional(classify->toCpp()) : std::nullopt,
+        readText != nullptr ? std::make_optional(readText->toCpp()) : std::nullopt
       );
     }
 
@@ -53,13 +62,14 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JAnalyzeImageOptions::javaobject> fromCpp(const AnalyzeImageOptions& value) {
-      using JSignature = JAnalyzeImageOptions(jni::alias_ref<JBackgroundRemovalOptions>, jni::alias_ref<JClassificationOptions>);
+      using JSignature = JAnalyzeImageOptions(jni::alias_ref<JBackgroundRemovalOptions>, jni::alias_ref<JClassificationOptions>, jni::alias_ref<JTextRecognitionOptions>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.removeBackground.has_value() ? JBackgroundRemovalOptions::fromCpp(value.removeBackground.value()) : nullptr,
-        value.classify.has_value() ? JClassificationOptions::fromCpp(value.classify.value()) : nullptr
+        value.classify.has_value() ? JClassificationOptions::fromCpp(value.classify.value()) : nullptr,
+        value.readText.has_value() ? JTextRecognitionOptions::fromCpp(value.readText.value()) : nullptr
       );
     }
   };

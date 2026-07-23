@@ -18,7 +18,7 @@ public extension AnalyzeImageOptions {
   /**
    * Create a new instance of `AnalyzeImageOptions`.
    */
-  init(removeBackground: BackgroundRemovalOptions?, classify: ClassificationOptions?) {
+  init(removeBackground: BackgroundRemovalOptions?, classify: ClassificationOptions?, readText: TextRecognitionOptions?) {
     self.init({ () -> bridge.std__optional_BackgroundRemovalOptions_ in
       if let __unwrappedValue = removeBackground {
         return bridge.create_std__optional_BackgroundRemovalOptions_(__unwrappedValue)
@@ -28,6 +28,12 @@ public extension AnalyzeImageOptions {
     }(), { () -> bridge.std__optional_ClassificationOptions_ in
       if let __unwrappedValue = classify {
         return bridge.create_std__optional_ClassificationOptions_(__unwrappedValue)
+      } else {
+        return .init()
+      }
+    }(), { () -> bridge.std__optional_TextRecognitionOptions_ in
+      if let __unwrappedValue = readText {
+        return bridge.create_std__optional_TextRecognitionOptions_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -42,5 +48,10 @@ public extension AnalyzeImageOptions {
   @inline(__always)
   var classify: ClassificationOptions? {
     return self.__classify.value
+  }
+  
+  @inline(__always)
+  var readText: TextRecognitionOptions? {
+    return self.__readText.value
   }
 }

@@ -13,8 +13,8 @@ internal object VisionKitOptions {
   fun minConfidence(options: ClassificationOptions?) = options?.minConfidence?.toFloat() ?: 0.5f
 
   fun requireAnalyzeOperations(options: AnalyzeImageOptions) {
-    if (options.removeBackground == null && options.classify == null) {
-      throw RuntimeException("analyzeImage requires removeBackground and/or classify options.")
+    if (options.removeBackground == null && options.classify == null && options.readText == null) {
+      throw RuntimeException("analyzeImage requires removeBackground, classify, and/or readText options.")
     }
   }
 }

@@ -26,7 +26,13 @@ data class VisionCapabilities(
   val backgroundRemovalUnavailableReason: String?,
   @DoNotStrip
   @Keep
-  val supportsImageClassification: Boolean
+  val supportsImageClassification: Boolean,
+  @DoNotStrip
+  @Keep
+  val supportsTextRecognition: Boolean,
+  @DoNotStrip
+  @Keep
+  val supportedTextLanguages: Array<String>
 ) {
   /* primary constructor */
 
@@ -36,13 +42,17 @@ data class VisionCapabilities(
     return Objects.deepEquals(this.supportsBackgroundRemoval, other.supportsBackgroundRemoval)
       && Objects.deepEquals(this.backgroundRemovalUnavailableReason, other.backgroundRemovalUnavailableReason)
       && Objects.deepEquals(this.supportsImageClassification, other.supportsImageClassification)
+      && Objects.deepEquals(this.supportsTextRecognition, other.supportsTextRecognition)
+      && Objects.deepEquals(this.supportedTextLanguages, other.supportedTextLanguages)
   }
 
   override fun hashCode(): Int {
     return arrayOf<Any?>(
       supportsBackgroundRemoval,
       backgroundRemovalUnavailableReason,
-      supportsImageClassification
+      supportsImageClassification,
+      supportsTextRecognition,
+      supportedTextLanguages
     ).contentDeepHashCode()
   }
 
@@ -54,8 +64,8 @@ data class VisionCapabilities(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(supportsBackgroundRemoval: Boolean, backgroundRemovalUnavailableReason: String?, supportsImageClassification: Boolean): VisionCapabilities {
-      return VisionCapabilities(supportsBackgroundRemoval, backgroundRemovalUnavailableReason, supportsImageClassification)
+    private fun fromCpp(supportsBackgroundRemoval: Boolean, backgroundRemovalUnavailableReason: String?, supportsImageClassification: Boolean, supportsTextRecognition: Boolean, supportedTextLanguages: Array<String>): VisionCapabilities {
+      return VisionCapabilities(supportsBackgroundRemoval, backgroundRemovalUnavailableReason, supportsImageClassification, supportsTextRecognition, supportedTextLanguages)
     }
   }
 }
