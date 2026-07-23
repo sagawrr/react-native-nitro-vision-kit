@@ -31,7 +31,7 @@ All on-device. Local path or `file://` only (cache remotes first). Orientation h
 
 | | Lift | Read | Text |
 | --- | --- | --- | --- |
-| **iOS** | 17+ device (not Simulator) | 13+ | **18+** `RecognizeTextRequest` |
+| **iOS** | 17+ | 13+ | 18+ |
 | **Android** | API 24+ · Play services | ML Kit | ML Kit Latin · Play services |
 
 ---
@@ -77,10 +77,11 @@ const {
 
 | Flag | Gate |
 | --- | --- |
-| `supportsBackgroundRemoval` | Lift — false on Simulator / missing Play services |
-| `supportsImageClassification` | Read — usually true |
-| `supportsTextRecognition` | Text — iOS 18+ or Android Play services |
-| `supportedTextLanguages` | BCP-47 tags for OCR (empty if Text off) |
+| `supportsBackgroundRemoval` | Lift |
+| `backgroundRemovalUnavailableReason` | Why Lift is off (when false) |
+| `supportsImageClassification` | Read |
+| `supportsTextRecognition` | Text |
+| `supportedTextLanguages` | OCR language tags (empty if Text off) |
 
 ## 3. Call what you need
 
