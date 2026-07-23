@@ -72,7 +72,7 @@
     "eslint-config-prettier": "^10.1.8",
     "nitrogen": "*",
     "prettier": "^3.8.3",
-    "react": "19.2.7",
+    "react": "19.2.8",
     "react-native": "0.86.0",
     "react-native-nitro-modules": "0.36.1",
     "release-it": "^20.2.1",
