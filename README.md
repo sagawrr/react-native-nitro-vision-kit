@@ -93,7 +93,7 @@ const { supportsBackgroundRemoval, backgroundRemovalUnavailableReason } =
 | Platform | Segment | Classify |
 | --- | --- | --- |
 | iOS | 17.0+ | 13.0+ |
-| Android | ML Kit + Play services | ML Kit |
+| Android | API 24+ · ML Kit + Play services | ML Kit |
 
 ## Options
 
