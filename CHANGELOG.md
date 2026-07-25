@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## [0.3.0](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.2.2...v0.3.0) (2026-07-25)
 
 ### Features
