@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## [0.3.0](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.2.2...v0.3.0) (2026-07-25)
+
 ### Features
 
 * OCR: `readText` + `analyzeImage.readText`
@@ -19,7 +21,6 @@
 * Android: Lift/OCR model prefetch off the JS thread; await subject-segmentation `getInitTask`
 * HybridObject results: reject/throw after `dispose()` on export / `blockAt`
 * Android: cap image-labeler cache (LRU); drop redundant `image_labeling` Play Services meta-data
-
 
 ## [0.2.2](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.2.1...v0.2.2) (2026-07-12)
 
