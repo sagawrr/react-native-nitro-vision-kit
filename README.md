@@ -11,53 +11,68 @@
 <h1 align="center">Nitro Vision</h1>
 
 <p align="center">
-  On-device vision for React Native — nothing leaves the phone.<br />
+  Subject cutouts, image labels, and OCR on device for React Native.<br />
   <sub>Vision on iOS · ML Kit on Android · <a href="https://nitro.margelo.com">Nitro Modules</a></sub>
 </p>
 
 ---
 
-## Do this first
+## Install
 
 ```bash
 npm install react-native-nitro-vision-kit react-native-nitro-modules
 cd ios && pod install
 ```
 
-Then pick one call below. Always **export → then `dispose()`**.
-
 ---
 
-## What you get
+## API
 
-| Call | Method | Needs |
+| Method | Returns | Platform |
 | --- | --- | --- |
-| Lift | `removeBackground` | iOS 17+ · Android Play Services (beta model) |
-| Read | `classifyImage` | iOS 13+ · Android bundled ML Kit |
-| Text | `readText` | iOS 18+ · Android Play Services |
-| Compose | `analyzeImage` | same as the ops you pass |
+| `removeBackground` | Transparent PNG cutout (HybridObject) | iOS 17+ · Android API 24+ (Play Services, **beta**) |
+| `classifyImage` | `{ label, confidence, index }[]` | iOS 13+ · Android (bundled ML Kit) |
+| `readText` | OCR HybridObject (`text`, `blockAt`, …) | iOS 18+ · Android (Play Services) |
+| `analyzeImage` | Any mix of the three, one decode | same as the ops you pass |
 
-**Paths:** local file path or `file://`. Android also accepts `content://`.
+**Image path:** local path or `file://`. Android also accepts `content://`.
 
-**Memory:** Lift/Text return Nitro HybridObjects. Save or copy first, then `dispose()`. GC frees later if you forget; dispose frees now.
+**Memory:** `removeBackground` / `readText` results stay native until you `dispose()`. Call `saveToTemporaryFile` / `toArrayBuffer` **before** `dispose()`.
+
+<table>
+  <tr>
+    <td width="42%" align="center" valign="top">
+      <img src="assets/demo.gif" alt="Example playground: removeBackground, classifyImage, readText, analyzeImage" width="260" />
+    </td>
+    <td valign="middle">
+      <p><strong>Example app</strong></p>
+      <p>Modes map to the four methods above. After a cutout, <strong>Keep</strong> writes to Photos.</p>
+      <p><a href="./example"><code>example/</code></a></p>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 1. Capabilities
+## Capabilities
 
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
 
-const c = VisionKit.capabilities
-// c.supportsBackgroundRemoval
-// c.supportsImageClassification
-// c.supportsTextRecognition
-// c.supportedTextLanguages  // tags this build can request (not “already downloaded”)
+const {
+  supportsBackgroundRemoval,
+  backgroundRemovalUnavailableReason,
+  supportsImageClassification,
+  supportsTextRecognition,
+  supportedTextLanguages, // tags this build can request — not “already downloaded”
+} = VisionKit.capabilities
 ```
 
 ---
 
-## 2. Lift
+## Examples
+
+### `removeBackground`
 
 ```ts
 const cutout = await VisionKit.removeBackground(path, { trim: true })
@@ -65,9 +80,7 @@ const png = await cutout.saveToTemporaryFile('png', 100)
 cutout.dispose()
 ```
 
----
-
-## 3. Read
+### `classifyImage`
 
 ```ts
 const labels = await VisionKit.classifyImage(path, {
@@ -76,9 +89,7 @@ const labels = await VisionKit.classifyImage(path, {
 })
 ```
 
----
-
-## 4. Text
+### `readText`
 
 ```ts
 if (!VisionKit.capabilities.supportsTextRecognition) return
@@ -90,9 +101,7 @@ console.log(ocr.text)
 ocr.dispose()
 ```
 
----
-
-## 5. Compose (one decode)
+### `analyzeImage`
 
 ```ts
 const { segmentation, classifications, text } = await VisionKit.analyzeImage(path, {
@@ -106,31 +115,31 @@ segmentation?.dispose()
 text?.dispose()
 ```
 
+Rules:
+
 1. Pass at least one of `removeBackground` / `classify` / `readText`
-2. No subject → `segmentation` omitted; Read/Text still run
-3. Lift + Read/Text without `region` → uses subject bounds
+2. No subject → `segmentation` omitted; classify/OCR still run
+3. Cutout + classify/OCR without `region` → ROI = subject bounds
 
 ---
 
-## Android first run
+## Android model download
 
-| Feature | First launch |
+| Method | First launch |
 | --- | --- |
-| **Read** | Works offline immediately (bundled) |
-| **Lift / Text** | Needs Play Services model download once |
+| `classifyImage` | Offline OK (bundled) |
+| `removeBackground` / `readText` | Downloads Play Services model once |
 
-- **Online:** kit waits / prefetches (can take up to ~2 min), then works offline forever
-- **Offline, model missing:** fails fast — connect once, open the app, retry
-- **iOS:** models ship with the OS — no download
-
-Android Lift uses ML Kit subject segmentation **beta**.
+- Online: waits/prefetches (up to ~2 min), then offline forever
+- Offline with no model: fails fast — connect once, open the app, retry
+- iOS: models ship with the OS
 
 ---
 
-## Options (skim)
+## Options
 
 <details>
-<summary><strong>removeBackground</strong></summary>
+<summary><code>removeBackground</code></summary>
 
 | Option | Default | |
 | --- | --- | --- |
@@ -141,7 +150,7 @@ Android Lift uses ML Kit subject segmentation **beta**.
 </details>
 
 <details>
-<summary><strong>classifyImage</strong></summary>
+<summary><code>classifyImage</code></summary>
 
 | Option | Default | |
 | --- | --- | --- |
@@ -152,7 +161,7 @@ Android Lift uses ML Kit subject segmentation **beta**.
 </details>
 
 <details>
-<summary><strong>readText</strong></summary>
+<summary><code>readText</code></summary>
 
 | Option | Default | Who |
 | --- | --- | --- |
@@ -166,7 +175,7 @@ Android Lift uses ML Kit subject segmentation **beta**.
 
 Decode cap **4M px**. Android longest edge **2048**.
 
-**Android `languages`:** picks script model(s) — Latin / Chinese / Japanese / Korean / Devanagari. Non-Latin models also read Latin. Mixed non-Latin scripts run in parallel.
+Android `languages` selects script model(s): Latin / Chinese / Japanese / Korean / Devanagari. Non-Latin models also read Latin. Mixed non-Latin scripts run in parallel.
 
 </details>
 
@@ -174,17 +183,17 @@ Decode cap **4M px**. Android longest edge **2048**.
 
 ## Results
 
-**Lift** — `saveToTemporaryFile` / `toArrayBuffer` / `toMaskBuffer` → then `dispose()`. Geometry: `width`, `height`, `bounds`, `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`.
+**`removeBackground`** — `saveToTemporaryFile` / `toArrayBuffer` / `toMaskBuffer`, then `dispose()`. Also: `width`, `height`, `bounds`, `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`.
 
-**Read** — `{ label, confidence, index }[]` high → low.
+**`classifyImage`** — `{ label, confidence, index }[]`, high → low.
 
-**Text** — `text`, `blockAt(i)` (preferred), `blocks` (copies all to JS), then `dispose()`. Android: multi-line blocks. iOS: one line per observation.
+**`readText`** — `text`, `blockAt(i)` (preferred), `blocks` (copies all to JS), then `dispose()`. Android: multi-line blocks. iOS: one line per observation.
 
 Temp files from `saveToTemporaryFile` are yours to delete.
 
 ---
 
-## Playground
+## Run the example
 
 ```bash
 cd example
@@ -193,14 +202,12 @@ cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios   # or: npm run android
 ```
 
-Demo: `Lift` · `Read` · `Text` · `All` → **Keep**. See [`example/`](./example).
-
 ---
 
 ## Requirements
 
-- React Native ≥ 0.75 · [Nitro Modules](https://nitro.margelo.com)
-- iOS Simulator: Lift unavailable (no subject segmentation)
+- React Native ≥ 0.75 and [react-native-nitro-modules](https://nitro.margelo.com)
+- iOS Simulator: `removeBackground` unavailable (no subject segmentation)
 - New Architecture recommended (Nitro / JSI)
 
 ## License
