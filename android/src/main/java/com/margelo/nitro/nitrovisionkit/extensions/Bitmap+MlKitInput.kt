@@ -13,6 +13,7 @@ import kotlin.math.min
  */
 internal fun Bitmap.toMlKitInput(maxEdge: Int = VisionKitLimits.ML_KIT_MAX_EDGE): Bitmap {
   val scaled = downscaleToMaxEdge(maxEdge)
+  val ownsScaled = scaled !== this
   val needsCopy =
     scaled.config == Bitmap.Config.HARDWARE ||
       scaled.isRecycled ||
@@ -21,8 +22,14 @@ internal fun Bitmap.toMlKitInput(maxEdge: Int = VisionKitLimits.ML_KIT_MAX_EDGE)
   if (!needsCopy) {
     return scaled
   }
-  return scaled.copy(Bitmap.Config.ARGB_8888, false)
-    ?: throw RuntimeException("Failed to copy bitmap for ML Kit input.")
+  try {
+    return scaled.copy(Bitmap.Config.ARGB_8888, false)
+      ?: throw RuntimeException("Failed to copy bitmap for ML Kit input.")
+  } finally {
+    if (ownsScaled) {
+      scaled.recycle()
+    }
+  }
 }
 
 private fun Bitmap.downscaleToMaxEdge(maxEdge: Int): Bitmap {

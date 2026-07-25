@@ -23,6 +23,7 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
+    "assets",
     "!**/android/build",
     "!**/android/.cxx",
     "!**/Pods",

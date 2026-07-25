@@ -20,6 +20,5 @@ internal suspend fun <T> Task<T>.await(): T {
         continuation.resume(task.result as T)
       }
     }
-    continuation.invokeOnCancellation { }
   }
 }

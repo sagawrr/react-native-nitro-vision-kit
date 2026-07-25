@@ -4,8 +4,11 @@ import type { TextRecognitionLevel } from './TextRecognitionLevel'
 /** Options for `readText`. */
 export interface TextRecognitionOptions {
   /**
-   * BCP-47 language tags, priority order.
-   * iOS: Vision `recognitionLanguages`. Android v1: Latin model only (ignored at runtime).
+   * BCP-47 tags, priority order.
+   * iOS: Vision `recognitionLanguages` (omit → auto-detect).
+   * Android: maps to ML Kit v2 script clients. Omit → Latin.
+   * Chinese/Japanese/Korean/Devanagari models also read Latin — no second Latin pass.
+   * Distinct non-Latin scripts run in parallel and merge.
    */
   readonly languages?: string[]
   /** @default 'accurate' — iOS Vision only; Android ignores. */

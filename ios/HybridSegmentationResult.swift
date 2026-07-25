@@ -7,6 +7,7 @@ import NitroModules
 final class HybridSegmentationResult: HybridSegmentationResultSpec {
   private var rgba: Data
   private var mask: Data
+  private var disposed = false
   private let pixelWidth: Int
   private let pixelHeight: Int
 
@@ -41,15 +42,18 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
   var height: Double { Double(pixelHeight) }
 
   var memorySize: Int {
-    rgba.count + mask.count + HybridMemorySize.overhead
+    if disposed { return HybridMemorySize.overhead }
+    return rgba.count + mask.count + HybridMemorySize.overhead
   }
 
   func dispose() {
+    disposed = true
     rgba = Data()
     mask = Data()
   }
 
   func toMaskBuffer() throws -> Promise<ArrayBuffer> {
+    try ensureNotDisposed()
     guard hasMask else {
       throw RuntimeError("No mask retained. Pass retainMask: true to removeBackground.")
     }
@@ -60,6 +64,7 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
   }
 
   func toArrayBuffer() throws -> Promise<ArrayBuffer> {
+    try ensureNotDisposed()
     let rgbaCopy = rgba
     return Promise.parallel(VisionKitQueue.queue) {
       try ArrayBuffer.copy(data: rgbaCopy)
@@ -67,6 +72,7 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
   }
 
   func saveToTemporaryFile(format: ImageFormat, quality: Double) throws -> Promise<String> {
+    try ensureNotDisposed()
     let qualityClamped = min(100, max(0, Int(quality.rounded())))
     let width = pixelWidth
     let height = pixelHeight
@@ -91,6 +97,14 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
         throw RuntimeError("Failed to encode image.")
       }
       return url.path
+    }
+  }
+
+  private func ensureNotDisposed() throws {
+    if disposed {
+      throw RuntimeError(
+        "SegmentationResult already disposed. Export (save/toArrayBuffer) before dispose()."
+      )
     }
   }
 }

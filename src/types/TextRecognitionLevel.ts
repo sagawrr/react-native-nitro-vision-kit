@@ -1,2 +1,2 @@
-/** Vision recognition path. Android ignores this in v1 (Latin ML Kit). */
+/** iOS Vision path only (`accurate` \| `fast`). Android ignores. */
 export type TextRecognitionLevel = 'accurate' | 'fast'

@@ -40,8 +40,12 @@ internal object ImageLoader {
         decoder.isMutableRequired = true
         decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
       }
-      return decoded.copy(Bitmap.Config.ARGB_8888, false)
+      val copy = decoded.copy(Bitmap.Config.ARGB_8888, false)
         ?: throw RuntimeException("Failed to copy decoded image to ARGB_8888.")
+      if (copy !== decoded) {
+        decoded.recycle()
+      }
+      return copy
     }
     return decodeLegacy(context, uri, maxPixels)
   }

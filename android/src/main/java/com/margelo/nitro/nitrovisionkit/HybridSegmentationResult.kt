@@ -17,6 +17,7 @@ class HybridSegmentationResult internal constructor(
 
   private var rgba = output.pixels
   private var mask = output.mask
+  private var disposed = false
   private val pixelWidth = output.width
   private val pixelHeight = output.height
 
@@ -37,14 +38,18 @@ class HybridSegmentationResult internal constructor(
     get() = pixelHeight.toDouble()
 
   override val memorySize: Long
-    get() = rgba.size.toLong() + mask.size.toLong() + HybridMemorySize.OVERHEAD
+    get() = if (disposed) HybridMemorySize.OVERHEAD else rgba.size.toLong() + mask.size.toLong() + HybridMemorySize.OVERHEAD
 
   override fun dispose() {
+    disposed = true
     rgba = ByteArray(0)
     mask = ByteArray(0)
   }
 
   override fun toMaskBuffer(): Promise<ArrayBuffer> {
+    if (disposed) {
+      return Promise.rejected(RuntimeException(DISPOSED))
+    }
     if (!hasMask) {
       return Promise.rejected(
         RuntimeException("No mask retained. Pass retainMask: true to removeBackground."),
@@ -57,6 +62,9 @@ class HybridSegmentationResult internal constructor(
   }
 
   override fun toArrayBuffer(): Promise<ArrayBuffer> {
+    if (disposed) {
+      return Promise.rejected(RuntimeException(DISPOSED))
+    }
     val rgbaCopy = rgba
     return Promise.async {
       ArrayBuffer.copy(rgbaCopy)
@@ -64,6 +72,9 @@ class HybridSegmentationResult internal constructor(
   }
 
   override fun saveToTemporaryFile(format: ImageFormat, quality: Double): Promise<String> {
+    if (disposed) {
+      return Promise.rejected(RuntimeException(DISPOSED))
+    }
     val q = quality.toInt().coerceIn(0, 100)
     val w = width.toInt()
     val h = height.toInt()
@@ -84,5 +95,10 @@ class HybridSegmentationResult internal constructor(
         bitmap.recycle()
       }
     }
+  }
+
+  private companion object {
+    private const val DISPOSED =
+      "SegmentationResult already disposed. Export (save/toArrayBuffer) before dispose()."
   }
 }

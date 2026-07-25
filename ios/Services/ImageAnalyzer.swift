@@ -44,17 +44,41 @@ enum ImageAnalyzer {
     }
 
     var classifications: [Classification]?
-    if classifyOptions != nil {
+    var text: (any HybridTextRecognitionResultSpec)?
+
+    if classifyOptions != nil, textOptions != nil {
+      async let labelsTask: [Classification] = ImageClassifier.classify(
+        ciImage: ciImage,
+        maxResults: maxResults,
+        minConfidence: minConfidence,
+        region: classifyRegion,
+      )
+      async let textTask: (any HybridTextRecognitionResultSpec) = {
+        guard #available(iOS 18.0, *) else {
+          throw RuntimeError(VisionAvailability.textRecognitionUnavailableReason)
+        }
+        let output = try await TextRecognizer.recognize(
+          ciImage: ciImage,
+          languages: textOptions?.languages,
+          recognitionLevel: textOptions?.recognitionLevel,
+          region: textRegion,
+          minTextHeightFraction: textOptions?.minTextHeightFraction,
+          usesLanguageCorrection: textOptions?.usesLanguageCorrection,
+          customWords: textOptions?.customWords,
+          maxCandidates: textOptions?.maxCandidates,
+        )
+        return HybridTextRecognitionResult(output: output) as any HybridTextRecognitionResultSpec
+      }()
+      classifications = try await labelsTask
+      text = try await textTask
+    } else if classifyOptions != nil {
       classifications = try ImageClassifier.classify(
         ciImage: ciImage,
         maxResults: maxResults,
         minConfidence: minConfidence,
         region: classifyRegion,
       )
-    }
-
-    var text: (any HybridTextRecognitionResultSpec)?
-    if textOptions != nil {
+    } else if textOptions != nil {
       guard #available(iOS 18.0, *) else {
         throw RuntimeError(VisionAvailability.textRecognitionUnavailableReason)
       }

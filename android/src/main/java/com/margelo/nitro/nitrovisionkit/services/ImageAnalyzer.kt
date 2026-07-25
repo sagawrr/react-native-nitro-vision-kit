@@ -2,6 +2,9 @@ package com.margelo.nitro.nitrovisionkit
 
 import android.content.Context
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+
 internal object ImageAnalyzer {
   private const val NO_FOREGROUND = "No foreground subject detected."
 
@@ -27,7 +30,7 @@ internal object ImageAnalyzer {
       var segmentation: HybridSegmentationResultSpec? = null
       if (segmentOptions != null) {
         try {
-          val output = SubjectSegmenter.segment(loaded, trim, retainMask)
+          val output = SubjectSegmenter.segment(context, loaded, trim, retainMask)
           segmentation = HybridSegmentationResult(output, ImageLoader.cacheDir(context))
           if (classifyRegion == null && classifyOptions != null) {
             classifyRegion = output.bounds
@@ -44,18 +47,46 @@ internal object ImageAnalyzer {
       }
 
       var classifications: Array<Classification>? = null
-      if (classifyOptions != null) {
+      var text: HybridTextRecognitionResultSpec? = null
+
+      if (classifyOptions != null && textOptions != null) {
+        coroutineScope {
+          val labelsDeferred = async {
+            ImageClassifier.classify(
+              loaded,
+              maxResults,
+              minConfidence,
+              classifyRegion,
+            ).toTypedArray()
+          }
+          val textDeferred = async {
+            val output = TextRecognizer.recognize(
+              context = context,
+              bitmap = loaded,
+              languages = textOptions.languages,
+              region = textRegion,
+              minTextHeightFraction = textOptions.minTextHeightFraction,
+            )
+            HybridTextRecognitionResult(output)
+          }
+          classifications = labelsDeferred.await()
+          text = textDeferred.await()
+        }
+      } else if (classifyOptions != null) {
         classifications = ImageClassifier.classify(
           loaded,
           maxResults,
           minConfidence,
           classifyRegion,
         ).toTypedArray()
-      }
-
-      var text: HybridTextRecognitionResultSpec? = null
-      if (textOptions != null) {
-        val output = TextRecognizer.recognize(loaded, textRegion, textOptions.minTextHeightFraction)
+      } else if (textOptions != null) {
+        val output = TextRecognizer.recognize(
+          context = context,
+          bitmap = loaded,
+          languages = textOptions.languages,
+          region = textRegion,
+          minTextHeightFraction = textOptions.minTextHeightFraction,
+        )
         text = HybridTextRecognitionResult(output)
       }
 

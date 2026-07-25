@@ -77,7 +77,7 @@ export function PlaygroundScreen() {
     mode === 'classify'
       ? 'Reading…'
       : mode === 'ocr'
-        ? 'Scanning…'
+        ? 'Scanning text…'
         : mode === 'analyze'
           ? 'Working…'
           : 'Lifting…'

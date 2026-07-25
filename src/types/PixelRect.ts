@@ -1,4 +1,4 @@
-/** Pixel rectangle in source image space. */
+/** Source-image pixel bounds. */
 export interface PixelRect {
   readonly x: number
   readonly y: number

@@ -67,6 +67,12 @@ export const RUN_DEFAULTS = {
   minConfidence: 0,
 } as const
 
+/**
+ * OCR languages for Text / All (BCP-47).
+ * Android: Chinese model also reads English — no second Latin pass.
+ */
+export const OCR_LANGUAGES = ['zh-Hans', 'zh-Hant', 'en-US'] as const
+
 export function modeAvailable(
   mode: Mode,
   canSegment: boolean,

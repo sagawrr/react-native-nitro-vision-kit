@@ -11,17 +11,28 @@ class HybridTextRecognitionResult internal constructor(
 
   private var storedText: String = output.text
   private var storedBlocks: Array<RecognizedTextBlock> = output.blocks
+  private var disposed = false
 
   override val text: String
-    get() = storedText
+    get() {
+      ensureNotDisposed()
+      return storedText
+    }
 
   override val blockCount: Double
-    get() = storedBlocks.size.toDouble()
+    get() {
+      ensureNotDisposed()
+      return storedBlocks.size.toDouble()
+    }
 
   override val blocks: Array<RecognizedTextBlock>
-    get() = storedBlocks
+    get() {
+      ensureNotDisposed()
+      return storedBlocks
+    }
 
   override fun blockAt(index: Double): RecognizedTextBlock {
+    ensureNotDisposed()
     val i = index.toInt()
     if (i < 0 || i >= storedBlocks.size) {
       throw RuntimeException("blockAt index $i out of range (blockCount=${storedBlocks.size}).")
@@ -31,6 +42,7 @@ class HybridTextRecognitionResult internal constructor(
 
   override val memorySize: Long
     get() {
+      if (disposed) return HybridMemorySize.OVERHEAD
       var size = storedText.length.toLong() + HybridMemorySize.OVERHEAD
       for (block in storedBlocks) {
         size += block.text.length
@@ -45,7 +57,16 @@ class HybridTextRecognitionResult internal constructor(
     }
 
   override fun dispose() {
+    disposed = true
     storedText = ""
     storedBlocks = emptyArray()
+  }
+
+  private fun ensureNotDisposed() {
+    if (disposed) {
+      throw RuntimeException(
+        "TextRecognitionResult already disposed. Read text/blocks before dispose().",
+      )
+    }
   }
 }

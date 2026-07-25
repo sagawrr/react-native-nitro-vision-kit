@@ -1,6 +1,8 @@
 package com.margelo.nitro.nitrovisionkit
 
+import android.content.Context
 import android.graphics.Bitmap
+import com.google.android.gms.common.api.OptionalModuleApi
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenter
@@ -14,11 +16,34 @@ internal object SubjectSegmenter {
     SubjectSegmentation.getClient(options)
   }
 
-  suspend fun segment(bitmap: Bitmap, trim: Boolean, retainMask: Boolean): SegmentationOutput {
+  fun optionalApi(): OptionalModuleApi = segmenter
+
+  suspend fun segment(
+    context: Context,
+    bitmap: Bitmap,
+    trim: Boolean,
+    retainMask: Boolean,
+  ): SegmentationOutput {
+    MlKitModuleInstaller.ensure(context, "subject segmentation", segmenter)
+    try {
+      segmenter.initTask.await()
+    } catch (error: Exception) {
+      throw RuntimeException(
+        MlKitModuleInstaller.friendlyError(error, "subject segmentation"),
+        error,
+      )
+    }
+
     val mlInput = bitmap.toMlKitInput()
     val ownsMlInput = mlInput !== bitmap
     try {
       return segmentInternal(mlInput, bitmap, trim, retainMask)
+    } catch (error: Exception) {
+      if (error.message == "No foreground subject detected.") throw error
+      throw RuntimeException(
+        MlKitModuleInstaller.friendlyError(error, "subject segmentation"),
+        error,
+      )
     } finally {
       if (ownsMlInput) {
         mlInput.recycle()

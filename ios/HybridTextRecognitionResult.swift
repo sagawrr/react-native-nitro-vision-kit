@@ -4,6 +4,7 @@ import NitroModules
 final class HybridTextRecognitionResult: HybridTextRecognitionResultSpec {
   private var storedText: String
   private var storedBlocks: [RecognizedTextBlock]
+  private var disposed = false
 
   init(output: TextRecognitionOutput) {
     self.storedText = output.text
@@ -18,6 +19,7 @@ final class HybridTextRecognitionResult: HybridTextRecognitionResultSpec {
   var blocks: [RecognizedTextBlock] { storedBlocks }
 
   func blockAt(index: Double) throws -> RecognizedTextBlock {
+    try ensureNotDisposed()
     let i = Int(index)
     guard i >= 0, i < storedBlocks.count else {
       throw RuntimeError("blockAt index \(i) out of range (blockCount=\(storedBlocks.count)).")
@@ -26,7 +28,8 @@ final class HybridTextRecognitionResult: HybridTextRecognitionResultSpec {
   }
 
   var memorySize: Int {
-    storedText.utf8.count
+    if disposed { return HybridMemorySize.overhead }
+    return storedText.utf8.count
       + storedBlocks.reduce(0) { partial, block in
         partial
           + block.text.utf8.count
@@ -42,7 +45,16 @@ final class HybridTextRecognitionResult: HybridTextRecognitionResultSpec {
   }
 
   func dispose() {
+    disposed = true
     storedText = ""
     storedBlocks = []
+  }
+
+  private func ensureNotDisposed() throws {
+    if disposed {
+      throw RuntimeError(
+        "TextRecognitionResult already disposed. Read text/blocks before dispose()."
+      )
+    }
   }
 }

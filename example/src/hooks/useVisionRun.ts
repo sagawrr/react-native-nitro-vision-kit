@@ -5,7 +5,12 @@ import {
   type SegmentationResult,
   type TextRecognitionResult,
 } from 'react-native-nitro-vision-kit'
-import { RUN_DEFAULTS, type Mode, type RunResult } from '../types'
+import {
+  OCR_LANGUAGES,
+  RUN_DEFAULTS,
+  type Mode,
+  type RunResult,
+} from '../types'
 import { ensureLocalImagePath } from '../utils/ensureLocalImagePath'
 import { toFileUri } from '../utils/format'
 
@@ -140,7 +145,9 @@ export function useVisionRun() {
 
       if (mode === 'ocr') {
         if (!canOcr) throw new Error('Text scan is not available on this device.')
-        textResult = await VisionKit.readText(localPath)
+        textResult = await VisionKit.readText(localPath, {
+          languages: [...OCR_LANGUAGES],
+        })
         if (gen.current !== myGen) return null
         const next: RunResult = {
           mode,
@@ -168,7 +175,9 @@ export function useVisionRun() {
             maxResults: RUN_DEFAULTS.maxResults,
             minConfidence: RUN_DEFAULTS.minConfidence,
           },
-          readText: {},
+          readText: {
+            languages: [...OCR_LANGUAGES],
+          },
         })
         segmentation = analysis.segmentation ?? null
         textResult = analysis.text ?? null
@@ -202,7 +211,9 @@ export function useVisionRun() {
     } catch (err) {
       await dropTemp()
       if (gen.current === myGen) {
-        setError(err instanceof Error ? err.message : String(err))
+        const raw = err instanceof Error ? err.message : String(err)
+        const firstLine = raw.split('\n')[0]?.trim() || raw
+        setError(firstLine)
         setResult(null)
       }
       return null

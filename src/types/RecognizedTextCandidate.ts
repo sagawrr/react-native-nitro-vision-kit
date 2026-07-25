@@ -1,6 +1,5 @@
-/** Alternate OCR reading from Vision `topCandidates` (iOS). */
+/** iOS Vision `topCandidates` entry. */
 export interface RecognizedTextCandidate {
   readonly text: string
-  /** Confidence 0–1. */
   readonly confidence: number
 }

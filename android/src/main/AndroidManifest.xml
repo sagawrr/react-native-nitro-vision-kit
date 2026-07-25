@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <application>
-    <!-- Download ML Kit subject-segmentation + image-labeling + Latin OCR models after app install -->
+    <!-- Download ML Kit models after install (Play Services / unbundled). -->
+    <!-- @see https://developers.google.com/ml-kit/vision/text-recognition/v2/android -->
     <meta-data
       android:name="com.google.mlkit.vision.DEPENDENCIES"
-      android:value="subject_segment,image_labeling,ocr" />
+      android:value="subject_segment,ocr,ocr_chinese,ocr_japanese,ocr_korean,ocr_devanagari" />
   </application>
 </manifest>

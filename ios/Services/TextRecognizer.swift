@@ -8,24 +8,62 @@ enum TextRecognizer {
   private static var cachedAccurateLanguages: [String]?
   private static var cachedFastLanguages: [String]?
   private static let maxCandidateCap = 10
+  private static let prefetchOnce: Void = {
+    prefetchSupportedLanguages()
+  }()
 
+  /// Prefetched off the JS thread; fills sync once if the first read races the warm-up.
   static func supportedLanguages(level: TextRecognitionLevel = .accurate) -> [String] {
+    _ = prefetchOnce
     guard #available(iOS 18.0, *) else { return [] }
+    ensureLanguageCacheFilled()
     languageCacheLock.lock()
     defer { languageCacheLock.unlock() }
-    let visionLevel: RecognizeTextRequest.RecognitionLevel = level == .fast ? .fast : .accurate
-    switch visionLevel {
+    switch level {
     case .fast:
-      if let cachedFastLanguages { return cachedFastLanguages }
-      let languages = fetchSupportedLanguages(level: .fast)
-      cachedFastLanguages = languages
-      return languages
+      return cachedFastLanguages ?? []
     case .accurate:
-      if let cachedAccurateLanguages { return cachedAccurateLanguages }
-      let languages = fetchSupportedLanguages(level: .accurate)
-      cachedAccurateLanguages = languages
-      return languages
+      return cachedAccurateLanguages ?? []
+    @unknown default:
+      return cachedAccurateLanguages ?? []
     }
+  }
+
+  private static func prefetchSupportedLanguages() {
+    guard #available(iOS 18.0, *) else { return }
+    Task.detached(priority: .utility) {
+      fillLanguageCacheIfNeeded()
+    }
+  }
+
+  @available(iOS 18.0, *)
+  private static func ensureLanguageCacheFilled() {
+    languageCacheLock.lock()
+    let ready = cachedAccurateLanguages != nil && cachedFastLanguages != nil
+    languageCacheLock.unlock()
+    if ready { return }
+    fillLanguageCacheIfNeeded()
+  }
+
+  @available(iOS 18.0, *)
+  private static func fillLanguageCacheIfNeeded() {
+    languageCacheLock.lock()
+    let needsAccurate = cachedAccurateLanguages == nil
+    let needsFast = cachedFastLanguages == nil
+    languageCacheLock.unlock()
+    if !needsAccurate && !needsFast { return }
+
+    let accurate = needsAccurate ? fetchSupportedLanguages(level: .accurate) : nil
+    let fast = needsFast ? fetchSupportedLanguages(level: .fast) : nil
+
+    languageCacheLock.lock()
+    if let accurate, cachedAccurateLanguages == nil {
+      cachedAccurateLanguages = accurate
+    }
+    if let fast, cachedFastLanguages == nil {
+      cachedFastLanguages = fast
+    }
+    languageCacheLock.unlock()
   }
 
   @available(iOS 18.0, *)

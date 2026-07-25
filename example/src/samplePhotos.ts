@@ -27,11 +27,12 @@ function bundled(n: number, source: number, fileName: string): SamplePhoto {
   }
 }
 
-/** Clear-subject Unsplash photos — good for lift + read demos. */
+/** Clear-subject Unsplash photos + text-dense signage for OCR demos. */
 export const SAMPLE_PHOTOS: SamplePhoto[] = [
   bundled(1, require('../assets/images/portrait.jpg'), 'portrait.jpg'),
   bundled(2, require('../assets/images/product.jpg'), 'product.jpg'),
   bundled(3, require('../assets/images/pet.jpg'), 'pet.jpg'),
+  bundled(4, require('../assets/images/signage.jpg'), 'signage.jpg'),
 ]
 
 export function photoFromAsset(asset: PhotoAsset): SamplePhoto {

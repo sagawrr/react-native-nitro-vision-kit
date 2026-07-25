@@ -12,7 +12,6 @@ import type { VisionCapabilities } from '../types/VisionCapabilities'
 /** On-device vision — segmentation, classification, and text recognition. */
 export interface VisionKitFactory
   extends HybridObject<{ ios: 'swift'; android: 'kotlin' }> {
-  /** Device feature flags. Check before Lift / OCR. */
   readonly capabilities: VisionCapabilities
   /**
    * Segments foreground instances in the image.
@@ -31,8 +30,9 @@ export interface VisionKitFactory
     options?: ClassificationOptions,
   ): Promise<Classification[]>
   /**
-   * Recognizes text in the image (OCR).
-   * iOS 18+: Vision `RecognizeTextRequest`. Android v1: ML Kit Latin + Play Services.
+   * On-device OCR.
+   * iOS 18+: Vision `RecognizeTextRequest`.
+   * Android: ML Kit v2 (Latin / CJK / Devanagari) via Play Services.
    * @param path File path or `file://` URI.
    */
   readText(
@@ -40,9 +40,8 @@ export interface VisionKitFactory
     options?: TextRecognitionOptions,
   ): Promise<TextRecognitionResult>
   /**
-   * Decodes once and runs the requested operations.
-   * At least one of `removeBackground`, `classify`, or `readText` is required.
-   * When segment + classify/OCR run and `region` is omitted, those use `segmentation.bounds`.
+   * One decode → any mix of Lift / Read / Text.
+   * At least one option required. Omit `region` with Lift → uses subject bounds.
    */
   analyzeImage(
     path: string,

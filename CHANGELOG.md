@@ -4,10 +4,22 @@
 
 ### Features
 
-* On-device OCR: `readText` + `analyzeImage.readText`
-* iOS 18+: Vision `RecognizeTextRequest` only (no legacy `VNRecognizeTextRequest`)
-* Android: ML Kit Latin + Play services gate
+* OCR: `readText` + `analyzeImage.readText`
+* iOS 18+: Vision `RecognizeTextRequest` (no legacy path)
+* Android: ML Kit v2 Latin / Chinese / Japanese / Korean / Devanagari (Play Services)
+* Android: `languages` → script models; non-Latin models also read Latin; multi-script parallel merge
 * Capabilities: `supportsTextRecognition`, `supportedTextLanguages`
+
+### Fixes
+
+* Android: recycle intermediate bitmaps in ImageDecoder / ML Kit input path
+* iOS: prefetch OCR languages off the JS thread; fill sync if first capabilities read races warm-up
+* Compose: run classify + OCR in parallel after segment
+* Android: ModuleInstallClient for Lift/OCR download; friendly errors; offline first-use fails fast
+* Android: Lift/OCR model prefetch off the JS thread; await subject-segmentation `getInitTask`
+* HybridObject results: reject/throw after `dispose()` on export / `blockAt`
+* Android: cap image-labeler cache (LRU); drop redundant `image_labeling` Play Services meta-data
+
 
 ## [0.2.2](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.2.1...v0.2.2) (2026-07-12)
 
