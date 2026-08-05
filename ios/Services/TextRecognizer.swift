@@ -96,7 +96,10 @@ enum TextRecognizer {
     }
 
     if let minTextHeightFraction {
-      request.minimumTextHeightFraction = Float(minTextHeightFraction.clamped(to: 0...1))
+      let fraction = minTextHeightFraction.isFinite
+        ? min(max(minTextHeightFraction, 0), 1)
+        : 0
+      request.minimumTextHeightFraction = Float(fraction)
     }
 
     let chineseOnly = resolvedLanguages.map { langs in
@@ -167,9 +170,10 @@ enum TextRecognizer {
   }
 
   private static func resolvedCandidateCount(_ maxCandidates: Double?) -> Int {
-    guard let maxCandidates else { return 1 }
-    let n = Int(maxCandidates.rounded())
-    return min(max(n, 1), maxCandidateCap)
+    guard let maxCandidates, maxCandidates.isFinite, maxCandidates > 0 else { return 1 }
+    // `Int(nonFinite)` / `Int(>Int.max)` trap; cap the Double first.
+    let capped = min(maxCandidates.rounded(), Double(maxCandidateCap))
+    return max(1, Int(capped))
   }
 
   @available(iOS 18.0, *)
@@ -204,11 +208,5 @@ enum TextRecognizer {
   private static func topLeftPoint(_ point: Vision.NormalizedPoint) -> NormalizedPoint {
     let flipped = point.verticallyFlipped()
     return NormalizedPoint(x: Double(flipped.x), y: Double(flipped.y))
-  }
-}
-
-private extension Double {
-  func clamped(to range: ClosedRange<Double>) -> Double {
-    min(max(self, range.lowerBound), range.upperBound)
   }
 }

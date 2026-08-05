@@ -6,7 +6,8 @@ internal object VisionKitOptions {
   fun retainMask(options: BackgroundRemovalOptions?) = options?.retainMask ?: false
 
   fun segmentMaxPixels(options: BackgroundRemovalOptions?) =
-    options?.maxPixels?.toInt()?.coerceAtLeast(1) ?: VisionKitLimits.DEFAULT_MAX_PIXELS
+    options?.maxPixels?.toInt()?.coerceIn(1, VisionKitLimits.MAX_SEGMENT_PIXELS)
+      ?: VisionKitLimits.DEFAULT_MAX_PIXELS
 
   fun maxResults(options: ClassificationOptions?) = options?.maxResults?.toInt() ?: 0
 

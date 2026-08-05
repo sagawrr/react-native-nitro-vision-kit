@@ -94,6 +94,10 @@
       "javaPackageName": "com.margelo.nitro.nitrovisionkit"
     }
   },
+  "overrides": {
+    "undici": "^7.29.0",
+    "ip-address": "^10.3.1"
+  },
   "prettier": {
     "quoteProps": "consistent",
     "singleQuote": true,
@@ -101,5 +105,8 @@
     "trailingComma": "es5",
     "useTabs": false,
     "semi": false
+  },
+  "dependencies": {
+    "brace-expansion": "^5.0.9"
   }
 }

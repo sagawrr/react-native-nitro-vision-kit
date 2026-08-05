@@ -73,7 +73,8 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
 
   func saveToTemporaryFile(format: ImageFormat, quality: Double) throws -> Promise<String> {
     try ensureNotDisposed()
-    let qualityClamped = min(100, max(0, Int(quality.rounded())))
+    let safeQuality = quality.isFinite ? min(max(quality, 0), 100) : 90
+    let qualityClamped = Int(safeQuality.rounded())
     let width = pixelWidth
     let height = pixelHeight
     let rgbaCopy = rgba

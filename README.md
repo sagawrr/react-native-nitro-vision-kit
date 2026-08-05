@@ -277,6 +277,15 @@ text?.dispose()
 | `file://` | ✅ | ✅ |
 | `content://` | — | ✅ |
 
+> [!IMPORTANT]
+> **Never pass attacker-controlled or untrusted strings as `path`.** The native
+> layer opens whatever the host app process can reach and returns decoded pixels
+> and recognized text to JavaScript — so an untrusted `path` is an arbitrary
+> file/URI read primitive. On Android, any `content://` authority the app may
+> access is readable and its contents come back via `toArrayBuffer()`/`readText()`.
+> Only ever pass paths you produced yourself (e.g. a copy you wrote to the app's
+> cache from a picker).
+
 ---
 
 ## Example app

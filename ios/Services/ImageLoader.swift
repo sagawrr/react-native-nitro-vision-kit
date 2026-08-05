@@ -17,7 +17,7 @@ enum ImageLoader {
     let filePath = path.hasPrefix("file://") ? String(path.dropFirst("file://".count)) : path
     let url = URL(fileURLWithPath: filePath)
     guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else {
-      throw RuntimeError("Failed to load image at path: \(path)")
+      throw RuntimeError("Failed to load image: could not read the file at the given path.")
     }
 
     let maxDimension = thumbnailMaxPixelSize(source: source, maxPixels: maxPixels)
@@ -27,7 +27,7 @@ enum ImageLoader {
       kCGImageSourceThumbnailMaxPixelSize: maxDimension,
     ]
     guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
-      throw RuntimeError("Failed to load image at path: \(path)")
+      throw RuntimeError("Failed to load image: the file could not be decoded as an image.")
     }
     return CIImage(cgImage: cgImage)
   }

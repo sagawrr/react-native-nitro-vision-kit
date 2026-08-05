@@ -17,14 +17,20 @@ enum VisionKitOptions {
   }
 
   static func segmentMaxPixels(_ options: BackgroundRemovalOptions?) -> Int {
-    Int(options?.maxPixels ?? Double(VisionKitLimits.defaultMaxPixels))
+    let requested = options?.maxPixels ?? Double(VisionKitLimits.defaultMaxPixels)
+    guard requested.isFinite else { return VisionKitLimits.defaultMaxPixels }
+    let bounded = min(max(requested, 1), Double(VisionKitLimits.maxSegmentPixels))
+    return Int(bounded)
   }
 
   static func maxResults(_ options: ClassificationOptions?) -> Int {
-    Int(options?.maxResults ?? 0)
+    let requested = options?.maxResults ?? 0
+    guard requested.isFinite else { return 0 }
+    return Int(min(max(requested, 0), Double(VisionKitLimits.maxClassificationResults)))
   }
 
   static func minConfidence(_ options: ClassificationOptions?) -> Double {
-    options?.minConfidence ?? 0.5
+    guard let c = options?.minConfidence, c.isFinite, c >= 0, c <= 1 else { return 0.5 }
+    return c
   }
 }

@@ -5,6 +5,8 @@ internal object VisionKitLimits {
   const val LABELING_MAX_PIXELS = 1_000_000
   /** Decode budget for OCR — enough for letter-size pages (~720×1280+). */
   const val TEXT_MAX_PIXELS = 4_000_000
+  /** Hard ceiling for `removeBackground` `maxPixels`; bounds decode memory. */
+  const val MAX_SEGMENT_PIXELS = 25_000_000
   /** ML Kit MediaPipe GPU path is unstable on some devices above ~512px. */
   const val ML_KIT_MAX_EDGE = 512
   /** OCR downscale cap after decode (ML Kit input guidelines). */
