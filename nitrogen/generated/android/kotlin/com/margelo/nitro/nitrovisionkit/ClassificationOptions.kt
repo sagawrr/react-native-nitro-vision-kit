@@ -26,7 +26,7 @@ data class ClassificationOptions(
   val minConfidence: Double?,
   @DoNotStrip
   @Keep
-  val region: Rect?
+  val region: VisionRect?
 ) {
   /* primary constructor */
 
@@ -54,7 +54,7 @@ data class ClassificationOptions(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(maxResults: Double?, minConfidence: Double?, region: Rect?): ClassificationOptions {
+    private fun fromCpp(maxResults: Double?, minConfidence: Double?, region: VisionRect?): ClassificationOptions {
       return ClassificationOptions(maxResults, minConfidence, region)
     }
   }

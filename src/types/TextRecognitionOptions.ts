@@ -1,4 +1,4 @@
-import type { Rect } from './Rect'
+import type { VisionRect } from './VisionRect'
 import type { TextRecognitionLevel } from './TextRecognitionLevel'
 
 /** Options for `readText`. */
@@ -14,7 +14,7 @@ export interface TextRecognitionOptions {
   /** @default 'accurate' — iOS Vision only; Android ignores. */
   readonly recognitionLevel?: TextRecognitionLevel
   /** Normalized ROI (0–1). iOS: Vision ROI. Android: crop before OCR. */
-  readonly region?: Rect
+  readonly region?: VisionRect
   /**
    * Minimum text height as a fraction of image height (0–1).
    * iOS: Vision `minimumTextHeight`. Android: post-filter on line bounds.

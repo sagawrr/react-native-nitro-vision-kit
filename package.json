@@ -38,6 +38,7 @@
     "lint:fix": "eslint \"src/**/*.{js,ts,tsx}\" --fix",
     "lint-ci": "eslint \"src/**/*.{js,ts,tsx}\" --max-warnings 0",
     "specs": "tsc --noEmit false && nitrogen --logLevel=\"debug\"",
+    "specs:check": "bun run specs && git diff --exit-code -- nitrogen/generated",
     "release": "release-it"
   },
   "keywords": [
@@ -84,7 +85,7 @@
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.75.0",
-    "react-native-nitro-modules": "^0.36.5"
+    "react-native-nitro-modules": ">=0.36.0"
   },
   "codegenConfig": {
     "name": "NitroVisionKitSpec",
@@ -105,8 +106,5 @@
     "trailingComma": "es5",
     "useTabs": false,
     "semi": false
-  },
-  "dependencies": {
-    "brace-expansion": "^5.0.9"
   }
 }

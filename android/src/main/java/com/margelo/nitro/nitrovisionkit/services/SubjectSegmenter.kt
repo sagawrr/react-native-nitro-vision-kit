@@ -82,7 +82,7 @@ internal object SubjectSegmenter {
       else -> 1.0
     }
 
-    val normalizedBounds = Rect(
+    val normalizedBounds = VisionRect(
       x = pixelBounds.x / sourceWidth,
       y = pixelBounds.y / sourceHeight,
       width = pixelBounds.width / sourceWidth,

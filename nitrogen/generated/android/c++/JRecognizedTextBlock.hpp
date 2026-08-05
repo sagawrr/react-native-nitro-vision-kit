@@ -13,11 +13,11 @@
 #include "JNormalizedPoint.hpp"
 #include "JRecognizedTextCandidate.hpp"
 #include "JRecognizedTextLine.hpp"
-#include "JRect.hpp"
+#include "JVisionRect.hpp"
 #include "NormalizedPoint.hpp"
 #include "RecognizedTextCandidate.hpp"
 #include "RecognizedTextLine.hpp"
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -43,8 +43,8 @@ namespace margelo::nitro::nitrovisionkit {
       static const auto clazz = javaClassStatic();
       static const auto fieldText = clazz->getField<jni::JString>("text");
       jni::local_ref<jni::JString> text = this->getFieldValue(fieldText);
-      static const auto fieldBounds = clazz->getField<JRect>("bounds");
-      jni::local_ref<JRect> bounds = this->getFieldValue(fieldBounds);
+      static const auto fieldBounds = clazz->getField<JVisionRect>("bounds");
+      jni::local_ref<JVisionRect> bounds = this->getFieldValue(fieldBounds);
       static const auto fieldLines = clazz->getField<jni::JArrayClass<JRecognizedTextLine>>("lines");
       jni::local_ref<jni::JArrayClass<JRecognizedTextLine>> lines = this->getFieldValue(fieldLines);
       static const auto fieldLanguage = clazz->getField<jni::JString>("language");
@@ -84,13 +84,13 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JRecognizedTextBlock::javaobject> fromCpp(const RecognizedTextBlock& value) {
-      using JSignature = JRecognizedTextBlock(jni::alias_ref<jni::JString>, jni::alias_ref<JRect>, jni::alias_ref<jni::JArrayClass<JRecognizedTextLine>>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JArrayClass<JNormalizedPoint>>);
+      using JSignature = JRecognizedTextBlock(jni::alias_ref<jni::JString>, jni::alias_ref<JVisionRect>, jni::alias_ref<jni::JArrayClass<JRecognizedTextLine>>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JArrayClass<JNormalizedPoint>>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         jni::make_jstring(value.text),
-        JRect::fromCpp(value.bounds),
+        JVisionRect::fromCpp(value.bounds),
         [&](auto&& __input) {
           size_t __size = __input.size();
           jni::local_ref<jni::JArrayClass<JRecognizedTextLine>> __array = jni::JArrayClass<JRecognizedTextLine>::newArray(__size);

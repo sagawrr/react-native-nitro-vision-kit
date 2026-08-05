@@ -52,7 +52,7 @@ namespace margelo::nitro::nitrovisionkit {
     // Properties
     double getWidth() override;
     double getHeight() override;
-    Rect getBounds() override;
+    VisionRect getBounds() override;
     double getSourceWidth() override;
     double getSourceHeight() override;
     double getForegroundCoverage() override;
@@ -66,7 +66,7 @@ namespace margelo::nitro::nitrovisionkit {
     // Methods
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toMaskBuffer() override;
     std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toArrayBuffer() override;
-    std::shared_ptr<Promise<std::string>> saveToTemporaryFile(ImageFormat format, double quality) override;
+    std::shared_ptr<Promise<std::string>> saveToTemporaryFile(VisionImageFormat format, double quality) override;
 
   private:
     jni::global_ref<JHybridSegmentationResultSpec::JavaPart> _javaPart;

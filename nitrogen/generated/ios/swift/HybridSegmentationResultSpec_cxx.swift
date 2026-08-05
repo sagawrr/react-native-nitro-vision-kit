@@ -135,7 +135,7 @@ open class HybridSegmentationResultSpec_cxx {
     }
   }
   
-  public final var bounds: Rect {
+  public final var bounds: VisionRect {
     @inline(__always)
     get {
       return self.__implementation.bounds
@@ -240,7 +240,7 @@ open class HybridSegmentationResultSpec_cxx {
   @inline(__always)
   public final func saveToTemporaryFile(format: Int32, quality: Double) -> bridge.Result_std__shared_ptr_Promise_std__string___ {
     do {
-      let __result = try self.__implementation.saveToTemporaryFile(format: margelo.nitro.nitrovisionkit.ImageFormat(rawValue: format)!, quality: quality)
+      let __result = try self.__implementation.saveToTemporaryFile(format: margelo.nitro.nitrovisionkit.VisionImageFormat(rawValue: format)!, quality: quality)
       let __resultCpp = { () -> bridge.std__shared_ptr_Promise_std__string__ in
         let __promise = bridge.create_std__shared_ptr_Promise_std__string__()
         let __promiseHolder = bridge.wrap_std__shared_ptr_Promise_std__string__(__promise)

@@ -14,12 +14,12 @@
 #include "ClassificationOptions.hpp"
 #include "JBackgroundRemovalOptions.hpp"
 #include "JClassificationOptions.hpp"
-#include "JRect.hpp"
 #include "JTextRecognitionLevel.hpp"
 #include "JTextRecognitionOptions.hpp"
-#include "Rect.hpp"
+#include "JVisionRect.hpp"
 #include "TextRecognitionLevel.hpp"
 #include "TextRecognitionOptions.hpp"
+#include "VisionRect.hpp"
 #include <optional>
 #include <string>
 #include <vector>

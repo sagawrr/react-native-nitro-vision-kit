@@ -28,15 +28,15 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
 // Forward declaration of `RecognizedTextCandidate` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
 
 #include <string>
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 #include <optional>
 #include "NormalizedPoint.hpp"
 #include <vector>
@@ -50,7 +50,7 @@ namespace margelo::nitro::nitrovisionkit {
   struct RecognizedTextLine final {
   public:
     std::string text     SWIFT_PRIVATE;
-    Rect bounds     SWIFT_PRIVATE;
+    VisionRect bounds     SWIFT_PRIVATE;
     std::optional<double> confidence     SWIFT_PRIVATE;
     std::optional<std::string> language     SWIFT_PRIVATE;
     std::optional<double> angleDegrees     SWIFT_PRIVATE;
@@ -59,7 +59,7 @@ namespace margelo::nitro::nitrovisionkit {
 
   public:
     RecognizedTextLine() = default;
-    explicit RecognizedTextLine(std::string text, Rect bounds, std::optional<double> confidence, std::optional<std::string> language, std::optional<double> angleDegrees, std::optional<std::vector<NormalizedPoint>> cornerPoints, std::optional<std::vector<RecognizedTextCandidate>> candidates): text(text), bounds(bounds), confidence(confidence), language(language), angleDegrees(angleDegrees), cornerPoints(cornerPoints), candidates(candidates) {}
+    explicit RecognizedTextLine(std::string text, VisionRect bounds, std::optional<double> confidence, std::optional<std::string> language, std::optional<double> angleDegrees, std::optional<std::vector<NormalizedPoint>> cornerPoints, std::optional<std::vector<RecognizedTextCandidate>> candidates): text(text), bounds(bounds), confidence(confidence), language(language), angleDegrees(angleDegrees), cornerPoints(cornerPoints), candidates(candidates) {}
 
   public:
     friend bool operator==(const RecognizedTextLine& lhs, const RecognizedTextLine& rhs) = default;
@@ -76,7 +76,7 @@ namespace margelo::nitro {
       jsi::Object obj = arg.asObject(runtime);
       return margelo::nitro::nitrovisionkit::RecognizedTextLine(
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text"))),
-        JSIConverter<margelo::nitro::nitrovisionkit::Rect>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "bounds"))),
+        JSIConverter<margelo::nitro::nitrovisionkit::VisionRect>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "bounds"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "confidence"))),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "language"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "angleDegrees"))),
@@ -87,7 +87,7 @@ namespace margelo::nitro {
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::nitrovisionkit::RecognizedTextLine& arg) {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "text"), JSIConverter<std::string>::toJSI(runtime, arg.text));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "bounds"), JSIConverter<margelo::nitro::nitrovisionkit::Rect>::toJSI(runtime, arg.bounds));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "bounds"), JSIConverter<margelo::nitro::nitrovisionkit::VisionRect>::toJSI(runtime, arg.bounds));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "confidence"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.confidence));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "language"), JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.language));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "angleDegrees"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.angleDegrees));
@@ -104,7 +104,7 @@ namespace margelo::nitro {
         return false;
       }
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "text")))) return false;
-      if (!JSIConverter<margelo::nitro::nitrovisionkit::Rect>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "bounds")))) return false;
+      if (!JSIConverter<margelo::nitro::nitrovisionkit::VisionRect>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "bounds")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "confidence")))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "language")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "angleDegrees")))) return false;

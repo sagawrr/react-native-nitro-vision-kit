@@ -26,7 +26,7 @@ data class TextRecognitionOptions(
   val recognitionLevel: TextRecognitionLevel?,
   @DoNotStrip
   @Keep
-  val region: Rect?,
+  val region: VisionRect?,
   @DoNotStrip
   @Keep
   val minTextHeightFraction: Double?,
@@ -74,7 +74,7 @@ data class TextRecognitionOptions(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(languages: Array<String>?, recognitionLevel: TextRecognitionLevel?, region: Rect?, minTextHeightFraction: Double?, usesLanguageCorrection: Boolean?, customWords: Array<String>?, maxCandidates: Double?): TextRecognitionOptions {
+    private fun fromCpp(languages: Array<String>?, recognitionLevel: TextRecognitionLevel?, region: VisionRect?, minTextHeightFraction: Double?, usesLanguageCorrection: Boolean?, customWords: Array<String>?, maxCandidates: Double?): TextRecognitionOptions {
       return TextRecognitionOptions(languages, recognitionLevel, region, minTextHeightFraction, usesLanguageCorrection, customWords, maxCandidates)
     }
   }

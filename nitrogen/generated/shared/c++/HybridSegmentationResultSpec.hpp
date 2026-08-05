@@ -13,22 +13,22 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
 // Forward declaration of `PixelRect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct PixelRect; }
-// Forward declaration of `ImageFormat` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
+// Forward declaration of `VisionImageFormat` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class VisionImageFormat; }
 
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 #include "NormalizedPoint.hpp"
 #include "PixelRect.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <string>
-#include "ImageFormat.hpp"
+#include "VisionImageFormat.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -59,7 +59,7 @@ namespace margelo::nitro::nitrovisionkit {
       // Properties
       virtual double getWidth() = 0;
       virtual double getHeight() = 0;
-      virtual Rect getBounds() = 0;
+      virtual VisionRect getBounds() = 0;
       virtual double getSourceWidth() = 0;
       virtual double getSourceHeight() = 0;
       virtual double getForegroundCoverage() = 0;
@@ -73,7 +73,7 @@ namespace margelo::nitro::nitrovisionkit {
       // Methods
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toMaskBuffer() = 0;
       virtual std::shared_ptr<Promise<std::shared_ptr<ArrayBuffer>>> toArrayBuffer() = 0;
-      virtual std::shared_ptr<Promise<std::string>> saveToTemporaryFile(ImageFormat format, double quality) = 0;
+      virtual std::shared_ptr<Promise<std::string>> saveToTemporaryFile(VisionImageFormat format, double quality) = 0;
 
     protected:
       // Hybrid Setup

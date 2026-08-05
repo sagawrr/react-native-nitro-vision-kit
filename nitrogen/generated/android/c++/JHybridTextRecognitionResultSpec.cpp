@@ -9,8 +9,8 @@
 
 // Forward declaration of `RecognizedTextBlock` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextBlock; }
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `RecognizedTextLine` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextLine; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
@@ -22,8 +22,8 @@ namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
 #include "RecognizedTextBlock.hpp"
 #include <vector>
 #include "JRecognizedTextBlock.hpp"
-#include "Rect.hpp"
-#include "JRect.hpp"
+#include "VisionRect.hpp"
+#include "JVisionRect.hpp"
 #include "RecognizedTextLine.hpp"
 #include "JRecognizedTextLine.hpp"
 #include <optional>

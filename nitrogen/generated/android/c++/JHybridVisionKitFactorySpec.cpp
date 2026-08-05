@@ -21,8 +21,8 @@ namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
 namespace margelo::nitro::nitrovisionkit { struct BackgroundRemovalOptions; }
 // Forward declaration of `ClassificationOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ClassificationOptions; }
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `TextRecognitionOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
 // Forward declaration of `TextRecognitionLevel` to properly resolve imports.
@@ -50,8 +50,8 @@ namespace margelo::nitro::nitrovisionkit { struct AnalyzeImageOptions; }
 #include "JBackgroundRemovalOptions.hpp"
 #include "ClassificationOptions.hpp"
 #include "JClassificationOptions.hpp"
-#include "Rect.hpp"
-#include "JRect.hpp"
+#include "VisionRect.hpp"
+#include "JVisionRect.hpp"
 #include "TextRecognitionOptions.hpp"
 #include "JTextRecognitionOptions.hpp"
 #include "TextRecognitionLevel.hpp"

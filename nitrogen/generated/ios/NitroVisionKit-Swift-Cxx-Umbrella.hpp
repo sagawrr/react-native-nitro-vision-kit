@@ -24,8 +24,6 @@ namespace margelo::nitro::nitrovisionkit { class HybridTextRecognitionResultSpec
 namespace margelo::nitro::nitrovisionkit { class HybridVisionKitFactorySpec; }
 // Forward declaration of `ImageAnalysisResult` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct ImageAnalysisResult; }
-// Forward declaration of `ImageFormat` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
 // Forward declaration of `PixelRect` to properly resolve imports.
@@ -36,14 +34,16 @@ namespace margelo::nitro::nitrovisionkit { struct RecognizedTextBlock; }
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
 // Forward declaration of `RecognizedTextLine` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextLine; }
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
 // Forward declaration of `TextRecognitionLevel` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { enum class TextRecognitionLevel; }
 // Forward declaration of `TextRecognitionOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
 // Forward declaration of `VisionCapabilities` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
+// Forward declaration of `VisionImageFormat` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class VisionImageFormat; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 
 // Include C++ defined types
 #include "AnalyzeImageOptions.hpp"
@@ -54,16 +54,16 @@ namespace margelo::nitro::nitrovisionkit { struct VisionCapabilities; }
 #include "HybridTextRecognitionResultSpec.hpp"
 #include "HybridVisionKitFactorySpec.hpp"
 #include "ImageAnalysisResult.hpp"
-#include "ImageFormat.hpp"
 #include "NormalizedPoint.hpp"
 #include "PixelRect.hpp"
 #include "RecognizedTextBlock.hpp"
 #include "RecognizedTextCandidate.hpp"
 #include "RecognizedTextLine.hpp"
-#include "Rect.hpp"
 #include "TextRecognitionLevel.hpp"
 #include "TextRecognitionOptions.hpp"
 #include "VisionCapabilities.hpp"
+#include "VisionImageFormat.hpp"
+#include "VisionRect.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/Result.hpp>

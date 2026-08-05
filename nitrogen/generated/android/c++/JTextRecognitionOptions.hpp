@@ -10,10 +10,10 @@
 #include <fbjni/fbjni.h>
 #include "TextRecognitionOptions.hpp"
 
-#include "JRect.hpp"
 #include "JTextRecognitionLevel.hpp"
-#include "Rect.hpp"
+#include "JVisionRect.hpp"
 #include "TextRecognitionLevel.hpp"
+#include "VisionRect.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -41,8 +41,8 @@ namespace margelo::nitro::nitrovisionkit {
       jni::local_ref<jni::JArrayClass<jni::JString>> languages = this->getFieldValue(fieldLanguages);
       static const auto fieldRecognitionLevel = clazz->getField<JTextRecognitionLevel>("recognitionLevel");
       jni::local_ref<JTextRecognitionLevel> recognitionLevel = this->getFieldValue(fieldRecognitionLevel);
-      static const auto fieldRegion = clazz->getField<JRect>("region");
-      jni::local_ref<JRect> region = this->getFieldValue(fieldRegion);
+      static const auto fieldRegion = clazz->getField<JVisionRect>("region");
+      jni::local_ref<JVisionRect> region = this->getFieldValue(fieldRegion);
       static const auto fieldMinTextHeightFraction = clazz->getField<jni::JDouble>("minTextHeightFraction");
       jni::local_ref<jni::JDouble> minTextHeightFraction = this->getFieldValue(fieldMinTextHeightFraction);
       static const auto fieldUsesLanguageCorrection = clazz->getField<jni::JBoolean>("usesLanguageCorrection");
@@ -86,7 +86,7 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JTextRecognitionOptions::javaobject> fromCpp(const TextRecognitionOptions& value) {
-      using JSignature = JTextRecognitionOptions(jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JTextRecognitionLevel>, jni::alias_ref<JRect>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<jni::JDouble>);
+      using JSignature = JTextRecognitionOptions(jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<JTextRecognitionLevel>, jni::alias_ref<JVisionRect>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JBoolean>, jni::alias_ref<jni::JArrayClass<jni::JString>>, jni::alias_ref<jni::JDouble>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -102,7 +102,7 @@ namespace margelo::nitro::nitrovisionkit {
           return __array;
         }(value.languages.value()) : nullptr,
         value.recognitionLevel.has_value() ? JTextRecognitionLevel::fromCpp(value.recognitionLevel.value()) : nullptr,
-        value.region.has_value() ? JRect::fromCpp(value.region.value()) : nullptr,
+        value.region.has_value() ? JVisionRect::fromCpp(value.region.value()) : nullptr,
         value.minTextHeightFraction.has_value() ? jni::JDouble::valueOf(value.minTextHeightFraction.value()) : nullptr,
         value.usesLanguageCorrection.has_value() ? jni::JBoolean::valueOf(value.usesLanguageCorrection.value()) : nullptr,
         value.customWords.has_value() ? [&](auto&& __input) {

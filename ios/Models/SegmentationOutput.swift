@@ -4,7 +4,7 @@ struct SegmentationOutput {
   let rgba: Data
   let width: Int
   let height: Int
-  let bounds: Rect
+  let bounds: VisionRect
   let sourceWidth: Int
   let sourceHeight: Int
   let foregroundCoverage: Double

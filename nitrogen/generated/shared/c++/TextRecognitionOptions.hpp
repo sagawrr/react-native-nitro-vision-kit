@@ -30,14 +30,14 @@
 
 // Forward declaration of `TextRecognitionLevel` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { enum class TextRecognitionLevel; }
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 
 #include <string>
 #include <vector>
 #include <optional>
 #include "TextRecognitionLevel.hpp"
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -48,7 +48,7 @@ namespace margelo::nitro::nitrovisionkit {
   public:
     std::optional<std::vector<std::string>> languages     SWIFT_PRIVATE;
     std::optional<TextRecognitionLevel> recognitionLevel     SWIFT_PRIVATE;
-    std::optional<Rect> region     SWIFT_PRIVATE;
+    std::optional<VisionRect> region     SWIFT_PRIVATE;
     std::optional<double> minTextHeightFraction     SWIFT_PRIVATE;
     std::optional<bool> usesLanguageCorrection     SWIFT_PRIVATE;
     std::optional<std::vector<std::string>> customWords     SWIFT_PRIVATE;
@@ -56,7 +56,7 @@ namespace margelo::nitro::nitrovisionkit {
 
   public:
     TextRecognitionOptions() = default;
-    explicit TextRecognitionOptions(std::optional<std::vector<std::string>> languages, std::optional<TextRecognitionLevel> recognitionLevel, std::optional<Rect> region, std::optional<double> minTextHeightFraction, std::optional<bool> usesLanguageCorrection, std::optional<std::vector<std::string>> customWords, std::optional<double> maxCandidates): languages(languages), recognitionLevel(recognitionLevel), region(region), minTextHeightFraction(minTextHeightFraction), usesLanguageCorrection(usesLanguageCorrection), customWords(customWords), maxCandidates(maxCandidates) {}
+    explicit TextRecognitionOptions(std::optional<std::vector<std::string>> languages, std::optional<TextRecognitionLevel> recognitionLevel, std::optional<VisionRect> region, std::optional<double> minTextHeightFraction, std::optional<bool> usesLanguageCorrection, std::optional<std::vector<std::string>> customWords, std::optional<double> maxCandidates): languages(languages), recognitionLevel(recognitionLevel), region(region), minTextHeightFraction(minTextHeightFraction), usesLanguageCorrection(usesLanguageCorrection), customWords(customWords), maxCandidates(maxCandidates) {}
 
   public:
     friend bool operator==(const TextRecognitionOptions& lhs, const TextRecognitionOptions& rhs) = default;
@@ -74,7 +74,7 @@ namespace margelo::nitro {
       return margelo::nitro::nitrovisionkit::TextRecognitionOptions(
         JSIConverter<std::optional<std::vector<std::string>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "languages"))),
         JSIConverter<std::optional<margelo::nitro::nitrovisionkit::TextRecognitionLevel>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "recognitionLevel"))),
-        JSIConverter<std::optional<margelo::nitro::nitrovisionkit::Rect>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "region"))),
+        JSIConverter<std::optional<margelo::nitro::nitrovisionkit::VisionRect>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "region"))),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "minTextHeightFraction"))),
         JSIConverter<std::optional<bool>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "usesLanguageCorrection"))),
         JSIConverter<std::optional<std::vector<std::string>>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "customWords"))),
@@ -85,7 +85,7 @@ namespace margelo::nitro {
       jsi::Object obj(runtime);
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "languages"), JSIConverter<std::optional<std::vector<std::string>>>::toJSI(runtime, arg.languages));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "recognitionLevel"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::TextRecognitionLevel>>::toJSI(runtime, arg.recognitionLevel));
-      obj.setProperty(runtime, PropNameIDCache::get(runtime, "region"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::Rect>>::toJSI(runtime, arg.region));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "region"), JSIConverter<std::optional<margelo::nitro::nitrovisionkit::VisionRect>>::toJSI(runtime, arg.region));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "minTextHeightFraction"), JSIConverter<std::optional<double>>::toJSI(runtime, arg.minTextHeightFraction));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "usesLanguageCorrection"), JSIConverter<std::optional<bool>>::toJSI(runtime, arg.usesLanguageCorrection));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "customWords"), JSIConverter<std::optional<std::vector<std::string>>>::toJSI(runtime, arg.customWords));
@@ -102,7 +102,7 @@ namespace margelo::nitro {
       }
       if (!JSIConverter<std::optional<std::vector<std::string>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "languages")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::TextRecognitionLevel>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "recognitionLevel")))) return false;
-      if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::Rect>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "region")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::nitrovisionkit::VisionRect>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "region")))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "minTextHeightFraction")))) return false;
       if (!JSIConverter<std::optional<bool>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "usesLanguageCorrection")))) return false;
       if (!JSIConverter<std::optional<std::vector<std::string>>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "customWords")))) return false;

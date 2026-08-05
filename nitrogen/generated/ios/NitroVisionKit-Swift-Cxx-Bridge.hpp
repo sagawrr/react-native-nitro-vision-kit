@@ -32,12 +32,12 @@ namespace margelo::nitro::nitrovisionkit { struct RecognizedTextBlock; }
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
 // Forward declaration of `RecognizedTextLine` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextLine; }
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
 // Forward declaration of `TextRecognitionLevel` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { enum class TextRecognitionLevel; }
 // Forward declaration of `TextRecognitionOptions` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct TextRecognitionOptions; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 
 // Forward declarations of Swift defined types
 // Forward declaration of `HybridSegmentationResultSpec_cxx` to properly resolve imports.
@@ -59,9 +59,9 @@ namespace NitroVisionKit { class HybridVisionKitFactorySpec_cxx; }
 #include "RecognizedTextBlock.hpp"
 #include "RecognizedTextCandidate.hpp"
 #include "RecognizedTextLine.hpp"
-#include "Rect.hpp"
 #include "TextRecognitionLevel.hpp"
 #include "TextRecognitionOptions.hpp"
+#include "VisionRect.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 #include <NitroModules/Promise.hpp>
@@ -445,18 +445,18 @@ namespace margelo::nitro::nitrovisionkit::bridge::swift {
     return Func_void_std__vector_Classification__Wrapper(std::move(value));
   }
   
-  // pragma MARK: std::optional<Rect>
+  // pragma MARK: std::optional<VisionRect>
   /**
-   * Specialized version of `std::optional<Rect>`.
+   * Specialized version of `std::optional<VisionRect>`.
    */
-  using std__optional_Rect_ = std::optional<Rect>;
-  inline std::optional<Rect> create_std__optional_Rect_(const Rect& value) noexcept {
-    return std::optional<Rect>(value);
+  using std__optional_VisionRect_ = std::optional<VisionRect>;
+  inline std::optional<VisionRect> create_std__optional_VisionRect_(const VisionRect& value) noexcept {
+    return std::optional<VisionRect>(value);
   }
-  inline bool has_value_std__optional_Rect_(const std::optional<Rect>& optional) noexcept {
+  inline bool has_value_std__optional_VisionRect_(const std::optional<VisionRect>& optional) noexcept {
     return optional.has_value();
   }
-  inline Rect get_std__optional_Rect_(const std::optional<Rect>& optional) noexcept {
+  inline VisionRect get_std__optional_VisionRect_(const std::optional<VisionRect>& optional) noexcept {
     return optional.value();
   }
   

@@ -4,7 +4,7 @@ internal class SegmentationOutput(
   val pixels: ByteArray,
   val width: Int,
   val height: Int,
-  val bounds: Rect,
+  val bounds: VisionRect,
   val sourceWidth: Int,
   val sourceHeight: Int,
   val foregroundCoverage: Double,

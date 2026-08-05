@@ -34,10 +34,7 @@ jobs:
         run: bun run build
 
       - name: Verify Nitrogen specs are up to date
-        run: |
-          bun run specs
-          git diff --exit-code -- nitrogen/generated || \
-            (echo "::error::nitrogen/generated is stale — run 'bun run specs' and commit before releasing." && exit 1)
+        run: bun run specs:check
 
       - name: Publish
         run: |

@@ -12,10 +12,10 @@
 
 #include "JNormalizedPoint.hpp"
 #include "JRecognizedTextCandidate.hpp"
-#include "JRect.hpp"
+#include "JVisionRect.hpp"
 #include "NormalizedPoint.hpp"
 #include "RecognizedTextCandidate.hpp"
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 #include <optional>
 #include <string>
 #include <vector>
@@ -41,8 +41,8 @@ namespace margelo::nitro::nitrovisionkit {
       static const auto clazz = javaClassStatic();
       static const auto fieldText = clazz->getField<jni::JString>("text");
       jni::local_ref<jni::JString> text = this->getFieldValue(fieldText);
-      static const auto fieldBounds = clazz->getField<JRect>("bounds");
-      jni::local_ref<JRect> bounds = this->getFieldValue(fieldBounds);
+      static const auto fieldBounds = clazz->getField<JVisionRect>("bounds");
+      jni::local_ref<JVisionRect> bounds = this->getFieldValue(fieldBounds);
       static const auto fieldConfidence = clazz->getField<jni::JDouble>("confidence");
       jni::local_ref<jni::JDouble> confidence = this->getFieldValue(fieldConfidence);
       static const auto fieldLanguage = clazz->getField<jni::JString>("language");
@@ -88,13 +88,13 @@ namespace margelo::nitro::nitrovisionkit {
      */
     [[maybe_unused]]
     static jni::local_ref<JRecognizedTextLine::javaobject> fromCpp(const RecognizedTextLine& value) {
-      using JSignature = JRecognizedTextLine(jni::alias_ref<jni::JString>, jni::alias_ref<JRect>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JArrayClass<JNormalizedPoint>>, jni::alias_ref<jni::JArrayClass<JRecognizedTextCandidate>>);
+      using JSignature = JRecognizedTextLine(jni::alias_ref<jni::JString>, jni::alias_ref<JVisionRect>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JArrayClass<JNormalizedPoint>>, jni::alias_ref<jni::JArrayClass<JRecognizedTextCandidate>>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         jni::make_jstring(value.text),
-        JRect::fromCpp(value.bounds),
+        JVisionRect::fromCpp(value.bounds),
         value.confidence.has_value() ? jni::JDouble::valueOf(value.confidence.value()) : nullptr,
         value.language.has_value() ? jni::make_jstring(value.language.value()) : nullptr,
         value.angleDegrees.has_value() ? jni::JDouble::valueOf(value.angleDegrees.value()) : nullptr,

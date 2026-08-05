@@ -18,7 +18,7 @@ public extension RecognizedTextBlock {
   /**
    * Create a new instance of `RecognizedTextBlock`.
    */
-  init(text: String, bounds: Rect, lines: [RecognizedTextLine], language: String?, cornerPoints: [NormalizedPoint]?) {
+  init(text: String, bounds: VisionRect, lines: [RecognizedTextLine], language: String?, cornerPoints: [NormalizedPoint]?) {
     self.init(std.string(text), bounds, { () -> bridge.std__vector_RecognizedTextLine_ in
       var __vector = bridge.create_std__vector_RecognizedTextLine_(lines.count)
       for __item in lines {
@@ -52,7 +52,7 @@ public extension RecognizedTextBlock {
   }
   
   @inline(__always)
-  var bounds: Rect {
+  var bounds: VisionRect {
     return self.__bounds
   }
   

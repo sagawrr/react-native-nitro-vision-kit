@@ -43,7 +43,7 @@ enum SubjectSegmenter {
     }
 
     let instanceCount = observation.allInstances.isEmpty ? 1.0 : Double(observation.allInstances.count)
-    let normalizedBounds = Rect(
+    let normalizedBounds = VisionRect(
       x: pixelBounds.x / Double(sourceWidth),
       y: pixelBounds.y / Double(sourceHeight),
       width: pixelBounds.width / Double(sourceWidth),

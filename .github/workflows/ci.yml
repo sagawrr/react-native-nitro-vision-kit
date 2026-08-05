@@ -36,8 +36,8 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Generate Nitrogen specs
-        run: bun run specs
+      - name: Verify Nitrogen specs are up to date
+        run: bun run specs:check
 
   example:
     name: Example typecheck

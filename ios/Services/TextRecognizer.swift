@@ -78,7 +78,7 @@ enum TextRecognizer {
     ciImage: CIImage,
     languages: [String]?,
     recognitionLevel: TextRecognitionLevel?,
-    region: Rect?,
+    region: VisionRect?,
     minTextHeightFraction: Double?,
     usesLanguageCorrection: Bool?,
     customWords: [String]?,
@@ -187,9 +187,9 @@ enum TextRecognizer {
   @available(iOS 18.0, *)
   private static func topLeftGeometry(
     from quad: any QuadrilateralProviding
-  ) -> (bounds: Rect, corners: [NormalizedPoint]) {
+  ) -> (bounds: VisionRect, corners: [NormalizedPoint]) {
     let flippedBox = quad.boundingBox.verticallyFlipped()
-    let bounds = Rect(
+    let bounds = VisionRect(
       x: Double(flippedBox.origin.x),
       y: Double(flippedBox.origin.y),
       width: Double(flippedBox.width),

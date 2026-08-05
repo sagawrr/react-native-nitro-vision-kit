@@ -41,7 +41,7 @@ internal object TextRecognizer {
     context: Context,
     bitmap: Bitmap,
     languages: Array<String>?,
-    region: Rect?,
+    region: VisionRect?,
     minTextHeightFraction: Double?,
   ): TextRecognitionOutput {
     val scripts = TextRecognitionScript.fromLanguages(languages)
@@ -166,7 +166,7 @@ internal object TextRecognizer {
   private fun normalizedText(value: String): String =
     value.filter { !it.isWhitespace() }
 
-  private fun iou(a: Rect, b: Rect): Double {
+  private fun iou(a: VisionRect, b: VisionRect): Double {
     val ax2 = a.x + a.width
     val ay2 = a.y + a.height
     val bx2 = b.x + b.width
@@ -191,7 +191,7 @@ internal object TextRecognizer {
     sourceHeight: Int,
     fullWidth: Int,
     fullHeight: Int,
-    region: Rect?,
+    region: VisionRect?,
     minTextHeightFraction: Double?,
   ): TextRecognitionOutput {
     val offsetX = if (region != null) region.x * fullWidth else 0.0
@@ -286,9 +286,9 @@ internal object TextRecognizer {
     offsetY: Double,
     fullWidth: Int,
     fullHeight: Int,
-  ): Rect? {
+  ): VisionRect? {
     if (box == null || fullWidth <= 0 || fullHeight <= 0) return null
-    return Rect(
+    return VisionRect(
       x = ((offsetX + box.left * scaleX) / fullWidth).coerceIn(0.0, 1.0),
       y = ((offsetY + box.top * scaleY) / fullHeight).coerceIn(0.0, 1.0),
       width = (box.width() * scaleX / fullWidth).coerceIn(0.0, 1.0),
@@ -315,8 +315,8 @@ internal object TextRecognizer {
     }
   }
 
-  private fun unionBounds(rects: List<Rect>): Rect {
-    if (rects.isEmpty()) return Rect(0.0, 0.0, 0.0, 0.0)
+  private fun unionBounds(rects: List<VisionRect>): VisionRect {
+    if (rects.isEmpty()) return VisionRect(0.0, 0.0, 0.0, 0.0)
     var minX = Double.POSITIVE_INFINITY
     var minY = Double.POSITIVE_INFINITY
     var maxX = Double.NEGATIVE_INFINITY
@@ -327,7 +327,7 @@ internal object TextRecognizer {
       maxX = maxOf(maxX, r.x + r.width)
       maxY = maxOf(maxY, r.y + r.height)
     }
-    return Rect(
+    return VisionRect(
       x = minX,
       y = minY,
       width = (maxX - minX).coerceAtLeast(0.0),

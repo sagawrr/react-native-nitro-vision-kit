@@ -14,8 +14,8 @@ namespace NitroVisionKit { class HybridTextRecognitionResultSpec_cxx; }
 
 // Forward declaration of `RecognizedTextBlock` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextBlock; }
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `RecognizedTextLine` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct RecognizedTextLine; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
@@ -26,7 +26,7 @@ namespace margelo::nitro::nitrovisionkit { struct RecognizedTextCandidate; }
 #include <string>
 #include "RecognizedTextBlock.hpp"
 #include <vector>
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 #include "RecognizedTextLine.hpp"
 #include <optional>
 #include "NormalizedPoint.hpp"

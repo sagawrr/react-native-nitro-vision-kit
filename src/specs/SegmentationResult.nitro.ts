@@ -1,8 +1,8 @@
 import type { HybridObject } from 'react-native-nitro-modules'
-import type { ImageFormat } from '../types/ImageFormat'
+import type { VisionImageFormat } from '../types/VisionImageFormat'
 import type { NormalizedPoint } from '../types/NormalizedPoint'
 import type { PixelRect } from '../types/PixelRect'
-import type { Rect } from '../types/Rect'
+import type { VisionRect } from '../types/VisionRect'
 
 /** HybridObject — call `dispose()` when done. */
 export interface SegmentationResult
@@ -11,7 +11,7 @@ export interface SegmentationResult
   readonly width: number
   readonly height: number
   /** Normalized 0–1. */
-  readonly bounds: Rect
+  readonly bounds: VisionRect
   readonly sourceWidth: number
   readonly sourceHeight: number
   /** Foreground pixel ratio (threshold 0.5). */
@@ -28,5 +28,8 @@ export interface SegmentationResult
   /** Premultiplied RGBA_8888 (`width × height × 4`). */
   toArrayBuffer(): Promise<ArrayBuffer>
   /** `quality` 0–100 (JPEG only). */
-  saveToTemporaryFile(format: ImageFormat, quality: number): Promise<string>
+  saveToTemporaryFile(
+    format: VisionImageFormat,
+    quality: number
+  ): Promise<string>
 }

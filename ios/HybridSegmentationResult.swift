@@ -28,7 +28,7 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
     super.init()
   }
 
-  let bounds: Rect
+  let bounds: VisionRect
   let sourceWidth: Double
   let sourceHeight: Double
   let foregroundCoverage: Double
@@ -71,7 +71,7 @@ final class HybridSegmentationResult: HybridSegmentationResultSpec {
     }
   }
 
-  func saveToTemporaryFile(format: ImageFormat, quality: Double) throws -> Promise<String> {
+  func saveToTemporaryFile(format: VisionImageFormat, quality: Double) throws -> Promise<String> {
     try ensureNotDisposed()
     let safeQuality = quality.isFinite ? min(max(quality, 0), 100) : 90
     let qualityClamped = Int(safeQuality.rounded())

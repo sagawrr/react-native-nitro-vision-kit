@@ -18,7 +18,7 @@ public extension TextRecognitionOptions {
   /**
    * Create a new instance of `TextRecognitionOptions`.
    */
-  init(languages: [String]?, recognitionLevel: TextRecognitionLevel?, region: Rect?, minTextHeightFraction: Double?, usesLanguageCorrection: Bool?, customWords: [String]?, maxCandidates: Double?) {
+  init(languages: [String]?, recognitionLevel: TextRecognitionLevel?, region: VisionRect?, minTextHeightFraction: Double?, usesLanguageCorrection: Bool?, customWords: [String]?, maxCandidates: Double?) {
     self.init({ () -> bridge.std__optional_std__vector_std__string__ in
       if let __unwrappedValue = languages {
         return bridge.create_std__optional_std__vector_std__string__({ () -> bridge.std__vector_std__string_ in
@@ -37,9 +37,9 @@ public extension TextRecognitionOptions {
       } else {
         return .init()
       }
-    }(), { () -> bridge.std__optional_Rect_ in
+    }(), { () -> bridge.std__optional_VisionRect_ in
       if let __unwrappedValue = region {
-        return bridge.create_std__optional_Rect_(__unwrappedValue)
+        return bridge.create_std__optional_VisionRect_(__unwrappedValue)
       } else {
         return .init()
       }
@@ -94,7 +94,7 @@ public extension TextRecognitionOptions {
   }
   
   @inline(__always)
-  var region: Rect? {
+  var region: VisionRect? {
     return self.__region.value
   }
   

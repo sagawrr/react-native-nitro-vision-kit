@@ -23,7 +23,7 @@ data class RecognizedTextLine(
   val text: String,
   @DoNotStrip
   @Keep
-  val bounds: Rect,
+  val bounds: VisionRect,
   @DoNotStrip
   @Keep
   val confidence: Double?,
@@ -74,7 +74,7 @@ data class RecognizedTextLine(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(text: String, bounds: Rect, confidence: Double?, language: String?, angleDegrees: Double?, cornerPoints: Array<NormalizedPoint>?, candidates: Array<RecognizedTextCandidate>?): RecognizedTextLine {
+    private fun fromCpp(text: String, bounds: VisionRect, confidence: Double?, language: String?, angleDegrees: Double?, cornerPoints: Array<NormalizedPoint>?, candidates: Array<RecognizedTextCandidate>?): RecognizedTextLine {
       return RecognizedTextLine(text, bounds, confidence, language, angleDegrees, cornerPoints, candidates)
     }
   }

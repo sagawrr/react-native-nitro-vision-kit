@@ -12,7 +12,7 @@ public protocol HybridSegmentationResultSpec_protocol: HybridObject {
   // Properties
   var width: Double { get }
   var height: Double { get }
-  var bounds: Rect { get }
+  var bounds: VisionRect { get }
   var sourceWidth: Double { get }
   var sourceHeight: Double { get }
   var foregroundCoverage: Double { get }
@@ -25,7 +25,7 @@ public protocol HybridSegmentationResultSpec_protocol: HybridObject {
   // Methods
   func toMaskBuffer() throws -> Promise<ArrayBuffer>
   func toArrayBuffer() throws -> Promise<ArrayBuffer>
-  func saveToTemporaryFile(format: ImageFormat, quality: Double) throws -> Promise<String>
+  func saveToTemporaryFile(format: VisionImageFormat, quality: Double) throws -> Promise<String>
 }
 
 public extension HybridSegmentationResultSpec_protocol {

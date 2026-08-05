@@ -8,7 +8,7 @@ enum ImageClassifier {
     ciImage: CIImage,
     maxResults: Int,
     minConfidence: Double,
-    region: Rect?,
+    region: VisionRect?,
   ) throws -> [Classification] {
     // ImageLoader bakes EXIF into upright pixels; Vision must get `.up`.
     let handler = VNImageRequestHandler(ciImage: ciImage, orientation: .up)

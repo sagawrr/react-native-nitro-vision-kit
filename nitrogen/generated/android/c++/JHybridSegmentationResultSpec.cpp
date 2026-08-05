@@ -7,17 +7,17 @@
 
 #include "JHybridSegmentationResultSpec.hpp"
 
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
 // Forward declaration of `PixelRect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct PixelRect; }
-// Forward declaration of `ImageFormat` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
+// Forward declaration of `VisionImageFormat` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class VisionImageFormat; }
 
-#include "Rect.hpp"
-#include "JRect.hpp"
+#include "VisionRect.hpp"
+#include "JVisionRect.hpp"
 #include "NormalizedPoint.hpp"
 #include "JNormalizedPoint.hpp"
 #include "PixelRect.hpp"
@@ -27,8 +27,8 @@ namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
 #include <NitroModules/JPromise.hpp>
 #include <NitroModules/JArrayBuffer.hpp>
 #include <string>
-#include "ImageFormat.hpp"
-#include "JImageFormat.hpp"
+#include "VisionImageFormat.hpp"
+#include "JVisionImageFormat.hpp"
 
 namespace margelo::nitro::nitrovisionkit {
 
@@ -70,8 +70,8 @@ namespace margelo::nitro::nitrovisionkit {
     auto __result = method(_javaPart);
     return __result;
   }
-  Rect JHybridSegmentationResultSpec::getBounds() {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JRect>()>("getBounds");
+  VisionRect JHybridSegmentationResultSpec::getBounds() {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JVisionRect>()>("getBounds");
     auto __result = method(_javaPart);
     return __result->toCpp();
   }
@@ -149,9 +149,9 @@ namespace margelo::nitro::nitrovisionkit {
       return __promise;
     }();
   }
-  std::shared_ptr<Promise<std::string>> JHybridSegmentationResultSpec::saveToTemporaryFile(ImageFormat format, double quality) {
-    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JImageFormat> /* format */, double /* quality */)>("saveToTemporaryFile");
-    auto __result = method(_javaPart, JImageFormat::fromCpp(format), quality);
+  std::shared_ptr<Promise<std::string>> JHybridSegmentationResultSpec::saveToTemporaryFile(VisionImageFormat format, double quality) {
+    static const auto method = _javaPart->javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<JVisionImageFormat> /* format */, double /* quality */)>("saveToTemporaryFile");
+    auto __result = method(_javaPart, JVisionImageFormat::fromCpp(format), quality);
     return [&]() {
       auto __promise = Promise<std::string>::create();
       __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {

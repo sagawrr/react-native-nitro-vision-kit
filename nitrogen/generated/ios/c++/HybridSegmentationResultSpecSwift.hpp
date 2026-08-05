@@ -12,25 +12,25 @@
 // Forward declaration of `HybridSegmentationResultSpec_cxx` to properly resolve imports.
 namespace NitroVisionKit { class HybridSegmentationResultSpec_cxx; }
 
-// Forward declaration of `Rect` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { struct Rect; }
+// Forward declaration of `VisionRect` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { struct VisionRect; }
 // Forward declaration of `NormalizedPoint` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct NormalizedPoint; }
 // Forward declaration of `PixelRect` to properly resolve imports.
 namespace margelo::nitro::nitrovisionkit { struct PixelRect; }
 // Forward declaration of `ArrayBufferHolder` to properly resolve imports.
 namespace NitroModules { class ArrayBufferHolder; }
-// Forward declaration of `ImageFormat` to properly resolve imports.
-namespace margelo::nitro::nitrovisionkit { enum class ImageFormat; }
+// Forward declaration of `VisionImageFormat` to properly resolve imports.
+namespace margelo::nitro::nitrovisionkit { enum class VisionImageFormat; }
 
-#include "Rect.hpp"
+#include "VisionRect.hpp"
 #include "NormalizedPoint.hpp"
 #include "PixelRect.hpp"
 #include <NitroModules/ArrayBuffer.hpp>
 #include <NitroModules/Promise.hpp>
 #include <NitroModules/ArrayBufferHolder.hpp>
 #include <string>
-#include "ImageFormat.hpp"
+#include "VisionImageFormat.hpp"
 
 #include "NitroVisionKit-Swift-Cxx-Umbrella.hpp"
 
@@ -84,7 +84,7 @@ namespace margelo::nitro::nitrovisionkit {
     inline double getHeight() noexcept override {
       return _swiftPart.getHeight();
     }
-    inline Rect getBounds() noexcept override {
+    inline VisionRect getBounds() noexcept override {
       return _swiftPart.getBounds();
     }
     inline double getSourceWidth() noexcept override {
@@ -130,7 +130,7 @@ namespace margelo::nitro::nitrovisionkit {
       auto __value = std::move(__result.value());
       return __value;
     }
-    inline std::shared_ptr<Promise<std::string>> saveToTemporaryFile(ImageFormat format, double quality) override {
+    inline std::shared_ptr<Promise<std::string>> saveToTemporaryFile(VisionImageFormat format, double quality) override {
       auto __result = _swiftPart.saveToTemporaryFile(static_cast<int>(format), std::forward<decltype(quality)>(quality));
       if (__result.hasError()) [[unlikely]] {
         std::rethrow_exception(__result.error());

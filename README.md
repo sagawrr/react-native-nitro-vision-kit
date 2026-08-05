@@ -11,39 +11,13 @@
 <h1 align="center">Nitro Vision</h1>
 
 <p align="center">
-  <strong>Subject cutouts · image labels · OCR</strong><br />
-  On-device vision for React Native.<br />
+  React Native library for subject cutouts, image labels, and text reading.<br />
+  Processing runs on the device.<br />
   <sub>
-    <a href="https://developer.apple.com/documentation/vision">Vision</a> on iOS ·
-    <a href="https://developers.google.com/ml-kit">ML Kit</a> on Android ·
+    <a href="https://developer.apple.com/documentation/vision">Vision</a> (iOS) ·
+    <a href="https://developers.google.com/ml-kit">ML Kit</a> (Android) ·
     <a href="https://nitro.margelo.com">Nitro Modules</a>
   </sub>
-</p>
-
-<p align="center">
-  <a href="#install">Install</a> ·
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#api">API</a> ·
-  <a href="#platform-notes">Platform notes</a> ·
-  <a href="#example-app">Example</a>
-</p>
-
----
-
-## Features
-
-- **Cut out subjects** — `removeBackground` → transparent PNG + geometry
-- **Label what’s in the frame** — `classifyImage` → `{ label, confidence }[]`
-- **Read text on device** — `readText` → full string + blocks (Latin / CJK / Devanagari on Android)
-- **One decode, many tasks** — `analyzeImage` runs any mix in one pass
-- **Native memory control** — HybridObject results; `dispose()` when done
-
-<p align="center">
-  <img src="assets/demo.gif" alt="Example app running removeBackground, classifyImage, readText, and analyzeImage" width="280" />
-</p>
-
-<p align="center">
-  <sub>Example app — <a href="./example"><code>example/</code></a></sub>
 </p>
 
 ---
@@ -57,238 +31,132 @@ cd ios && pod install
 
 | | Minimum |
 | --- | --- |
-| React Native | ≥ 0.75 |
-| Peer | [`react-native-nitro-modules`](https://nitro.margelo.com) ^0.36 |
-| iOS | 13+ (cutouts 17+, OCR 18+) |
-| Android | API 24+ |
+| React Native | 0.75 |
+| [`react-native-nitro-modules`](https://nitro.margelo.com) | 0.36.0 |
+| iOS | 13 (cutouts need 17, text needs 18) |
+| Android | API 24 |
 
-> **New Architecture** recommended (Nitro / JSI).
-
----
-
-## Quick start
-
-```ts
-import { VisionKit } from 'react-native-nitro-vision-kit'
-
-// 1. Gate on capabilities
-const { supportsBackgroundRemoval, supportsTextRecognition } = VisionKit.capabilities
-
-// 2. Local path or file://  (Android also: content://)
-const path = '/path/to/photo.jpg'
-
-// 3. Run → export → dispose
-if (supportsBackgroundRemoval) {
-  const cutout = await VisionKit.removeBackground(path, { trim: true })
-  const png = await cutout.saveToTemporaryFile('png', 100)
-  cutout.dispose()
-}
-```
-
-> Always **export before `dispose()`**. GC frees later; `dispose()` frees now.
+The New Architecture is a better choice. Nitro works best with it.
 
 ---
 
 ## API
 
+```ts
+import { VisionKit } from 'react-native-nitro-vision-kit'
+```
+
+Some results are HybridObjects. A HybridObject holds memory on the native side. Call `dispose()` when the result is no longer needed. Export or save before `dispose()`.
+
 ### Capabilities
 
-```ts
-const {
-  supportsBackgroundRemoval,
-  backgroundRemovalUnavailableReason,
-  supportsImageClassification,
-  supportsTextRecognition,
-  supportedTextLanguages,
-} = VisionKit.capabilities
-```
-
-| Flag | Meaning |
+| Field | Meaning |
 | --- | --- |
-| `supportsBackgroundRemoval` | Cutouts available |
-| `backgroundRemovalUnavailableReason` | Why cutouts are off (string) |
-| `supportsImageClassification` | Labels available |
-| `supportsTextRecognition` | OCR available |
-| `supportedTextLanguages` | Tags this build can request (not “already downloaded”) |
+| `supportsBackgroundRemoval` | Cutouts are available |
+| `backgroundRemovalUnavailableReason` | Why cutouts are off |
+| `supportsImageClassification` | Labels are available |
+| `supportsTextRecognition` | Text reading is available |
+| `supportedTextLanguages` | Language tags that can be requested |
 
----
+### `removeBackground(path, options?)`
 
-### `removeBackground`
-
-Transparent subject cutout.
-
-```ts
-const cutout = await VisionKit.removeBackground(path, { trim: true })
-const png = await cutout.saveToTemporaryFile('png', 100)
-cutout.dispose()
-```
+Returns a cutout HybridObject.
 
 | | |
 | --- | --- |
-| **iOS** | 17+ |
-| **Android** | API 24+ · Play Services · ML Kit subject segmentation **beta** |
-| **Result** | HybridObject — export with `saveToTemporaryFile` / `toArrayBuffer` / `toMaskBuffer` |
+| iOS | 17+ |
+| Android | API 24+, Play Services, ML Kit subject cutout (beta) |
+| Export | `saveToTemporaryFile(format, quality)`, `toArrayBuffer()`, `toMaskBuffer()` |
 
-<details>
-<summary>Options</summary>
-
-| Option | Default | Description |
+| Option | Default | Meaning |
 | --- | --- | --- |
-| `trim` | `true` | Crop to subject bounds |
-| `maxPixels` | `6_000_000` | Decode pixel cap |
-| `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
+| `trim` | `true` | Crop to the subject |
+| `maxPixels` | `6_000_000` | Max pixels when loading the image |
+| `retainMask` | `false` | Keep the mask for `toMaskBuffer()` |
 
-</details>
+Result fields: `width`, `height`, `bounds` (`VisionRect`, values from 0 to 1), `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`, `hasMask`.
 
-<details>
-<summary>Result fields</summary>
+### `classifyImage(path, options?)`
 
-`width` · `height` · `bounds` · `pixelBounds` · `foregroundCoverage` · `centroid` · `instanceCount` · `hasMask`
-
-Temp files from `saveToTemporaryFile` are yours to delete.
-
-</details>
-
----
-
-### `classifyImage`
-
-Labels with confidence (high → low).
-
-```ts
-const labels = await VisionKit.classifyImage(path, {
-  maxResults: 5,
-  minConfidence: 0.5,
-})
-// → [{ label, confidence, index }, ...]
-```
+Returns `{ label, confidence, index }[]`. Higher scores come first.
 
 | | |
 | --- | --- |
-| **iOS** | 13+ |
-| **Android** | Bundled ML Kit — works offline on first launch |
+| iOS | 13+ |
+| Android | ML Kit is packaged with this library. It works offline. |
 
-<details>
-<summary>Options</summary>
-
-| Option | Default | Description |
+| Option | Default | Meaning |
 | --- | --- | --- |
-| `maxResults` | `0` | `0` = all above threshold |
-| `minConfidence` | `0.5` | Minimum score |
-| `region` | full image | Normalized `0–1` rect |
+| `maxResults` | `0` | `0` keeps all results above the score limit |
+| `minConfidence` | `0.5` | Lowest score to keep |
+| `region` | full image | Area as `VisionRect` (0 to 1) |
 
-</details>
+### `readText(path, options?)`
 
----
-
-### `readText`
-
-On-device OCR.
-
-```ts
-if (!VisionKit.capabilities.supportsTextRecognition) return
-
-const ocr = await VisionKit.readText(path, {
-  languages: ['zh-Hans', 'en-US'],
-})
-console.log(ocr.text)       // full string
-console.log(ocr.blockAt(0)) // one block (preferred)
-ocr.dispose()
-```
+Returns a text HybridObject. Use `text` and `blockAt(i)` when possible. The `blocks` field copies all data into JavaScript.
 
 | | |
 | --- | --- |
-| **iOS** | 18+ · `RecognizeTextRequest` |
-| **Android** | Play Services · Latin / Chinese / Japanese / Korean / Devanagari |
-| **Result** | HybridObject — prefer `text` / `blockAt(i)`; `blocks` copies everything to JS |
-
-<details>
-<summary>Options</summary>
+| iOS | 18+ |
+| Android | Play Services: Latin, Chinese, Japanese, Korean, Devanagari |
 
 | Option | Default | Platform |
 | --- | --- | --- |
-| `languages` | auto / Latin | iOS auto-detect · Android script map |
+| `languages` | auto / Latin | Both |
 | `recognitionLevel` | `accurate` | iOS |
-| `region` | full image | Both |
+| `region` | full image | Both (`VisionRect`) |
 | `minTextHeightFraction` | unset | Both |
-| `usesLanguageCorrection` | `true` | iOS (forced off for Chinese-only) |
+| `usesLanguageCorrection` | `true` | iOS |
 | `customWords` | unset | iOS |
-| `maxCandidates` | `1` | iOS (`1–10`) |
+| `maxCandidates` | `1` | iOS (`1` to `10`) |
 
-Decode cap **4M px**. Android longest edge **2048**.
+Image load limit: 4 million pixels. On Android, the longest side is 2048.
 
-**Android `languages`:** picks script model(s). Non-Latin models also read Latin. Mixed non-Latin scripts run in parallel.
+On Android, `languages` picks script models. Non-Latin models also read Latin. Mixed non-Latin scripts run at the same time.
 
-</details>
+On Android, a block can hold many lines. On iOS, each block has one line.
 
-<details>
-<summary>Block shape</summary>
+### `analyzeImage(path, options)`
 
-Android: multi-line blocks. iOS: one line per observation.
+Loads the image once. Pass at least one of `removeBackground`, `classify`, or `readText`.
 
-Optional per line/block: `confidence`, `language`, `angleDegrees` (Android), `cornerPoints`, `candidates` (iOS).
-
-</details>
-
----
-
-### `analyzeImage`
-
-One decode → any mix of cutout / labels / OCR.
-
-```ts
-const { segmentation, classifications, text } = await VisionKit.analyzeImage(path, {
-  removeBackground: { trim: true },
-  classify: { maxResults: 5, minConfidence: 0.5 },
-  readText: {},
-})
-
-await segmentation?.saveToTemporaryFile('png', 100)
-segmentation?.dispose()
-text?.dispose()
-```
-
-| Rule | Behavior |
-| --- | --- |
-| Ops | Pass at least one of `removeBackground` / `classify` / `readText` |
-| No subject | `segmentation` omitted; labels/OCR still run |
-| ROI | Cutout + labels/OCR without `region` → uses subject bounds |
+If no subject is found, `segmentation` is left out. Labels and text still run. If labels or text have no `region`, and a cutout ran, the subject bounds are used.
 
 ---
 
 ## Platform notes
 
-### Android model download
+**Android models**
 
-| Method | First launch |
+| Method | First use |
 | --- | --- |
-| `classifyImage` | Offline immediately (bundled) |
-| `removeBackground` / `readText` | Downloads Play Services model once |
+| `classifyImage` | Offline (model is packaged with this library) |
+| `removeBackground` / `readText` | Downloads a Play Services model once |
 
-- **Online** — waits / prefetches (up to ~2 min), then works offline
-- **Offline, model missing** — fails fast; connect once, open the app, retry
-- **iOS** — models ship with the OS; no download step
+If the device is online, wait up to about 2 minutes. After that, the model works offline. If the device is offline and the model is missing, the call fails at once. On iOS, models come with the system. There is no download step.
 
-### Paths
+**Paths**
 
 | Input | iOS | Android |
 | --- | --- | --- |
-| Absolute path | ✅ | ✅ |
-| `file://` | ✅ | ✅ |
-| `content://` | — | ✅ |
+| Absolute path | yes | yes |
+| `file://` | yes | yes |
+| `content://` | no | yes |
 
 > [!IMPORTANT]
-> **Never pass attacker-controlled or untrusted strings as `path`.** The native
-> layer opens whatever the host app process can reach and returns decoded pixels
-> and recognized text to JavaScript — so an untrusted `path` is an arbitrary
-> file/URI read primitive. On Android, any `content://` authority the app may
-> access is readable and its contents come back via `toArrayBuffer()`/`readText()`.
-> Only ever pass paths you produced yourself (e.g. a copy you wrote to the app's
-> cache from a picker).
+> Do not pass an untrusted path. Native code in this library opens that path. It then returns pixels and text to JavaScript. Only pass paths created by the host application.
 
 ---
 
-## Example app
+## Example
+
+<p align="center">
+  <img src="assets/demo.gif" alt="Example app: removeBackground, classifyImage, readText, analyzeImage" width="280" />
+</p>
+
+<p align="center">
+  <sub><a href="./example"><code>example/</code></a> — sample host app for this library. After a cutout, <strong>Keep</strong> saves to Photos.</sub>
+</p>
 
 ```bash
 cd example
@@ -297,10 +165,8 @@ cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios    # or: npm run android
 ```
 
-Modes call the four APIs above. After a cutout, **Keep** saves to Photos.
-
 ---
 
 ## License
 
-[MIT](./LICENSE) · [Security policy](./SECURITY.md) · [Changelog](./CHANGELOG.md)
+[MIT](./LICENSE) · [Security](./SECURITY.md) · [Changelog](./CHANGELOG.md)

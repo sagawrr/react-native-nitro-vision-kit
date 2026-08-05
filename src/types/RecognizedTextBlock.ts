@@ -1,5 +1,5 @@
 import type { NormalizedPoint } from './NormalizedPoint'
-import type { Rect } from './Rect'
+import type { VisionRect } from './VisionRect'
 import type { RecognizedTextLine } from './RecognizedTextLine'
 
 /**
@@ -10,7 +10,7 @@ import type { RecognizedTextLine } from './RecognizedTextLine'
 export interface RecognizedTextBlock {
   readonly text: string
   /** Normalized bounds, origin top-left (0–1). */
-  readonly bounds: Rect
+  readonly bounds: VisionRect
   readonly lines: RecognizedTextLine[]
   /** Prevailing BCP-47 language when reported (ML Kit; Vision on iOS 26+). */
   readonly language?: string

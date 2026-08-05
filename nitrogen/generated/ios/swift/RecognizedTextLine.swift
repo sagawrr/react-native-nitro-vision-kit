@@ -18,7 +18,7 @@ public extension RecognizedTextLine {
   /**
    * Create a new instance of `RecognizedTextLine`.
    */
-  init(text: String, bounds: Rect, confidence: Double?, language: String?, angleDegrees: Double?, cornerPoints: [NormalizedPoint]?, candidates: [RecognizedTextCandidate]?) {
+  init(text: String, bounds: VisionRect, confidence: Double?, language: String?, angleDegrees: Double?, cornerPoints: [NormalizedPoint]?, candidates: [RecognizedTextCandidate]?) {
     self.init(std.string(text), bounds, { () -> bridge.std__optional_double_ in
       if let __unwrappedValue = confidence {
         return bridge.create_std__optional_double_(__unwrappedValue)
@@ -70,7 +70,7 @@ public extension RecognizedTextLine {
   }
   
   @inline(__always)
-  var bounds: Rect {
+  var bounds: VisionRect {
     return self.__bounds
   }
   

@@ -21,7 +21,7 @@ class HybridSegmentationResult internal constructor(
   private val pixelWidth = output.width
   private val pixelHeight = output.height
 
-  override val bounds: Rect = output.bounds
+  override val bounds: VisionRect = output.bounds
   override val sourceWidth: Double = output.sourceWidth.toDouble()
   override val sourceHeight: Double = output.sourceHeight.toDouble()
   override val foregroundCoverage: Double = output.foregroundCoverage
@@ -71,7 +71,7 @@ class HybridSegmentationResult internal constructor(
     }
   }
 
-  override fun saveToTemporaryFile(format: ImageFormat, quality: Double): Promise<String> {
+  override fun saveToTemporaryFile(format: VisionImageFormat, quality: Double): Promise<String> {
     if (disposed) {
       return Promise.rejected(RuntimeException(DISPOSED))
     }
@@ -82,12 +82,12 @@ class HybridSegmentationResult internal constructor(
     return Promise.async {
       val bitmap = RgbaConversions.premultipliedRgbaToBitmap(pixels, w, h)
       try {
-        val compressed = if (format == ImageFormat.PNG) {
+        val compressed = if (format == VisionImageFormat.PNG) {
           Bitmap.CompressFormat.PNG
         } else {
           Bitmap.CompressFormat.JPEG
         }
-        val ext = if (format == ImageFormat.PNG) "png" else "jpg"
+        val ext = if (format == VisionImageFormat.PNG) "png" else "jpg"
         val file = File.createTempFile("visionkit-", ".$ext", tempDir)
         FileOutputStream(file).use { out -> bitmap.compress(compressed, q, out) }
         file.absolutePath

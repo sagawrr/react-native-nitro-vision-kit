@@ -9,7 +9,7 @@ internal object ImageClassifier {
     bitmap: Bitmap,
     maxResults: Int,
     minConfidence: Float,
-    region: Rect?,
+    region: VisionRect?,
   ): List<Classification> {
     val cropped = if (region != null) bitmap.cropToRegion(region) else null
     val source = cropped ?: bitmap

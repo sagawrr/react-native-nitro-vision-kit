@@ -38,7 +38,7 @@ abstract class HybridSegmentationResultSpec: HybridObject() {
   
   @get:DoNotStrip
   @get:Keep
-  abstract val bounds: Rect
+  abstract val bounds: VisionRect
   
   @get:DoNotStrip
   @get:Keep
@@ -83,7 +83,7 @@ abstract class HybridSegmentationResultSpec: HybridObject() {
   
   @DoNotStrip
   @Keep
-  abstract fun saveToTemporaryFile(format: ImageFormat, quality: Double): Promise<String>
+  abstract fun saveToTemporaryFile(format: VisionImageFormat, quality: Double): Promise<String>
 
   // Default implementation of `HybridObject.toString()`
   override fun toString(): String {
