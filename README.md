@@ -11,13 +11,36 @@
 <h1 align="center">Nitro Vision</h1>
 
 <p align="center">
-  React Native library for subject cutouts, image labels, and text reading.<br />
-  Processing runs on the device.<br />
+  <b>Subject cutouts · image labels · on-device OCR</b><br />
+  React Native vision that stays on the device.<br />
   <sub>
-    <a href="https://developer.apple.com/documentation/vision">Vision</a> (iOS) ·
-    <a href="https://developers.google.com/ml-kit">ML Kit</a> (Android) ·
+    <a href="https://developer.apple.com/documentation/vision">Vision</a> ·
+    <a href="https://developers.google.com/ml-kit">ML Kit</a> ·
     <a href="https://nitro.margelo.com">Nitro Modules</a>
   </sub>
+</p>
+
+<p align="center">
+  <a href="#features">Features</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#api">API</a> ·
+  <a href="#platform-notes">Platform</a> ·
+  <a href="#example-app">Example</a>
+</p>
+
+---
+
+## Features
+
+- **Cutouts** — Isolate the subject (`removeBackground`). Trim, export PNG/JPEG, optional mask.
+- **Labels** — Ranked classifications (`classifyImage`). Offline on both platforms.
+- **OCR** — Read text (`readText`). Latin / CJK / Devanagari on Android; Vision on iOS 18+.
+- **Compose** — One decode, many results (`analyzeImage`). Segment + classify + OCR together.
+- **Native** — Nitro HybridObjects keep large results on the native side. Call `dispose()` when done.
+
+<p align="center">
+  <img src="assets/demo.gif" alt="Example app: cutout, labels, OCR, and analyze" width="280" />
 </p>
 
 ---
@@ -33,72 +56,139 @@ cd ios && pod install
 | --- | --- |
 | React Native | 0.75 |
 | [`react-native-nitro-modules`](https://nitro.margelo.com) | 0.36.0 |
-| iOS | 13 (cutouts need 17, text needs 18) |
+| iOS | 13 · cutouts **17+** · OCR **18+** |
 | Android | API 24 |
 
-The New Architecture is a better choice. Nitro works best with it.
+> Prefer the New Architecture — Nitro is built for it.
 
 ---
 
-## API
+## Quick start
 
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
 ```
 
-Some results are HybridObjects. A HybridObject holds memory on the native side. Call `dispose()` when the result is no longer needed. Export or save before `dispose()`.
+**Cutout**
+
+```ts
+if (!VisionKit.capabilities.supportsBackgroundRemoval) {
+  throw new Error(VisionKit.capabilities.backgroundRemovalUnavailableReason)
+}
+
+const cutout = await VisionKit.removeBackground(imagePath, { trim: true })
+const path = await cutout.saveToTemporaryFile('png', 100)
+cutout.dispose()
+```
+
+**Labels**
+
+```ts
+const labels = await VisionKit.classifyImage(imagePath, {
+  maxResults: 5,
+  minConfidence: 0.5,
+})
+```
+
+**OCR**
+
+```ts
+const ocr = await VisionKit.readText(imagePath)
+console.log(ocr.text)
+ocr.dispose()
+```
+
+**Compose (one decode)**
+
+```ts
+const result = await VisionKit.analyzeImage(imagePath, {
+  removeBackground: { trim: true },
+  classify: { maxResults: 5 },
+  readText: {},
+})
+
+result.segmentation?.dispose()
+result.text?.dispose()
+```
+
+> [!NOTE]
+> `removeBackground` and `readText` return HybridObjects. Export or read what you need, then call `dispose()`.
+
+---
+
+## API
 
 ### Capabilities
 
+```ts
+VisionKit.capabilities
+```
+
 | Field | Meaning |
 | --- | --- |
-| `supportsBackgroundRemoval` | Cutouts are available |
+| `supportsBackgroundRemoval` | Cutouts available |
 | `backgroundRemovalUnavailableReason` | Why cutouts are off |
-| `supportsImageClassification` | Labels are available |
-| `supportsTextRecognition` | Text reading is available |
-| `supportedTextLanguages` | Language tags that can be requested |
+| `supportsImageClassification` | Labels available |
+| `supportsTextRecognition` | OCR available |
+| `supportedTextLanguages` | Language tags you can request |
 
 ### `removeBackground(path, options?)`
 
 Returns a cutout HybridObject.
 
-| | |
+| Platform | Requirement |
 | --- | --- |
 | iOS | 17+ |
-| Android | API 24+, Play Services, ML Kit subject cutout (beta) |
-| Export | `saveToTemporaryFile(format, quality)`, `toArrayBuffer()`, `toMaskBuffer()` |
+| Android | API 24+, Play Services, ML Kit subject segmentation (beta) |
+
+**Export:** `saveToTemporaryFile(format, quality)` · `toArrayBuffer()` · `toMaskBuffer()`
+
+<details>
+<summary>Options &amp; result fields</summary>
 
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `trim` | `true` | Crop to the subject |
-| `maxPixels` | `6_000_000` | Max pixels when loading the image |
-| `retainMask` | `false` | Keep the mask for `toMaskBuffer()` |
+| `maxPixels` | `6_000_000` | Cap when loading the image |
+| `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
 
-Result fields: `width`, `height`, `bounds` (`VisionRect`, values from 0 to 1), `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`, `hasMask`.
+**Result:** `width`, `height`, `bounds` (`VisionRect`, 0–1), `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`, `hasMask`, `sourceWidth`, `sourceHeight`, `trimOrigin`
+
+</details>
 
 ### `classifyImage(path, options?)`
 
-Returns `{ label, confidence, index }[]`. Higher scores come first.
+Returns `{ label, confidence, index }[]`, highest confidence first.
 
-| | |
+| Platform | Notes |
 | --- | --- |
 | iOS | 13+ |
-| Android | ML Kit is packaged with this library. It works offline. |
+| Android | Model ships with the library — offline |
+
+<details>
+<summary>Options</summary>
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `maxResults` | `0` | `0` keeps all results above the score limit |
+| `maxResults` | `0` | `0` keeps all above the score floor |
 | `minConfidence` | `0.5` | Lowest score to keep |
-| `region` | full image | Area as `VisionRect` (0 to 1) |
+| `region` | full image | `VisionRect` (0–1) |
+
+</details>
 
 ### `readText(path, options?)`
 
-Returns a text HybridObject. Use `text` and `blockAt(i)` when possible. The `blocks` field copies all data into JavaScript.
+Returns a text HybridObject. Prefer `text` and `blockAt(i)` — `blocks` copies everything into JS.
 
-| | |
+| Platform | Notes |
 | --- | --- |
-| iOS | 18+ |
+| iOS | 18+ (`RecognizeTextRequest`) |
 | Android | Play Services: Latin, Chinese, Japanese, Korean, Devanagari |
+
+Image load cap: **4M pixels** (both platforms). On Android, longest side is also capped at **2048**.
+
+<details>
+<summary>Options &amp; platform quirks</summary>
 
 | Option | Default | Platform |
 | --- | --- | --- |
@@ -108,34 +198,35 @@ Returns a text HybridObject. Use `text` and `blockAt(i)` when possible. The `blo
 | `minTextHeightFraction` | unset | Both |
 | `usesLanguageCorrection` | `true` | iOS |
 | `customWords` | unset | iOS |
-| `maxCandidates` | `1` | iOS (`1` to `10`) |
+| `maxCandidates` | `1` | iOS (`1`–`10`) |
 
-Image load limit: 4 million pixels. On Android, the longest side is 2048.
+**Android:** `languages` selects script models. Non-Latin models also read Latin. Multiple non-Latin scripts can run together. A block may contain many lines.
 
-On Android, `languages` picks script models. Non-Latin models also read Latin. Mixed non-Latin scripts run at the same time.
+**iOS:** Each block is one line.
 
-On Android, a block can hold many lines. On iOS, each block has one line.
+</details>
 
 ### `analyzeImage(path, options)`
 
-Loads the image once. Pass at least one of `removeBackground`, `classify`, or `readText`.
+One decode. Pass at least one of `removeBackground`, `classify`, or `readText`.
 
-If no subject is found, `segmentation` is left out. Labels and text still run. If labels or text have no `region`, and a cutout ran, the subject bounds are used.
+- No subject found → `segmentation` is omitted; labels and text still run
+- If classify/OCR omit `region` and a cutout ran → subject bounds are used
 
 ---
 
 ## Platform notes
 
-**Android models**
+### Model download (Android)
 
 | Method | First use |
 | --- | --- |
-| `classifyImage` | Offline (model is packaged with this library) |
+| `classifyImage` | Offline — model is packaged |
 | `removeBackground` / `readText` | Downloads a Play Services model once |
 
-If the device is online, wait up to about 2 minutes. After that, the model works offline. If the device is offline and the model is missing, the call fails at once. On iOS, models come with the system. There is no download step.
+Online: wait up to ~2 minutes for the first download, then offline. Offline with no model → fails immediately. iOS models ship with the system — no download step.
 
-**Paths**
+### Paths
 
 | Input | iOS | Android |
 | --- | --- | --- |
@@ -144,19 +235,11 @@ If the device is online, wait up to about 2 minutes. After that, the model works
 | `content://` | no | yes |
 
 > [!IMPORTANT]
-> Do not pass an untrusted path. Native code in this library opens that path. It then returns pixels and text to JavaScript. Only pass paths created by the host application.
+> Only pass paths created by your app. Native code opens the path and returns pixels/text to JavaScript.
 
 ---
 
-## Example
-
-<p align="center">
-  <img src="assets/demo.gif" alt="Example app: removeBackground, classifyImage, readText, analyzeImage" width="280" />
-</p>
-
-<p align="center">
-  <sub><a href="./example"><code>example/</code></a> — sample host app for this library. After a cutout, <strong>Keep</strong> saves to Photos.</sub>
-</p>
+## Example app
 
 ```bash
 cd example
@@ -164,6 +247,8 @@ npm install
 cd ios && bundle install && bundle exec pod install && cd ..
 npm run ios    # or: npm run android
 ```
+
+After a cutout, **Keep** saves to Photos.
 
 ---
 
