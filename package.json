@@ -73,18 +73,18 @@
     "@types/react": "^19.2.15",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
-    "nitrogen": "*",
+    "nitrogen": "0.36.5",
     "prettier": "^3.8.3",
     "react": "19.2.8",
     "react-native": "0.86.0",
-    "react-native-nitro-modules": "0.36.1",
+    "react-native-nitro-modules": "0.36.5",
     "release-it": "^20.2.1",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.75.0",
-    "react-native-nitro-modules": "^0.36.1"
+    "react-native-nitro-modules": "^0.36.5"
   },
   "codegenConfig": {
     "name": "NitroVisionKitSpec",

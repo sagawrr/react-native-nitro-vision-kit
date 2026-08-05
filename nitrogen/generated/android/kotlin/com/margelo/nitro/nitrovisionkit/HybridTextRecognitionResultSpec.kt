@@ -10,6 +10,7 @@ package com.margelo.nitro.nitrovisionkit
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import dalvik.annotation.optimization.FastNative
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -52,6 +53,7 @@ abstract class HybridTextRecognitionResultSpec: HybridObject() {
   @Keep
   protected open class CxxPart(javaPart: HybridTextRecognitionResultSpec): HybridObject.CxxPart(javaPart) {
     // C++ JHybridTextRecognitionResultSpec::CxxPart::initHybrid(...)
+    @FastNative
     external override fun initHybrid(): HybridData
   }
   override fun createCxxPart(): CxxPart {
