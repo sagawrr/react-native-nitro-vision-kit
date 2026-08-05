@@ -6,9 +6,14 @@ import android.net.NetworkCapabilities
 import com.google.android.gms.common.api.OptionalModuleApi
 import com.google.android.gms.common.moduleinstall.InstallStatusListener
 import com.google.android.gms.common.moduleinstall.ModuleInstall
+import com.google.android.gms.common.moduleinstall.ModuleInstallClient
 import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.android.gms.common.moduleinstall.ModuleInstallStatusUpdate
 import com.google.android.gms.common.moduleinstall.ModuleInstallStatusUpdate.InstallState
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import kotlin.coroutines.resume
@@ -21,6 +26,7 @@ import kotlin.coroutines.resumeWithException
  */
 internal object MlKitModuleInstaller {
   private const val INSTALL_TIMEOUT_MS = 120_000L
+  private const val AVAILABILITY_POLL_MS = 2_000L
 
   fun prefetch(context: Context, vararg apis: OptionalModuleApi) {
     if (apis.isEmpty() || !hasNetwork(context)) return
@@ -48,13 +54,56 @@ internal object MlKitModuleInstaller {
       throw RuntimeException(offlineRequired(feature))
     }
 
-    try {
+    val failure = try {
       withTimeout(INSTALL_TIMEOUT_MS) {
-        awaitUrgentInstall(context, apis, feature)
+        awaitInstall(client, context, apis, feature)
       }
+      null
     } catch (error: Exception) {
-      throw RuntimeException(friendlyError(error, feature), error)
+      error
+    } ?: return
+
+    // Play Services does not always deliver a terminal listener update, so a
+    // finished install can still surface here as a timeout or failure.
+    if (modulesReady(client, apis)) return
+
+    throw RuntimeException(friendlyError(failure, feature), failure)
+  }
+
+  /**
+   * Races the install listener against an availability poll. The poll is the
+   * reliable signal; the listener only makes success and failure land sooner.
+   */
+  private suspend fun awaitInstall(
+    client: ModuleInstallClient,
+    context: Context,
+    apis: Array<out OptionalModuleApi>,
+    feature: String,
+  ) = coroutineScope {
+    val install = async { awaitUrgentInstall(context, apis, feature) }
+    val poll = async {
+      while (!modulesReady(client, apis)) {
+        delay(AVAILABILITY_POLL_MS)
+      }
     }
+    try {
+      select<Unit> {
+        install.onAwait { }
+        poll.onAwait { }
+      }
+    } finally {
+      install.cancel()
+      poll.cancel()
+    }
+  }
+
+  private suspend fun modulesReady(
+    client: ModuleInstallClient,
+    apis: Array<out OptionalModuleApi>,
+  ): Boolean = try {
+    client.areModulesAvailable(*apis).await().areModulesAvailable()
+  } catch (_: Exception) {
+    false
   }
 
   private fun hasNetwork(context: Context): Boolean {

@@ -1,12 +1,16 @@
 # Changelog
 
-## Unreleased
+## [Unreleased]
 
-### Fixes
+### Breaking
 
-* Avoid iOS header name clashes with other Nitro libraries `VisionImageFormat.hpp` and `VisionRect.hpp` instead of `ImageFormat.hpp` and `Rect.hpp`.
+* Rename `ImageFormat` → `VisionImageFormat` and `Rect` → `VisionRect` (same shapes). Avoids iOS header name clashes with other Nitro libraries.
+
+### Fixed
+
+* Android: `removeBackground` works on first use. Wait for the model with `areModulesAvailable`, then rebuild the segmenter if it was created too early.
 * Require `react-native-nitro-modules` `>=0.36.0` (tested with `0.36.5`).
-* Validate numeric options (`maxPixels`, `maxResults`, `minConfidence`, and related values). Reject `NaN` / `Infinity`. Clamp out-of-range values.
+* Validate numeric options (`maxPixels`, `maxResults`, `minConfidence`, and related). Reject `NaN` / `Infinity`. Clamp out-of-range values.
 
 ## [0.3.0](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.2.2...v0.3.0) (2026-07-25)
 

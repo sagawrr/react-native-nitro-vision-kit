@@ -9,14 +9,34 @@ import com.google.mlkit.vision.segmentation.subject.SubjectSegmenter
 import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions
 
 internal object SubjectSegmenter {
-  private val segmenter: SubjectSegmenter by lazy {
+  private const val FEATURE = "subject segmentation"
+
+  @Volatile
+  private var cached: SubjectSegmenter? = null
+
+  private fun client(): SubjectSegmenter =
+    cached ?: synchronized(this) {
+      cached ?: newClient().also { cached = it }
+    }
+
+  private fun newClient(): SubjectSegmenter {
     val options = SubjectSegmenterOptions.Builder()
       .enableForegroundConfidenceMask()
       .build()
-    SubjectSegmentation.getClient(options)
+    return SubjectSegmentation.getClient(options)
   }
 
-  fun optionalApi(): OptionalModuleApi = segmenter
+  private fun discard(stale: SubjectSegmenter) {
+    synchronized(this) {
+      if (cached === stale) cached = null
+    }
+    try {
+      stale.close()
+    } catch (_: Exception) {
+    }
+  }
+
+  fun optionalApi(): OptionalModuleApi = client()
 
   suspend fun segment(
     context: Context,
@@ -24,24 +44,16 @@ internal object SubjectSegmenter {
     trim: Boolean,
     retainMask: Boolean,
   ): SegmentationOutput {
-    MlKitModuleInstaller.ensure(context, "subject segmentation", segmenter)
-    try {
-      segmenter.initTask.await()
-    } catch (error: Exception) {
-      throw RuntimeException(
-        MlKitModuleInstaller.friendlyError(error, "subject segmentation"),
-        error,
-      )
-    }
+    val segmenter = awaitReady(context)
 
     val mlInput = bitmap.toMlKitInput()
     val ownsMlInput = mlInput !== bitmap
     try {
-      return segmentInternal(mlInput, bitmap, trim, retainMask)
+      return segmentInternal(segmenter, mlInput, bitmap, trim, retainMask)
     } catch (error: Exception) {
       if (error.message == "No foreground subject detected.") throw error
       throw RuntimeException(
-        MlKitModuleInstaller.friendlyError(error, "subject segmentation"),
+        MlKitModuleInstaller.friendlyError(error, FEATURE),
         error,
       )
     } finally {
@@ -51,7 +63,35 @@ internal object SubjectSegmenter {
     }
   }
 
+  /**
+   * Prefetch builds a client before the model is on the device, and that client
+   * keeps its failed [SubjectSegmenter.initTask] for the life of the process.
+   * Rebuild once so the first run does not have to wait for an app restart.
+   */
+  private suspend fun awaitReady(context: Context): SubjectSegmenter {
+    val current = client()
+    MlKitModuleInstaller.ensure(context, FEATURE, current)
+    try {
+      current.initTask.await()
+      return current
+    } catch (_: Exception) {
+      discard(current)
+    }
+
+    val rebuilt = client()
+    try {
+      rebuilt.initTask.await()
+      return rebuilt
+    } catch (error: Exception) {
+      throw RuntimeException(
+        MlKitModuleInstaller.friendlyError(error, FEATURE),
+        error,
+      )
+    }
+  }
+
   private suspend fun segmentInternal(
+    segmenter: SubjectSegmenter,
     mlInput: Bitmap,
     bitmap: Bitmap,
     trim: Boolean,
