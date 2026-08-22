@@ -1,49 +1,40 @@
-<p align="center">
-  <img src="assets/banner.png" alt="react-native-nitro-vision-kit" width="100%" />
-</p>
+<div align="center">
+  <img src="assets/banner.png" alt="nitro vision kit — on-device computer vision for React Native" width="100%" />
+</div>
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/react-native-nitro-vision-kit"><img src="https://img.shields.io/npm/v/react-native-nitro-vision-kit?style=flat-square&logo=npm&label=npm" alt="npm" /></a>
-  <a href="https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sagawrr/react-native-nitro-vision-kit/ci.yml?branch=main&style=flat-square&label=ci" alt="CI" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/react-native-nitro-vision-kit?style=flat-square" alt="MIT" /></a>
-</p>
-
-<h1 align="center">Nitro Vision</h1>
-
-<p align="center">
-  <b>Subject cutouts · image labels · on-device OCR</b><br />
-  React Native vision that stays on the device.<br />
-  <sub>
-    <a href="https://developer.apple.com/documentation/vision">Vision</a> ·
-    <a href="https://developers.google.com/ml-kit">ML Kit</a> ·
-    <a href="https://nitro.margelo.com">Nitro Modules</a>
-  </sub>
-</p>
-
-<p align="center">
-  <a href="#features">Features</a> ·
-  <a href="#install">Install</a> ·
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#api">API</a> ·
-  <a href="#platform-notes">Platform</a> ·
-  <a href="#example-app">Example</a>
-</p>
-
----
+<div align="center">
+  <p>
+    <a href="https://www.npmjs.com/package/react-native-nitro-vision-kit"><img src="https://img.shields.io/npm/v/react-native-nitro-vision-kit?style=flat-square&logo=npm&label=npm" alt="npm" /></a>
+    <a href="https://github.com/sagawrr/react-native-nitro-vision-kit/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sagawrr/react-native-nitro-vision-kit/ci.yml?branch=main&style=flat-square&label=ci" alt="CI" /></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/npm/l/react-native-nitro-vision-kit?style=flat-square" alt="MIT" /></a>
+  </p>
+  <p>
+    Cutouts · Labels · OCR — <a href="https://developer.apple.com/documentation/vision">Vision</a> on iOS,
+    <a href="https://developers.google.com/ml-kit">ML Kit</a> on Android, built with
+    <a href="https://nitro.margelo.com">Nitro Modules</a>.
+  </p>
+</div>
 
 ## Features
 
-- **Cutouts** — Isolate the subject (`removeBackground`). Trim, export PNG/JPEG, optional mask.
-- **Labels** — Ranked classifications (`classifyImage`). Offline on both platforms.
-- **OCR** — Read text (`readText`). Latin / CJK / Devanagari on Android; Vision on iOS 18+.
-- **Compose** — One decode, many results (`analyzeImage`). Segment + classify + OCR together.
-- **Native** — Nitro HybridObjects keep large results on the native side. Call `dispose()` when done.
-
-<p align="center">
-  <img src="assets/demo.gif" alt="Example app: cutout, labels, OCR, and analyze" width="280" />
-</p>
-
----
+<table>
+<tr>
+<td width="60%" valign="middle">
+<b><code>removeBackground</code></b><br/>
+Subject cutout — trim, export PNG/JPEG, optional mask<br/><br/>
+<b><code>classifyImage</code></b><br/>
+Ranked labels — offline on both platforms<br/><br/>
+<b><code>readText</code></b><br/>
+OCR — Latin / CJK / Devanagari on Android; Vision on iOS 18+<br/><br/>
+<b><code>analyzeImage</code></b><br/>
+All three from a single decode<br/><br/>
+<sub>Cutout and OCR results live on the native side until you export them. Call <code>dispose()</code> when done.</sub>
+</td>
+<td width="40%" valign="middle">
+<img src="assets/demo.gif" alt="Example app: cutout, labels, OCR, and analyze" width="100%" />
+</td>
+</tr>
+</table>
 
 ## Install
 
@@ -59,17 +50,15 @@ cd ios && pod install
 | iOS | 13 · cutouts **17+** · OCR **18+** |
 | Android | API 24 |
 
-> Prefer the New Architecture — Nitro is built for it.
+Requires the New Architecture.
 
----
-
-## Quick start
+## Usage
 
 ```ts
 import { VisionKit } from 'react-native-nitro-vision-kit'
 ```
 
-**Cutout**
+Cutout:
 
 ```ts
 if (!VisionKit.capabilities.supportsBackgroundRemoval) {
@@ -81,7 +70,7 @@ const path = await cutout.saveToTemporaryFile('png', 100)
 cutout.dispose()
 ```
 
-**Labels**
+Labels:
 
 ```ts
 const labels = await VisionKit.classifyImage(imagePath, {
@@ -90,7 +79,7 @@ const labels = await VisionKit.classifyImage(imagePath, {
 })
 ```
 
-**OCR**
+OCR:
 
 ```ts
 const ocr = await VisionKit.readText(imagePath)
@@ -98,7 +87,7 @@ console.log(ocr.text)
 ocr.dispose()
 ```
 
-**Compose (one decode)**
+All three at once:
 
 ```ts
 const result = await VisionKit.analyzeImage(imagePath, {
@@ -111,37 +100,25 @@ result.segmentation?.dispose()
 result.text?.dispose()
 ```
 
-> [!NOTE]
-> `removeBackground` and `readText` return HybridObjects. Export or read what you need, then call `dispose()`.
-
----
-
 ## API
 
 ### Capabilities
 
-```ts
-VisionKit.capabilities
-```
+`VisionKit.capabilities`
 
 | Field | Meaning |
 | --- | --- |
 | `supportsBackgroundRemoval` | Cutouts available |
-| `backgroundRemovalUnavailableReason` | Why cutouts are off |
+| `backgroundRemovalUnavailableReason` | Why not |
 | `supportsImageClassification` | Labels available |
 | `supportsTextRecognition` | OCR available |
 | `supportedTextLanguages` | Language tags you can request |
 
 ### `removeBackground(path, options?)`
 
-Returns a cutout HybridObject.
+Returns a cutout HybridObject. iOS 17+, Android API 24+ with Play Services (ML Kit subject segmentation, beta).
 
-| Platform | Requirement |
-| --- | --- |
-| iOS | 17+ |
-| Android | API 24+, Play Services, ML Kit subject segmentation (beta) |
-
-**Export:** `saveToTemporaryFile(format, quality)` · `toArrayBuffer()` · `toMaskBuffer()`
+Export via `saveToTemporaryFile(format, quality)`, `toArrayBuffer()`, or `toMaskBuffer()`.
 
 <details>
 <summary>Options &amp; result fields</summary>
@@ -152,18 +129,13 @@ Returns a cutout HybridObject.
 | `maxPixels` | `6_000_000` | Cap when loading the image |
 | `retainMask` | `false` | Keep mask for `toMaskBuffer()` |
 
-**Result:** `width`, `height`, `bounds` (`VisionRect`, 0–1), `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`, `hasMask`, `sourceWidth`, `sourceHeight`, `trimOrigin`
+Result: `width`, `height`, `bounds` (`VisionRect`, 0–1), `pixelBounds`, `foregroundCoverage`, `centroid`, `instanceCount`, `hasMask`, `sourceWidth`, `sourceHeight`, `trimOrigin`.
 
 </details>
 
 ### `classifyImage(path, options?)`
 
-Returns `{ label, confidence, index }[]`, highest confidence first.
-
-| Platform | Notes |
-| --- | --- |
-| iOS | 13+ |
-| Android | Model ships with the library — offline |
+Returns `{ label, confidence, index }[]`, highest confidence first. iOS 13+; on Android the model ships with the library.
 
 <details>
 <summary>Options</summary>
@@ -178,14 +150,9 @@ Returns `{ label, confidence, index }[]`, highest confidence first.
 
 ### `readText(path, options?)`
 
-Returns a text HybridObject. Prefer `text` and `blockAt(i)` — `blocks` copies everything into JS.
+Returns a text HybridObject. Prefer `text` and `blockAt(i)` — `blocks` copies everything into JS. iOS 18+ (`RecognizeTextRequest`); Android uses Play Services script models (Latin, Chinese, Japanese, Korean, Devanagari).
 
-| Platform | Notes |
-| --- | --- |
-| iOS | 18+ (`RecognizeTextRequest`) |
-| Android | Play Services: Latin, Chinese, Japanese, Korean, Devanagari |
-
-Image load cap: **4M pixels** (both platforms). On Android, longest side is also capped at **2048**.
+Image load cap: 4M pixels on both platforms; on Android the longest side is also capped at 2048.
 
 <details>
 <summary>Options &amp; platform quirks</summary>
@@ -200,9 +167,9 @@ Image load cap: **4M pixels** (both platforms). On Android, longest side is also
 | `customWords` | unset | iOS |
 | `maxCandidates` | `1` | iOS (`1`–`10`) |
 
-**Android:** `languages` selects script models. Non-Latin models also read Latin. Multiple non-Latin scripts can run together. A block may contain many lines.
+Android: `languages` selects script models. Non-Latin models also read Latin; multiple non-Latin scripts can run together. A block may contain many lines.
 
-**iOS:** Each block is one line.
+iOS: each block is one line.
 
 </details>
 
@@ -210,36 +177,22 @@ Image load cap: **4M pixels** (both platforms). On Android, longest side is also
 
 One decode. Pass at least one of `removeBackground`, `classify`, or `readText`.
 
-- No subject found → `segmentation` is omitted; labels and text still run
-- If classify/OCR omit `region` and a cutout ran → subject bounds are used
-
----
+- No subject found → `segmentation` omitted; labels and text still run.
+- If classify/OCR omit `region` and a cutout ran → subject bounds are used.
 
 ## Platform notes
 
 ### Model download (Android)
 
-| Method | First use |
-| --- | --- |
-| `classifyImage` | Offline — model is packaged |
-| `removeBackground` / `readText` | Downloads a Play Services model once |
-
-Online: wait up to ~2 minutes for the first download, then offline. Offline with no model → fails immediately. iOS models ship with the system — no download step.
+`classifyImage` works offline out of the box (model is packaged). `removeBackground` and `readText` download a Play Services model once — allow up to ~2 minutes online on first use; offline with no model fails immediately. iOS ships its models with the OS.
 
 ### Paths
 
-| Input | iOS | Android |
-| --- | --- | --- |
-| Absolute path | yes | yes |
-| `file://` | yes | yes |
-| `content://` | no | yes |
+Absolute paths and `file://` work everywhere. `content://` is Android-only.
 
-> [!IMPORTANT]
-> Only pass paths created by your app. Native code opens the path and returns pixels/text to JavaScript.
+Only pass paths created by your app — native code opens the path and returns pixels/text to JavaScript.
 
----
-
-## Example app
+## Example
 
 ```bash
 cd example
@@ -249,8 +202,6 @@ npm run ios    # or: npm run android
 ```
 
 After a cutout, **Keep** saves to Photos.
-
----
 
 ## License
 
