@@ -198,7 +198,7 @@ internal object TextRecognizer {
     val offsetY = if (region != null) region.y * fullHeight else 0.0
     val scaleX = if (mlWidth > 0) sourceWidth.toDouble() / mlWidth else 1.0
     val scaleY = if (mlHeight > 0) sourceHeight.toDouble() / mlHeight else 1.0
-    val minHeight = minTextHeightFraction?.coerceIn(0.0, 1.0)
+    val minHeight = minTextHeightFraction?.takeIf { it.isFinite() }?.coerceIn(0.0, 1.0)
 
     val blocks = ArrayList<RecognizedTextBlock>(visionText.textBlocks.size)
     val blockTexts = ArrayList<String>(visionText.textBlocks.size)

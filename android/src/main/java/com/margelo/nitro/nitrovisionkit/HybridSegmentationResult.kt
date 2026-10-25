@@ -75,7 +75,7 @@ class HybridSegmentationResult internal constructor(
     if (disposed) {
       return Promise.rejected(RuntimeException(DISPOSED))
     }
-    val q = quality.toInt().coerceIn(0, 100)
+    val q = if (quality.isFinite()) quality.toInt().coerceIn(0, 100) else 90
     val w = width.toInt()
     val h = height.toInt()
     val pixels = rgba

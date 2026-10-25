@@ -1,5 +1,7 @@
+import { Platform } from 'react-native'
 import {
   CachesDirectoryPath,
+  copyFileAssets,
   downloadFile,
   exists,
   mkdir,
@@ -17,8 +19,7 @@ export async function ensureLocalImagePath(
   if (
     uri.startsWith('file://') ||
     uri.startsWith('content://') ||
-    uri.startsWith('/') ||
-    !/^https?:\/\//i.test(uri)
+    uri.startsWith('/')
   ) {
     return uri
   }
@@ -26,6 +27,15 @@ export async function ensureLocalImagePath(
   const dest = `${CACHE_DIR}/${cacheKey.replace(/[^a-zA-Z0-9._-]/g, '_')}`
   if (await exists(dest)) return dest
   if (!(await exists(CACHE_DIR))) await mkdir(CACHE_DIR)
+
+  if (!/^https?:\/\//i.test(uri)) {
+    if (Platform.OS !== 'android') {
+      throw new Error('Sample image is not a local file.')
+    }
+    const assetName = cacheKey.replace(/[^a-zA-Z0-9._-]/g, '_')
+    await copyFileAssets(`samples/${assetName}`, dest)
+    return dest
+  }
 
   const partial = `${dest}.partial`
   if (await exists(partial)) {

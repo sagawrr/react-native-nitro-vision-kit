@@ -30,7 +30,7 @@ enum VisionKitOptions {
   }
 
   static func minConfidence(_ options: ClassificationOptions?) -> Double {
-    guard let c = options?.minConfidence, c.isFinite, c >= 0, c <= 1 else { return 0.5 }
-    return c
+    guard let c = options?.minConfidence, c.isFinite else { return 0.5 }
+    return min(max(c, 0), 1)
   }
 }

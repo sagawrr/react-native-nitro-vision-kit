@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.1](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.4.0...v0.4.1) (2026-10-25)
+
+### Fixed
+
+* Android: numeric options reject `NaN` / `Infinity`. Clamp out-of-range values. Non-finite JPEG quality saves at 90.
+* Android: `analyzeImage` copies the bitmap before classify and OCR run together.
+* `analyzeImage`: `removeBackground.maxPixels` caps segmentation when labels or OCR need a larger decode.
+* iOS: out-of-range `minConfidence` clamps to 0…1.
+
 ## [0.4.0](https://github.com/sagawrr/react-native-nitro-vision-kit/compare/v0.3.0...v0.4.0) (2026-08-05)
 
 ### Breaking

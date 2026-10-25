@@ -27,7 +27,11 @@ enum ImageAnalyzer {
     var segmentation: (any HybridSegmentationResultSpec)?
     if segmentOptions != nil {
       do {
-        let output = try SubjectSegmenter.segment(ciImage: ciImage, trim: trim, retainMask: retainMask)
+        let output = try SubjectSegmenter.segment(
+          ciImage: segmentImage(ciImage, maxPixels: maxPixels),
+          trim: trim,
+          retainMask: retainMask,
+        )
         segmentation = HybridSegmentationResult(output: output)
         if classifyRegion == nil, classifyOptions != nil {
           classifyRegion = output.bounds
@@ -100,6 +104,21 @@ enum ImageAnalyzer {
       classifications: classifications,
       text: text,
     )
+  }
+
+  /// Shared decode may be larger than `maxPixels` so labels and OCR stay sharp.
+  /// The segmenter still sees an image within the caller's cap.
+  private static func segmentImage(_ image: CIImage, maxPixels: Int) -> CIImage {
+    let extent = image.extent.integral
+    let width = extent.width
+    let height = extent.height
+    guard width > 1, height > 1 else { return image }
+    let count = width * height
+    guard count > CGFloat(maxPixels) else { return image }
+    let scale = sqrt(CGFloat(maxPixels) / count)
+    let scaled = image.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+    let origin = scaled.extent.origin
+    return scaled.transformed(by: CGAffineTransform(translationX: -origin.x, y: -origin.y))
   }
 
   private static func isNoForeground(_ error: Error) -> Bool {

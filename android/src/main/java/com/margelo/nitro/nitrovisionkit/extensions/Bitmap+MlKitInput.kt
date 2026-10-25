@@ -5,6 +5,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import kotlin.math.min
+import kotlin.math.sqrt
 
 /**
  * ML Kit's subject-segmentation module (GMS dynamite / MediaPipe) reads the
@@ -31,6 +32,21 @@ internal fun Bitmap.toMlKitInput(maxEdge: Int = VisionKitLimits.ML_KIT_MAX_EDGE)
     }
   }
 }
+
+internal fun Bitmap.downscaleToMaxPixels(maxPixels: Int): Bitmap {
+  if (maxPixels <= 0) return this
+  val count = width.toLong() * height.toLong()
+  if (count <= maxPixels.toLong()) return this
+  val scale = sqrt(maxPixels.toDouble() / count.toDouble())
+  val targetW = (width * scale).toInt().coerceAtLeast(1)
+  val targetH = (height * scale).toInt().coerceAtLeast(1)
+  if (targetW >= width && targetH >= height) return this
+  return Bitmap.createScaledBitmap(this, targetW, targetH, true)
+}
+
+internal fun Bitmap.immutableArgbCopy(): Bitmap =
+  copy(Bitmap.Config.ARGB_8888, false)
+    ?: throw RuntimeException("Failed to copy bitmap.")
 
 private fun Bitmap.downscaleToMaxEdge(maxEdge: Int): Bitmap {
   val longest = maxOf(width, height)

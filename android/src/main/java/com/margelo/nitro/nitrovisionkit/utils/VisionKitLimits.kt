@@ -7,6 +7,8 @@ internal object VisionKitLimits {
   const val TEXT_MAX_PIXELS = 4_000_000
   /** Hard ceiling for `removeBackground` `maxPixels`; bounds decode memory. */
   const val MAX_SEGMENT_PIXELS = 25_000_000
+  /** `classifyImage` `maxResults` cap. `0` still means “no limit”. */
+  const val MAX_CLASSIFICATION_RESULTS = 50
   /** ML Kit MediaPipe GPU path is unstable on some devices above ~512px. */
   const val ML_KIT_MAX_EDGE = 512
   /** OCR downscale cap after decode (ML Kit input guidelines). */

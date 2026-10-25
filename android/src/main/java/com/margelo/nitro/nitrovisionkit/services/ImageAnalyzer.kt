@@ -29,20 +29,25 @@ internal object ImageAnalyzer {
     try {
       var segmentation: HybridSegmentationResultSpec? = null
       if (segmentOptions != null) {
+        val segmentSource = loaded.downscaleToMaxPixels(maxPixels)
         try {
-          val output = SubjectSegmenter.segment(context, loaded, trim, retainMask)
-          segmentation = HybridSegmentationResult(output, ImageLoader.cacheDir(context))
-          if (classifyRegion == null && classifyOptions != null) {
-            classifyRegion = output.bounds
+          try {
+            val output = SubjectSegmenter.segment(context, segmentSource, trim, retainMask)
+            segmentation = HybridSegmentationResult(output, ImageLoader.cacheDir(context))
+            if (classifyRegion == null && classifyOptions != null) {
+              classifyRegion = output.bounds
+            }
+            if (textRegion == null && textOptions != null) {
+              textRegion = output.bounds
+            }
+          } catch (error: Exception) {
+            val hasOtherOps = classifyOptions != null || textOptions != null
+            if (!hasOtherOps || error.message?.contains(NO_FOREGROUND) != true) {
+              throw error
+            }
           }
-          if (textRegion == null && textOptions != null) {
-            textRegion = output.bounds
-          }
-        } catch (error: Exception) {
-          val hasOtherOps = classifyOptions != null || textOptions != null
-          if (!hasOtherOps || error.message?.contains(NO_FOREGROUND) != true) {
-            throw error
-          }
+        } finally {
+          if (segmentSource !== loaded) segmentSource.recycle()
         }
       }
 
@@ -50,27 +55,35 @@ internal object ImageAnalyzer {
       var text: HybridTextRecognitionResultSpec? = null
 
       if (classifyOptions != null && textOptions != null) {
-        coroutineScope {
-          val labelsDeferred = async {
-            ImageClassifier.classify(
-              loaded,
-              maxResults,
-              minConfidence,
-              classifyRegion,
-            ).toTypedArray()
+        // ML Kit reads pixels off the calling thread. Each task gets its own copy.
+        val labelBitmap = loaded.immutableArgbCopy()
+        val textBitmap = loaded.immutableArgbCopy()
+        try {
+          coroutineScope {
+            val labelsDeferred = async {
+              ImageClassifier.classify(
+                labelBitmap,
+                maxResults,
+                minConfidence,
+                classifyRegion,
+              ).toTypedArray()
+            }
+            val textDeferred = async {
+              val output = TextRecognizer.recognize(
+                context = context,
+                bitmap = textBitmap,
+                languages = textOptions.languages,
+                region = textRegion,
+                minTextHeightFraction = textOptions.minTextHeightFraction,
+              )
+              HybridTextRecognitionResult(output)
+            }
+            classifications = labelsDeferred.await()
+            text = textDeferred.await()
           }
-          val textDeferred = async {
-            val output = TextRecognizer.recognize(
-              context = context,
-              bitmap = loaded,
-              languages = textOptions.languages,
-              region = textRegion,
-              minTextHeightFraction = textOptions.minTextHeightFraction,
-            )
-            HybridTextRecognitionResult(output)
-          }
-          classifications = labelsDeferred.await()
-          text = textDeferred.await()
+        } finally {
+          labelBitmap.recycle()
+          textBitmap.recycle()
         }
       } else if (classifyOptions != null) {
         classifications = ImageClassifier.classify(
