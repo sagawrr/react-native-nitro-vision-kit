@@ -74,11 +74,11 @@
     "@types/react": "^19.2.15",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
-    "nitrogen": "0.36.5",
+    "nitrogen": "0.37.0",
     "prettier": "^3.8.3",
     "react": "19.2.8",
     "react-native": "0.86.2",
-    "react-native-nitro-modules": "0.36.5",
+    "react-native-nitro-modules": "0.37.0",
     "release-it": "^21.0.1",
     "typescript": "^6.0.3"
   },
